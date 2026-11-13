@@ -2,3 +2,6 @@
 .DS_Store
 node_modules
 .env*
+android/
+play-store/*.aab
+play-store/*.apk
