@@ -1,10 +1,13 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.operationwindfall.app",
       "sha256_cert_fingerprints": [
+        "08:0C:59:49:F0:37:A5:A0:94:DE:E1:9E:AE:59:6F:78:69:DA:B6:2D:3E:A3:E2:7B:15:9A:49:72:3D:47:39:47",
         "4D:15:BE:20:43:D5:05:42:A0:C0:3F:F5:EB:04:7B:4F:3B:28:C9:F1:78:F6:6E:25:83:0F:F3:3A:0C:C6:61:6A"
       ]
     }
