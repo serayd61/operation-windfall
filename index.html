@@ -223,7 +223,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .comp-row label, .comp-tag { color: var(--type-dim); } .comp-row b { font: 700 18px/1 var(--f-hud); letter-spacing: .08em; flex: 1 1 auto; text-transform: none; }
 .comp-row input { flex: 1 1 120px; min-width: 0; padding: 9px 10px 7px; border: 1.5px solid var(--type); background: rgba(255, 255, 255, .35); color: var(--type); font: 700 16px/1 var(--f-hud); letter-spacing: .06em; border-radius: 0; }
 .note { margin: 0; font: 400 13px/1.4 var(--f-type); color: var(--type-dim); }
-#sky-box { display: grid; gap: 12px; }
+#sky-box { display: grid; gap: 12px; } .link { width: 100%; padding: 8px 10px; border: 1.5px dashed var(--type-dim); background: transparent; color: var(--type); font: 400 13px/1.2 var(--f-type); border-radius: 0; }
 .rank { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--type); }
 .rank li { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: baseline; padding: 7px 4px 6px; border-bottom: 1px solid rgba(41, 40, 31, .3); font: 700 16px/1.1 var(--f-hud); letter-spacing: .06em; }
 .rank li i { font-style: normal; color: var(--type-dim); } .rank li span { font-variant-numeric: tabular-nums; } .rank li.me { background: var(--type); color: var(--paper); } .rank li.me i { color: var(--paper-edge); }
@@ -319,7 +319,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div id="sky-box" hidden>
         <div class="lab2">Shared sky</div>
         <div class="seg" id="o-sky" role="radiogroup" aria-label="Shared sky"></div>
-        <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+        <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="ghost" id="b-invite" type="button">Copy invite link</button></div>
+        <input id="n-link" class="link" type="text" readonly hidden aria-label="Invite link">
         <p class="note">Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.</p>
       </div>
       <div class="lab2">Language</div>
@@ -329,7 +330,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <label class="opt" for="o-inv"><input type="checkbox" id="o-inv"> Pilot-style pitch (pull back to climb)</label>
       <div class="row"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button></div>
       <div class="stamp" id="m-stamp">Restricted</div>
-      <p class="build">Build 15 · competition and shared sky</p>
+      <p class="build">Build 16 · squadron invite links</p>
     </div>
   </div>
 
@@ -524,6 +525,9 @@ const DICT = {
   "Not enough points.": ["Yeterli puan yok.", "Nicht genug Punkte."], "No connection to the competition server.": ["Yarışma sunucusuna bağlanılamadı.", "Keine Verbindung zum Wettbewerbsserver."],
   "Score not recorded: too soon after the last sortie.": ["Puan kaydedilmedi: son sortiden hemen sonra.", "Punkte nicht gespeichert: zu kurz nach dem letzten Einsatz."], "Score not recorded: no connection.": ["Puan kaydedilmedi: bağlantı yok.", "Punkte nicht gespeichert: keine Verbindung."],
   "Recording your score…": ["Puanın kaydediliyor…", "Punkte werden gespeichert…"], "Score recorded": ["Puan kaydedildi", "Punkte gespeichert"], "Pilot joined": ["Bir pilot katıldı", "Pilot beigetreten"], "Pilot left": ["Bir pilot ayrıldı", "Pilot hat verlassen"],
+  "Copy invite link": ["Davet bağlantısını kopyala", "Einladungslink kopieren"], "Link copied": ["Bağlantı kopyalandı", "Link kopiert"], "Copy this link and send it": ["Bu bağlantıyı kopyalayıp gönder", "Kopiere diesen Link und sende ihn"],
+  "You are invited to a squadron. Enter a pilot name and join to fly together.": ["Bir filoya davet edildin. Birlikte uçmak için pilot adını yazıp katıl.", "Du bist in eine Staffel eingeladen. Gib einen Pilotennamen ein und tritt bei, um gemeinsam zu fliegen."],
+  "Invite link": ["Davet bağlantısı", "Einladungslink"],
   "Shared sky": ["Ortak gökyüzü", "Gemeinsamer Himmel"], "Squadron code": ["Filo kodu", "Staffelcode"],
   "Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.": ["Aynı sortideki pilotlar birbirini canlı görür ve puan için yarışır. Yalnızca arkadaşlarınla uçmak için bir filo kodu paylaş; herkese açık gökyüzü için boş bırak.", "Piloten im selben Einsatz sehen einander live und kämpfen um die Punkte. Teile einen Staffelcode, um nur mit Freunden zu fliegen; lass ihn leer für den offenen Himmel."],
   "speed": ["hız", "Tempo"], "agility": ["çeviklik", "Wendigkeit"], "armour": ["zırh", "Panzerung"], "firepower": ["ateş gücü", "Feuerkraft"], "the ridge": ["sırt", "der Kamm"]
@@ -2405,6 +2409,13 @@ function tick(dt, now) {
    Once joined, points and equipment live on the server and the device only mirrors them. */
 const NET = { url: 'https://cefpfihmzyqxrskltylk.supabase.co', key: 'sb_publishable_-OokMVXmREjldxfZaoijyw_D7hPawvh', sb: null, me: null, uid: null, sky: 0, room: '', ch: null, peers: new Map(), sendT: 0, listT: 0, busy: false };
 try { NET.sky = localStorage.getItem('windfall-sky') === '1' ? 1 : 0; NET.room = (localStorage.getItem('windfall-room') || '').slice(0, 12); } catch (e) {}
+let invited = false;
+try { // an invite link carries the squadron code and the sortie: ?sq=CODE&m=3
+  const qs = new URLSearchParams(location.search), sq = (qs.get('sq') || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 12).toUpperCase();
+  if (sq) { invited = true; NET.room = sq; NET.sky = 1; const m = parseInt(qs.get('m')); if (m >= 0 && m < MISSIONS.length) startAt = m;
+    try { localStorage.setItem('windfall-room', sq); localStorage.setItem('windfall-sky', '1'); } catch (e) {}
+    history.replaceState(null, '', location.pathname); }
+} catch (e) {}
 const netErr = e => { const m = (e && e.message) || ''; return /name_taken/.test(m) ? 'That name is taken. Try another.' : /bad_name/.test(m) ? 'Use 3 to 16 letters or numbers.' : /not_enough/.test(m) ? 'Not enough points.' : /too_soon/.test(m) ? 'Score not recorded: too soon after the last sortie.' : 'No connection to the competition server.'; };
 function netMsg(t) { const el = $('n-msg'); el.hidden = !t; el.textContent = t || ''; }
 async function rpc(fn, args) { const { data, error } = await NET.sb.rpc(fn, args || {}); if (error) throw error; return data; }
@@ -2416,6 +2427,7 @@ function adopt(p) { // the server's copy of the pilot replaces the device's
 }
 async function netInit() {
   if (!NET.url || !window.supabase) return;
+  if (invited) setTimeout(() => { if (!NET.me) netMsg('You are invited to a squadron. Enter a pilot name and join to fly together.'); }, 1500);
   try { NET.sb = supabase.createClient(NET.url, NET.key); } catch (e) { NET.sb = null; return; }
   netUi();
   try { const { data } = await NET.sb.auth.getSession(); if (!data || !data.session) return; NET.uid = data.session.user.id; const pl = CAR.plane; if (adopt(await rpc('my_pilot')) && state === 'menu') { if (pl !== CAR.plane) loadMission(mIdx); fillBoard(); } } catch (e) {}
@@ -2498,6 +2510,14 @@ $('b-join').onclick = netJoin; $('n-name').onkeydown = e => { if (e.key === 'Ent
 $('b-rank').onclick = () => { fillRank(); show('s-rank'); $('b-kback').focus(); }; $('b-kback').onclick = () => { fillBoard(); show('s-menu'); };
 $('o-sky').innerHTML = ['Off', 'On'].map((o, i) => '<label><input type="radio" name="sky" value="' + i + '"' + (i === NET.sky ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
 $('o-sky').querySelectorAll('input').forEach(el => { el.onchange = () => { NET.sky = +el.value; try { localStorage.setItem('windfall-sky', '' + NET.sky); } catch (e) {} }; });
+$('b-invite').onclick = () => {
+  if (!NET.room.replace(/[^A-Za-z0-9]/g, '')) { NET.room = Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random() * 32 | 0]).join(''); $('n-room').value = NET.room; try { localStorage.setItem('windfall-room', NET.room); } catch (e) {} }
+  if (!NET.sky) { NET.sky = 1; const on = $('o-sky').querySelector('input[value="1"]'); if (on) on.checked = true; try { localStorage.setItem('windfall-sky', '1'); } catch (e) {} }
+  const url = location.origin + location.pathname + '?sq=' + NET.room.replace(/[^A-Za-z0-9]/g, '').toUpperCase() + '&m=' + mIdx, b = $('b-invite'), box = $('n-link');
+  const shown = () => { box.hidden = false; box.value = url; box.focus(); box.select(); b.textContent = 'Copy this link and send it'; };
+  try { navigator.clipboard.writeText(url).then(() => { b.textContent = 'Link copied'; setTimeout(() => { b.textContent = 'Copy invite link'; }, 2200); }, shown); } catch (e) { shown(); }
+};
+$('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.stopPropagation();
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
