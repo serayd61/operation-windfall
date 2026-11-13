@@ -35,7 +35,7 @@ Operation Windfall is an arcade flight-combat game set across seven sorties, fro
 No adverts. No account needed to play; a pilot name is enough to enter the ranking, and you can delete your pilot at any time from inside the game. An internet connection is required.
 
 ### Türkçe
-**Kısa açıklama:** 2. Dünya Savaşı hava muharebesi: gemiden kalkış, it dalaşı, bombardıman, sıralama.
+**Kısa açıklama:** 2. Dünya Savaşı hava muharebesi: gemiden kalkış, it dalaşı, bomba, sıralama.
 
 **Tam açıklama:**
 Sallanan uçak gemisinin güvertesinden kalk, hedefe kadar savaş ve uçağını eve getir.
@@ -53,7 +53,7 @@ Operation Windfall, Güney Pasifik'ten Baltık'a uzanan yedi sortilik bir arcade
 Reklam yok. Oynamak için hesap gerekmez; sıralamaya girmek için bir pilot adı yeter ve pilotunu istediğin an oyunun içinden silebilirsin. İnternet bağlantısı gerekir.
 
 ### Deutsch
-**Kısa açıklama:** Luftkampf im 2. Weltkrieg: Trägerstarts, Kurvenkämpfe, Bombenangriffe, Rangliste.
+**Kısa açıklama:** Luftkampf im 2. Weltkrieg: Trägerstarts, Kurvenkämpfe, Bomben und Rangliste.
 
 **Tam açıklama:**
 Starte vom schwankenden Deck eines Flugzeugträgers, kämpfe dich zum Ziel durch und bring die Maschine nach Hause.
@@ -82,8 +82,9 @@ Bunlar senin adına verilen yasal beyanlardır; göndermeden önce oku.
 - **İçerik derecelendirme anketi:** Şiddet: evet, gerçekçi olmayan / hafif (uçak, gemi, araç ve uzaktan görünen asker figürleri vurulur; kan ve vahşet yok). Cinsellik, küfür, uyuşturucu, kumar: hayır. Kullanıcılar etkileşime girebiliyor mu: evet (pilot adları ve canlı konum diğer oyunculara görünür; sohbet yok). Konum paylaşımı: hayır. Dijital satın alma: hayır.
 - **Veri güvenliği:**
   - Veri toplanıyor mu: Evet. Aktarımda şifreleniyor mu: Evet. Kullanıcı silme isteyebilir mi: Evet (oyun içinden; URL olarak gizlilik sayfası).
-  - Toplanan türler: *Kişisel bilgi → Kullanıcı kimlikleri* (rastgele hesap numarası), *Kişisel bilgi → Ad* yerine *Uygulama etkinliği → Diğer kullanıcı içeriği* (pilot takma adı), *Uygulama etkinliği → Uygulama etkileşimleri* (puanlar, sortiler).
-  - Amaç: Uygulama işlevselliği. Üçüncü taraflarla paylaşılmıyor. Toplama isteğe bağlı (yarışmaya katılmadan oynanabilir).
+  - Toplanan türler: *Kişisel bilgi → Ad* (pilot takma adı) ve *Kullanıcı kimlikleri* (rastgele hesap numarası): amaç uygulama işlevselliği + hesap yönetimi. *Uygulama etkinliği → Uygulama etkileşimleri* (puanlar, sortiler): amaç uygulama işlevselliği + sahtekârlığı önleme.
+  - Üçüncü taraflarla paylaşılmıyor. Kısa süreli işlenmiyor. Toplama isteğe bağlı (yarışmaya katılmadan oynanabilir).
+  - Hesap oluşturma yöntemi: "Diğer" (takma adlı anonim hesap; e-posta/şifre yok).
 - **Devlet uygulaması / finans / sağlık / haber:** Hayır
 
 ## Başvuru adımları (Play Console)
