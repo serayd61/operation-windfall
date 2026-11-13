@@ -1,16 +1,16 @@
 # Google Play başvuru dosyası — Operation Windfall
 
-Paket adı: `com.operationwindfall.app` · Sürüm: 1.0.0 (kod 1) · Hedef Android API 36, en düşük Android 7.0 (API 24)
+Paket adı: `com.operationwindfall.app` · Sürüm: 1.0.1 (kod 2, Capacitor; 1.0.0 / kod 1 Bubblewrap TWA idi) · Hedef Android API 36, en düşük Android 7.0 (API 24)
 
 ## Yüklenecek dosyalar (bu klasörde)
 
 | Dosya | Nereye |
 | --- | --- |
-| `operation-windfall-1.0.0.aab` | Sürüm → uygulama paketi |
+| `operation-windfall-1.0.1.aab` | Sürüm → uygulama paketi |
 | `graphics/icon-512.png` | Mağaza girişi → uygulama simgesi |
 | `graphics/feature-1024x500.png` | Mağaza girişi → öne çıkan grafik |
 | `graphics/screenshot-1…5.png` (1920×1080) | Mağaza girişi → telefon ekran görüntüleri |
-| `operation-windfall-1.0.0-test.apk` | Yalnızca kendi telefonunda denemek için |
+| `operation-windfall-1.0.1-test.apk` | Yalnızca kendi telefonunda denemek için |
 
 ## Mağaza metinleri
 
@@ -108,3 +108,7 @@ Bu klasörü yedekle; her güncelleme bu anahtarla imzalanır. Kaybolursa Play C
 ## İleride
 
 Token ya da ekipman satışı eklenirse Play'de dijital ürünler **Google Play Faturalandırma** ile satılmak zorundadır; web'deki kartla ödeme Android uygulamasında kullanılamaz.
+
+## Android paketini yeniden üretmek
+
+Oyun dosyaları uygulamanın içine gömülüdür (Capacitor, `app/` klasörü). Oyunda bir değişiklik yapınca `app/android/app/build.gradle` içindeki `versionCode` ve `versionName` değerlerini artır, sonra `app/build-android.sh` çalıştır (JDK 21, Android SDK ve yükleme anahtarı gerekir). Çıkan `.aab` dosyası Play Console'a yeni sürüm olarak yüklenir.

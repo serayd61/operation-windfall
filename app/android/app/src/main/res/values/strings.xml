@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Operation Windfall</string>
+    <string name="title_activity_main">Operation Windfall</string>
+    <string name="package_name">com.operationwindfall.app</string>
+    <string name="custom_url_scheme">com.operationwindfall.app</string>
+</resources>
