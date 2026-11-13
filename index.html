@@ -218,7 +218,22 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 14px 18px; padding: 12px 0; border-block: 1px solid rgba(41, 40, 31, .35); }
 .stats b { display: block; font: 700 30px/1 var(--f-hud); font-variant-numeric: tabular-nums; margin-top: 5px; }
 #fatal { position: absolute; inset: auto 0 0 0; padding: 12px var(--gr) calc(12px + var(--sab)) var(--gl); font: 400 14px/1.4 var(--f-type); color: var(--threat); background: rgba(12, 18, 16, .94); }
+.comp { display: grid; gap: 8px; padding: 10px 12px; border: 1.5px dashed var(--type-dim); }
+.comp-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font: 700 13px/1.2 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; }
+.comp-row label, .comp-tag { color: var(--type-dim); } .comp-row b { font: 700 18px/1 var(--f-hud); letter-spacing: .08em; flex: 1 1 auto; text-transform: none; }
+.comp-row input { flex: 1 1 120px; min-width: 0; padding: 9px 10px 7px; border: 1.5px solid var(--type); background: rgba(255, 255, 255, .35); color: var(--type); font: 700 16px/1 var(--f-hud); letter-spacing: .06em; border-radius: 0; }
+.note { margin: 0; font: 400 13px/1.4 var(--f-type); color: var(--type-dim); }
+#sky-box { display: grid; gap: 12px; }
+.rank { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--type); }
+.rank li { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: baseline; padding: 7px 4px 6px; border-bottom: 1px solid rgba(41, 40, 31, .3); font: 700 16px/1.1 var(--f-hud); letter-spacing: .06em; }
+.rank li i { font-style: normal; color: var(--type-dim); } .rank li span { font-variant-numeric: tabular-nums; } .rank li.me { background: var(--type); color: var(--paper); } .rank li.me i { color: var(--paper-edge); }
+.rank li.k-wait { display: block; font: 400 14px/1.4 var(--f-type); color: var(--type-dim); }
+.pilots { position: absolute; left: var(--gl); top: calc(234px + var(--sat)); min-width: 132px; padding: 6px 9px 5px; background: var(--ink-plate); border-left: 2px solid var(--go); text-shadow: none; font: 600 12px/1.5 var(--f-hud); letter-spacing: .08em; color: var(--hud); }
+.pilots div { display: flex; justify-content: space-between; gap: 12px; } .pilots div.me { color: var(--go); } .pilots span { font-variant-numeric: tabular-nums; }
+.touch .pilots { top: calc(204px + var(--sat)); }
+@media (orientation: landscape) and (max-height: 440px) { .pilots { top: auto; bottom: calc(70px + var(--sab)); } .pilots div:nth-child(n+4) { display: none; } }
 @media (orientation: portrait) and (max-width: 600px) {
+  .pilots, .touch .pilots { top: calc(272px + var(--sat)); }
   .obj { max-width: calc(100vw - 200px); }
   .compass { top: calc(104px + var(--sat)); width: calc(100vw - 32px); }
   .radar, .touch .radar { top: calc(168px + var(--sat)); }
@@ -263,6 +278,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="pip" id="lead" hidden></div><div class="pip" id="bpip" hidden></div>
     <div class="cross" id="cross"><svg viewBox="-34 -34 68 68" fill="none" stroke="currentColor" stroke-width="1.6"><circle r="24"/><circle r="1.6" fill="currentColor" stroke="none"/><path d="M0 -33V-27M0 27V33M-33 0H-27M27 0H33M-9 0H-4M4 0H9M0 4V9"/></svg></div>
     <div class="feed" id="feed"></div>
+    <div class="pilots" id="pilots" hidden></div>
     <div class="radio" id="radio"><b id="radio-from">Homeplate</b><p id="radio-text"></p></div>
     <div class="gauges">
       <div class="hp" id="hp"><div class="k">Airframe</div><div class="g-n" id="hp-n">100</div><div class="hp-bar" id="hp-bar"></div></div>
@@ -290,11 +306,22 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="sheet">
       <div class="sheet-head"><span id="m-no">Mission orders no. 1</span><span id="m-when">South Pacific · 1942</span></div>
       <div class="rec"><b id="r-rank">Pilot Officer</b><div class="bar"><i id="r-bar"></i></div><span id="r-xp">0 XP</span><span id="r-rp">0 RP</span></div>
+      <div class="comp" id="comp" hidden>
+        <div class="comp-row" id="comp-out"><label for="n-name">Pilot name</label><input id="n-name" type="text" maxlength="16" autocomplete="off" autocapitalize="words" spellcheck="false"><button class="ghost" id="b-join" type="button">Join the competition</button></div>
+        <div class="comp-row" id="comp-in" hidden><span class="comp-tag">Pilot</span><b id="n-me" data-raw></b><button class="ghost" id="b-rank" type="button">Ranking</button></div>
+        <p class="note" id="n-msg" hidden></p>
+      </div>
       <div class="seg" id="m-pick" role="radiogroup" aria-label="Choose a sortie"></div>
       <h1 id="m-title">Operation Windfall</h1>
       <p class="lede" id="m-brief"></p>
       <ul class="medals" id="m-stars"></ul>
       <dl class="keys" id="m-keys"></dl>
+      <div id="sky-box" hidden>
+        <div class="lab2">Shared sky</div>
+        <div class="seg" id="o-sky" role="radiogroup" aria-label="Shared sky"></div>
+        <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+        <p class="note">Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.</p>
+      </div>
       <div class="lab2">Language</div>
       <div class="seg" id="o-lang" role="radiogroup" aria-label="Language"></div>
       <div class="lab2">Opposition</div>
@@ -302,7 +329,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <label class="opt" for="o-inv"><input type="checkbox" id="o-inv"> Pilot-style pitch (pull back to climb)</label>
       <div class="row"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button></div>
       <div class="stamp" id="m-stamp">Restricted</div>
-      <p class="build">Build 14 · English · Türkçe · Deutsch</p>
+      <p class="build">Build 15 · competition and shared sky</p>
     </div>
   </div>
 
@@ -311,6 +338,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="sheet-head"><span>Hangar and settings</span><span id="h-rp">0 RP</span></div>
       <h1>Aircraft park</h1>
       <p class="lede">Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.</p>
+      <p class="note" id="h-msg" hidden></p>
       <div class="lab2">Aircraft</div>
       <div id="h-planes"></div>
       <div class="lab2">Fittings</div>
@@ -323,6 +351,17 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Landing aid</div><div class="seg" id="o-aid" role="radiogroup" aria-label="Landing aid"></div>
       <p class="lede" style="font-size:13px">A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.</p>
       <div class="row"><button class="go" id="b-hback" type="button">Back</button></div>
+    </div>
+  </div>
+
+  <div class="screen" id="s-rank" hidden>
+    <div class="sheet">
+      <div class="sheet-head"><span>Competition</span><span id="k-me" data-raw></span></div>
+      <h1>Ranking</h1>
+      <p class="lede" style="font-size:13px">Each pilot's best score on every sortie, added up. Points and equipment are kept on the server.</p>
+      <div class="seg" id="k-tabs" role="radiogroup" aria-label="Ranking"></div>
+      <ol class="rank" id="k-list"></ol>
+      <div class="row"><button class="go" id="b-kback" type="button">Back</button></div>
     </div>
   </div>
 
@@ -340,6 +379,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <h1 id="end-title">Welcome aboard</h1>
       <p class="lede" id="end-lede"></p>
       <ul class="medals" id="end-stars"></ul>
+      <p class="note" id="end-net" hidden></p>
       <div class="stats">
         <div><span class="lab">Score</span><b id="st-score">0</b></div>
         <div><span class="lab">Time</span><b id="st-time">0:00</b></div>
@@ -358,6 +398,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 </div>
 
 <script src="vendor/three.min.js"></script>
+<script src="vendor/supabase.js"></script>
 <script>
 (() => {
 'use strict';
@@ -476,6 +517,15 @@ const DICT = {
   "Welcome home": ["Eve hoş geldin", "Willkommen daheim"], "Welcome aboard": ["Gemiye hoş geldin", "Willkommen an Bord"], "The war moves on": ["Savaş sürüyor", "Der Krieg geht weiter"], "Every sortie on the board is flown.": ["Panodaki bütün sortiler uçuldu.", "Jeder Einsatz auf der Tafel ist geflogen."],
   "Score": ["Puan", "Punkte"], "Time": ["Süre", "Zeit"], "Fighters": ["Avcılar", "Jäger"], "Boats": ["Botlar", "Boote"], "Armour / troops": ["Zırhlı / asker", "Panzer / Truppen"], "Bombers": ["Bombacılar", "Bomber"], "Earned": ["Kazanılan", "Verdient"], "Gunnery": ["İsabet", "Trefferquote"], "Best time": ["En iyi süre", "Bestzeit"],
   "Fly again": ["Yeniden uç", "Nochmal fliegen"], "Fly it again": ["Bunu yeniden uç", "Diesen nochmal"], "Next sortie": ["Sıradaki sorti", "Nächster Einsatz"],
+  "Pilot name": ["Pilot adı", "Pilotenname"], "Join the competition": ["Yarışmaya katıl", "Am Wettbewerb teilnehmen"], "Pilot": ["Pilot", "Pilot"], "Ranking": ["Sıralama", "Rangliste"], "Competition": ["Yarışma", "Wettbewerb"],
+  "Each pilot's best score on every sortie, added up. Points and equipment are kept on the server.": ["Her pilotun her sortideki en iyi puanının toplamı. Puanlar ve ekipman sunucuda saklanır.", "Die beste Punktzahl jedes Piloten in jedem Einsatz, zusammengezählt. Punkte und Ausrüstung liegen auf dem Server."],
+  "Overall": ["Genel", "Gesamt"], "This sortie": ["Bu sorti", "Dieser Einsatz"], "Loading…": ["Yükleniyor…", "Lädt…"], "No scores yet. Be the first.": ["Henüz puan yok. İlk sen ol.", "Noch keine Punkte. Sei der Erste."],
+  "Connecting…": ["Bağlanıyor…", "Verbinde…"], "That name is taken. Try another.": ["Bu ad alınmış. Başka bir ad dene.", "Dieser Name ist vergeben. Versuch einen anderen."], "Use 3 to 16 letters or numbers.": ["3 ile 16 arası harf ya da rakam kullan.", "Nimm 3 bis 16 Buchstaben oder Ziffern."],
+  "Not enough points.": ["Yeterli puan yok.", "Nicht genug Punkte."], "No connection to the competition server.": ["Yarışma sunucusuna bağlanılamadı.", "Keine Verbindung zum Wettbewerbsserver."],
+  "Score not recorded: too soon after the last sortie.": ["Puan kaydedilmedi: son sortiden hemen sonra.", "Punkte nicht gespeichert: zu kurz nach dem letzten Einsatz."], "Score not recorded: no connection.": ["Puan kaydedilmedi: bağlantı yok.", "Punkte nicht gespeichert: keine Verbindung."],
+  "Recording your score…": ["Puanın kaydediliyor…", "Punkte werden gespeichert…"], "Score recorded": ["Puan kaydedildi", "Punkte gespeichert"], "Pilot joined": ["Bir pilot katıldı", "Pilot beigetreten"], "Pilot left": ["Bir pilot ayrıldı", "Pilot hat verlassen"],
+  "Shared sky": ["Ortak gökyüzü", "Gemeinsamer Himmel"], "Squadron code": ["Filo kodu", "Staffelcode"],
+  "Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.": ["Aynı sortideki pilotlar birbirini canlı görür ve puan için yarışır. Yalnızca arkadaşlarınla uçmak için bir filo kodu paylaş; herkese açık gökyüzü için boş bırak.", "Piloten im selben Einsatz sehen einander live und kämpfen um die Punkte. Teile einen Staffelcode, um nur mit Freunden zu fliegen; lass ihn leer für den offenen Himmel."],
   "speed": ["hız", "Tempo"], "agility": ["çeviklik", "Wendigkeit"], "armour": ["zırh", "Panzerung"], "firepower": ["ateş gücü", "Feuerkraft"], "the ridge": ["sırt", "der Kamm"]
 };
 const CSN = '(Kestrel One|Lantern Red One|Sirocco Lead|Sokol One)', MEN = '(The Marines|The commandos|Eighth Army|The Guards)';
@@ -526,7 +576,7 @@ function tr(s) {
 }
 const trSrc = new WeakMap(), trOut = new WeakMap();
 function trNode(n, again) {
-  const p = n.parentNode; if (!p || p.id === 'fps' || (p.closest && p.closest('#o-lang'))) return;
+  const p = n.parentNode; if (!p || p.id === 'fps' || (p.closest && p.closest('#o-lang, [data-raw]'))) return;
   const v = n.nodeValue, mine = trSrc.has(n) && trOut.get(n) === v; if (mine && !again) return;
   const src = mine ? trSrc.get(n) : v, t = tr(src); trSrc.set(n, src); trOut.set(n, t); if (t !== v) n.nodeValue = t;
 }
@@ -1657,7 +1707,7 @@ function landAid(dt) {
 }
 
 function loadMission(i) {
-  mIdx = i; M = MISSIONS[i]; ISL = M.islands;
+  mIdx = i; M = MISSIONS[i]; ISL = M.islands; NET.peers.clear();
   if (world) { scene.remove(world); world.traverse(o => { if (o.geometry && o.geometry !== GEO.wing && !o.geometry.userData.keep) o.geometry.dispose(); if (o.material && o.material.dispose && o.isSprite && o.material !== FOEGLOW) o.material.dispose(); }); }
   world = new T.Group(); scene.add(world); enemies = []; HG = null;
   START.set(M.start[0], M.start[1], M.start[2]); SHIP.set(M.ship[0], 0, M.ship[1]);
@@ -1966,6 +2016,7 @@ function drawRadar() {
   for (const S2 of SITES) if (S2.camp && S2.campLeft > 0 && S2.near < 1900) dot(S2.campV, 'rgba(255,90,68,.8)', 4, true);
   if (phase === 'extract') { dot(PADV, '#9fe0a0', 8, true); if (!P.ap && !P.gnd) dot(gateMark.aim, '#9fe0a0', 4); } else for (const o of objs) if (o.alive) dot(o.aim, '#ffc86a', 7, true);
   for (const e of enemies) if (!e.falling && !e.dead) dot(e.aim || e.pos, '#ff5a44', e.kind === 'bomber' ? 8 : 5);
+  for (const p of NET.peers.values()) if (p.alive) dot(p.pos, '#9fe0a0', 5.5);
   if (wing) dot(wing.pos, '#9fe0a0', 4.5); for (const p of pals) if (p.alive) dot(p.pos, '#9fe0a0', 7);
   rc.fillStyle = '#f3eede'; rc.beginPath(); rc.moveTo(c, c - 11); rc.lineTo(c + 7, c + 8); rc.lineTo(c, c + 4); rc.lineTo(c - 7, c + 8); rc.fill();
 }
@@ -2172,6 +2223,7 @@ function updateHud(dt) {
   for (const k of gtanks) if (k.foe && k.alive && k.S.near < 1500) { const d = k.aim.distanceTo(P.pos); if (d < 950) put(k.aim, 'e', k.soft ? 'TRUCK' : 'TANK', d); }
   for (const S of SITES) if (S.camp && S.campLeft > 0 && S.near < 1600) { const d = S.campV.distanceTo(P.pos); if (d < 1300) put(S.campV, 'e', 'TROOPS ' + S.campLeft, d); }
   for (const p of pals) if (p.alive && !p.gone) put(p.pos, 'h', 'BOMBER', p.pos.distanceTo(P.pos));
+  for (const p of NET.peers.values()) if (p.alive) put(p.pos, 'h', '\u2708 ' + p.name, p.pos.distanceTo(P.pos));
   for (; mi < marks.length; mi++) marks[mi].d.hidden = true;
   updateTarget(); drawRadar();
   let lso = '';
@@ -2194,7 +2246,7 @@ function updateHud(dt) {
 }
 
 /* ------------------------------------------------------------------ flow */
-function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
+function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { loadMission(i); fillBoard(); }; });
@@ -2211,10 +2263,10 @@ let planeDirty = false;
 function fillHangar() {
   $('h-rp').textContent = CAR.rp + ' RP';
   $('h-list').innerHTML = Object.keys(UPG).map(k => { const l = CAR.up[k], max = l >= 3; return '<div class="upg"><b>' + UPG[k][0] + '<i>' + '■■■'.slice(0, l) + '□□□'.slice(0, 3 - l) + '</i></b><span>' + UPG[k][1] + '</span><button class="ghost" type="button" data-k="' + k + '"' + (max || CAR.rp < COST[l] ? ' disabled' : '') + '>' + (max ? 'Fitted' : 'Fit · ' + COST[l] + ' RP') + '</button></div>'; }).join('');
-  $('h-list').querySelectorAll('button').forEach(b => { b.onclick = () => { const k = b.dataset.k, l = CAR.up[k]; if (l >= 3 || CAR.rp < COST[l]) return; CAR.rp -= COST[l]; CAR.up[k]++; saveCar(); fillHangar(); }; });
+  $('h-list').querySelectorAll('button').forEach(b => { b.onclick = () => { const k = b.dataset.k, l = CAR.up[k]; if (l >= 3 || CAR.rp < COST[l]) return; if (NET.me) { netBuy('buy_upgrade', { p_key: k }); return; } CAR.rp -= COST[l]; CAR.up[k]++; saveCar(); fillHangar(); }; });
   const rows = [['-1', 'Mission standard', 'The type each front was flown with', 0]].concat(PLANES.map((p, i) => ['' + i, p.n, p.by + ' · ' + planeNote(p), p.cost]));
   $('h-planes').innerHTML = rows.map(r => { const i = +r[0], own = i < 4 || CAR.own.includes(i), cur = CAR.plane === i; return '<div class="upg"><b>' + r[1] + '</b><span>' + r[2] + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || (!own && CAR.rp < r[3]) ? ' disabled' : '') + '>' + (cur ? 'Flying' : own ? 'Fly' : 'Buy · ' + r[3] + ' RP') + '</button></div>'; }).join('');
-  $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i; if (i >= 4 && !CAR.own.includes(i)) { if (CAR.rp < PLANES[i].cost) return; CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
+  $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i; if (NET.me) { if (i >= 4 && !CAR.own.includes(i) && CAR.rp < PLANES[i].cost) return; netBuy('buy_plane', { p_i: i }); return; } if (i >= 4 && !CAR.own.includes(i)) { if (CAR.rp < PLANES[i].cost) return; CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
   const seg = (id, name, opts, cur, set) => { $(id).innerHTML = opts.map((o, i) => '<label><input type="radio" name="' + name + '" value="' + i + '"' + (i === cur ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $(id).querySelectorAll('input').forEach(el => { el.onchange = () => { set(+el.value); saveCar(); }; }); };
   seg('o-sens', 'sens', ['Gentle', 'Normal', 'Sharp'], CAR.sens, v => { CAR.sens = v; });
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
@@ -2223,8 +2275,8 @@ function fillHangar() {
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
 }
-function board() { hush(); state = 'menu'; reset(); fillBoard(); show('s-menu'); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
-function startGame() { initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); }
+function board() { hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
+function startGame() { initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); skyJoin(); }
 function pause() { if (state !== 'play') return; hush(); state = 'pause'; show('s-pause'); $('b-resume').focus(); }
 function resume() { if (state !== 'pause') return; state = 'play'; show(null); last = performance.now(); canvas.focus(); }
 function finish() {
@@ -2242,14 +2294,14 @@ function finish() {
   let got = 0;
   if (endWon) { addScore(1000); score += Math.round(Math.max(0, PAR[mIdx] + 120 - time) * 4 * D.sc); got = 1 | (siteBreaks > 0 ? 2 : 0) | (time <= PAR[mIdx] ? 4 : 0); CAR.stars[mIdx] |= got; }
   score = Math.max(0, score - fleetHits * 300);
-  const rk0 = rankOf(CAR.xp), earned = Math.round(score / (endWon ? 10 : 25)); CAR.xp += score; CAR.rp += earned; saveCar();
+  const rk0 = rankOf(CAR.xp), earned = Math.round(score / (endWon ? 10 : 25)); CAR.xp += score; CAR.rp += earned; saveCar(); netScore(got);
   $('end-stars').innerHTML = starLines(got); $('st-score').textContent = score; $('st-bomb').textContent = bomberKills; $('st-rp').textContent = earned + ' RP';
   if (rankOf(CAR.xp) > rk0) $('end-lede').textContent += ' Promoted to ' + RANKS[rankOf(CAR.xp)][1] + '.';
   if (fleetHits && !failed) $('end-lede').textContent += ' The fleet took ' + fleetHits + (fleetHits > 1 ? ' bomb hits.' : ' bomb hit.');
   $('st-time').textContent = fmtTime(time); $('st-kills').textContent = kills; $('st-boats').textContent = boatKills; $('st-tanks').textContent = (tankKills + truckKills) + ' / ' + troopKills; $('st-acc').textContent = (shots ? Math.round(hits / shots * 100) : 0) + '%'; $('st-best').textContent = best ? fmtTime(best) : '–';
   show('s-end'); $('b-again').focus();
 }
-$('b-hangar').onclick = () => { fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
+$('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 $('b-start').onclick = startGame; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
@@ -2336,7 +2388,7 @@ function tick(dt, now) {
   if (state === 'play') {
     time += P.alive && !endT ? dt : 0; readInput();
     if (mIdx === 0 && !done.includes(0) && tipI < TIPS.length && time > TIPS[tipI][0]) radio(TIPS[tipI++][1]);
-    updatePlayer(dt); updateEnemies(dt); updateObjs(dt); updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); tickRadio(dt);
+    updatePlayer(dt); updateEnemies(dt); updateObjs(dt); updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); tickRadio(dt); skyTick(dt);
     beacon.rotation.y += dt * .4; beacon.material.opacity = .15 + Math.sin(now / 300) * .05;
     updateCamera(dt); updateHud(dt);
     if (engGain) { engGain.gain.value = P.alive ? .05 : 0; const f = 44 + P.speed * .6; engOsc.frequency.value = f; engOsc2.frequency.value = f * .502; }
@@ -2348,8 +2400,108 @@ function tick(dt, now) {
   }
   sea.position.set(camera.position.x, 0, camera.position.z); sky.position.copy(camera.position);
 }
+/* ------------------------------------------------------------------ online: pilots, ranking, shared sky
+   Without a connection, or before a pilot has joined, the game runs exactly as it does offline.
+   Once joined, points and equipment live on the server and the device only mirrors them. */
+const NET = { url: '', key: '', sb: null, me: null, uid: null, sky: 0, room: '', ch: null, peers: new Map(), sendT: 0, listT: 0, busy: false };
+try { NET.sky = localStorage.getItem('windfall-sky') === '1' ? 1 : 0; NET.room = (localStorage.getItem('windfall-room') || '').slice(0, 12); } catch (e) {}
+const netErr = e => { const m = (e && e.message) || ''; return /name_taken/.test(m) ? 'That name is taken. Try another.' : /bad_name/.test(m) ? 'Use 3 to 16 letters or numbers.' : /not_enough/.test(m) ? 'Not enough points.' : /too_soon/.test(m) ? 'Score not recorded: too soon after the last sortie.' : 'No connection to the competition server.'; };
+function netMsg(t) { const el = $('n-msg'); el.hidden = !t; el.textContent = t || ''; }
+async function rpc(fn, args) { const { data, error } = await NET.sb.rpc(fn, args || {}); if (error) throw error; return data; }
+function netUi() { $('comp').hidden = !NET.sb; $('comp-out').hidden = !!NET.me; $('comp-in').hidden = !NET.me; $('sky-box').hidden = !NET.me; if (NET.me) $('n-me').textContent = NET.me.name; }
+function adopt(p) { // the server's copy of the pilot replaces the device's
+  if (!p || !p.id) return false; NET.me = p; CAR.xp = p.xp | 0; CAR.rp = p.rp | 0; for (const k in CAR.up) CAR.up[k] = clamp((p.up || {})[k] | 0, 0, 3);
+  CAR.own = (p.own || []).filter(n => n >= 4 && n < PLANES.length); CAR.plane = Number.isInteger(p.plane) ? clamp(p.plane, -1, PLANES.length - 1) : -1; for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = ((p.stars || [])[i] | 0) & 7;
+  saveCar(); netUi(); return true;
+}
+async function netInit() {
+  if (!NET.url || !window.supabase) return;
+  try { NET.sb = supabase.createClient(NET.url, NET.key); } catch (e) { NET.sb = null; return; }
+  netUi();
+  try { const { data } = await NET.sb.auth.getSession(); if (!data || !data.session) return; NET.uid = data.session.user.id; const pl = CAR.plane; if (adopt(await rpc('my_pilot')) && state === 'menu') { if (pl !== CAR.plane) loadMission(mIdx); fillBoard(); } } catch (e) {}
+}
+async function netJoin() {
+  const name = $('n-name').value.replace(/\s+/g, ' ').trim(); if (name.length < 3) { netMsg('Use 3 to 16 letters or numbers.'); return; }
+  if (NET.busy) return; NET.busy = true; netMsg('Connecting…');
+  try {
+    let { data } = await NET.sb.auth.getSession();
+    if (!data || !data.session) { const r = await NET.sb.auth.signInAnonymously(); if (r.error) throw r.error; data = r.data; }
+    NET.uid = data.session.user.id; const pl = CAR.plane;
+    adopt(await rpc('join_pilot', { p_name: name, p_seed: { xp: CAR.xp, rp: CAR.rp, up: CAR.up, own: CAR.own, stars: CAR.stars } }));
+    if (pl !== CAR.plane && (pl < 4 || CAR.own.includes(pl))) { try { adopt(await rpc('buy_plane', { p_i: pl })); } catch (e) {} }
+    netMsg(''); if (pl !== CAR.plane) loadMission(mIdx); fillBoard();
+  } catch (e) { netMsg(netErr(e)); }
+  NET.busy = false;
+}
+function netScore(got) {
+  const el = $('end-net'); el.hidden = !NET.me; if (!NET.me) return; el.textContent = 'Recording your score…';
+  rpc('submit_score', { p_mission: mIdx, p_diff: CAR.diff, p_score: score, p_time: Math.round(time), p_won: !!endWon, p_stars: got,
+    p_stats: { kills, boats: boatKills, tanks: tankKills, trucks: truckKills, troops: troopKills, bombers: bomberKills, acc: shots ? Math.round(hits / shots * 100) : 0 } })
+    .then(async p => { adopt(p); let pos = ''; try { const me = (await rpc('leaderboard', { p_mission: null, p_limit: 1 })).find(r => r.me); if (me) pos = ' · #' + me.pos; } catch (e) {} el.textContent = 'Score recorded' + pos; })
+    .catch(e => { el.textContent = /too_soon/.test((e && e.message) || '') ? netErr(e) : 'Score not recorded: no connection.'; });
+}
+function netBuy(fn, args) {
+  if (NET.busy) return; NET.busy = true; $('h-msg').hidden = true;
+  rpc(fn, args).then(p => { adopt(p); planeDirty = true; fillHangar(); }).catch(e => { $('h-msg').hidden = false; $('h-msg').textContent = netErr(e); }).then(() => { NET.busy = false; });
+}
+let rankTab = 0;
+async function fillRank() {
+  $('k-me').textContent = NET.me ? NET.me.name : '';
+  $('k-tabs').innerHTML = ['Overall', 'This sortie'].map((o, i) => '<label><input type="radio" name="rank" value="' + i + '"' + (i === rankTab ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
+  $('k-tabs').querySelectorAll('input').forEach(el => { el.onchange = () => { rankTab = +el.value; fillRank(); }; });
+  const ol = $('k-list'); ol.innerHTML = '<li class="k-wait">Loading…</li>';
+  try {
+    const rows = await rpc('leaderboard', { p_mission: rankTab ? mIdx : null, p_limit: 20 });
+    if (!rows.length) { ol.innerHTML = '<li class="k-wait">No scores yet. Be the first.</li>'; return; }
+    ol.innerHTML = rows.map(r => '<li' + (r.me ? ' class="me"' : '') + '><i>' + (r.pos | 0) + '</i><b data-raw></b><span>' + (r.score | 0) + '</span></li>').join('');
+    ol.querySelectorAll('b').forEach((b, i) => { b.textContent = rows[i].name; });
+  } catch (e) { ol.innerHTML = '<li class="k-wait">No connection to the competition server.</li>'; }
+}
+// shared sky: everyone in the same sortie and squadron sees each other; each pilot still fights their own enemies
+const skyPlane = () => CAR.plane >= 0 ? CAR.plane : [0, 1, 2, 3, 1, 0, 2][mIdx] || 0;
+function skyLeave() { if (NET.ch) { try { NET.sb.removeChannel(NET.ch); } catch (e) {} NET.ch = null; } for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear(); $('pilots').hidden = true; }
+function skyJoin() {
+  skyLeave(); if (!NET.me || !NET.sky || !NET.sb) return;
+  const room = (NET.room || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'open';
+  NET.ch = NET.sb.channel('sky:' + mIdx + ':' + room, { config: { broadcast: { self: false } } });
+  NET.ch.on('broadcast', { event: 'p' }, m => skyGot(m.payload)).subscribe(); NET.sendT = 0; NET.listT = 0;
+}
+function skyGot(d) {
+  if (!d || typeof d.i !== 'string' || d.i === NET.uid || !Array.isArray(d.p) || !Array.isArray(d.q) || d.p.length !== 3 || d.q.length !== 4 || !d.p.concat(d.q).every(v => typeof v === 'number' && isFinite(v))) return;
+  let p = NET.peers.get(d.i);
+  if (!p) {
+    if (NET.peers.size >= 11) return;
+    const mesh = buildWarbird(PLANES[Number.isInteger(d.k) && d.k >= 0 && d.k < PLANES.length ? d.k : 0].skin, false); world.add(mesh);
+    p = { mesh, pos: new V3(d.p[0], d.p[1], d.p[2]), to: new V3(), q: new T.Quaternion(), name: 'Pilot', score: 0, seen: 0, alive: true }; mesh.position.copy(p.pos); NET.peers.set(d.i, p); feed('Pilot joined'); NET.listT = 0;
+  }
+  p.to.set(clamp(d.p[0], -6000, 6000), clamp(d.p[1], 0, 3000), clamp(d.p[2], -6000, 6000)); p.q.set(d.q[0], d.q[1], d.q[2], d.q[3]).normalize();
+  p.name = String(d.n || 'Pilot').replace(/[<>&]/g, '').slice(0, 16); p.score = d.s | 0; p.alive = !!d.a; p.seen = clock;
+}
+function skyTick(dt) {
+  if (!NET.ch) return;
+  NET.sendT -= dt;
+  if (NET.sendT <= 0) { NET.sendT = .125; const q = plane.quaternion, r1 = v => Math.round(v * 10) / 10, r3 = v => Math.round(v * 1000) / 1000;
+    try { NET.ch.send({ type: 'broadcast', event: 'p', payload: { i: NET.uid, n: NET.me.name, k: skyPlane(), p: [r1(P.pos.x), r1(P.pos.y), r1(P.pos.z)], q: [r3(q.x), r3(q.y), r3(q.z), r3(q.w)], s: score, a: P.alive ? 1 : 0 } }); } catch (e) {} }
+  const k = 1 - Math.exp(-9 * dt);
+  for (const [id, p] of NET.peers) {
+    if (clock - p.seen > 6) { world.remove(p.mesh); NET.peers.delete(id); feed('Pilot left'); NET.listT = 0; continue; }
+    p.pos.lerp(p.to, k); p.mesh.position.copy(p.pos); p.mesh.quaternion.slerp(p.q, k); p.mesh.visible = p.alive; if (p.mesh.userData.prop) p.mesh.userData.prop.rotation.z += dt * 38;
+  }
+  NET.listT -= dt;
+  if (NET.listT <= 0) { // the live table of who is flying this sortie
+    NET.listT = 1; const el = $('pilots'), rows = [{ name: NET.me.name, score, me: true }].concat([...NET.peers.values()]).sort((a, b) => b.score - a.score).slice(0, 6);
+    el.hidden = false; el.textContent = '';
+    for (const r of rows) { const d = document.createElement('div'), b = document.createElement('b'), s = document.createElement('span'); if (r.me) d.className = 'me'; b.setAttribute('data-raw', ''); b.textContent = r.name; s.textContent = r.score; d.appendChild(b); d.appendChild(s); el.appendChild(d); }
+  }
+}
+$('b-join').onclick = netJoin; $('n-name').onkeydown = e => { if (e.key === 'Enter') netJoin(); e.stopPropagation(); }; $('n-name').onkeyup = e => e.stopPropagation();
+$('b-rank').onclick = () => { fillRank(); show('s-rank'); $('b-kback').focus(); }; $('b-kback').onclick = () => { fillBoard(); show('s-menu'); };
+$('o-sky').innerHTML = ['Off', 'On'].map((o, i) => '<label><input type="radio" name="sky" value="' + i + '"' + (i === NET.sky ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
+$('o-sky').querySelectorAll('input').forEach(el => { el.onchange = () => { NET.sky = +el.value; try { localStorage.setItem('windfall-sky', '' + NET.sky); } catch (e) {} }; });
+$('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
+netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { tr, setLang, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { tr, setLang, NET, skyGot, skyJoin, netJoin, fillRank, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
