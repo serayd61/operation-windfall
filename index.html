@@ -201,7 +201,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .ghost:hover { background: var(--type); color: var(--paper); }
 .sheet .go:focus-visible, .sheet .ghost:focus-visible { outline-color: var(--stamp); }
 .opt { display: flex; align-items: center; gap: 8px; font: 400 14px/1.2 var(--f-type); color: var(--type-dim); cursor: pointer; }
-.build { margin: 0; font: 400 11px/1.2 var(--f-type); letter-spacing: .08em; text-transform: uppercase; color: var(--type-dim); opacity: .8; }
+.build a { color: inherit; } .build { margin: 0; font: 400 11px/1.2 var(--f-type); letter-spacing: .08em; text-transform: uppercase; color: var(--type-dim); opacity: .8; }
 .rec { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font: 700 13px/1.2 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; }
 .rec b { font: 700 17px/1 var(--f-stencil); letter-spacing: .08em; } .rec span { color: var(--type-dim); } .rec .bar { flex: 1 1 80px; height: 6px; box-shadow: inset 0 0 0 1px var(--type-dim); align-self: center; } .rec .bar i { display: block; height: 100%; background: var(--olive); }
 .medals { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font: 400 14px/1.35 var(--f-type); color: var(--type-dim); }
@@ -307,7 +307,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="sheet-head"><span id="m-no">Mission orders no. 1</span><span id="m-when">South Pacific · 1942</span></div>
       <div class="rec"><b id="r-rank">Pilot Officer</b><div class="bar"><i id="r-bar"></i></div><span id="r-xp">0 XP</span><span id="r-rp">0 RP</span></div>
       <div class="comp" id="comp" hidden>
-        <div class="comp-row" id="comp-out"><label for="n-name">Pilot name</label><input id="n-name" type="text" maxlength="16" autocomplete="off" autocapitalize="words" spellcheck="false"><button class="ghost" id="b-join" type="button">Join the competition</button></div>
+        <div class="comp-row" id="comp-out"><label for="n-name">Pilot name</label><input id="n-name" type="text" maxlength="16" autocomplete="off" autocapitalize="words" spellcheck="false"><button class="ghost" id="b-join" type="button">Join the competition</button><button class="ghost" id="b-restore" type="button">I have a recovery code</button></div>
+        <div class="comp-row" id="comp-code" hidden><label for="n-code">Recovery code</label><input id="n-code" type="text" maxlength="19" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX"><button class="ghost" id="b-claim" type="button">Bring my pilot back</button></div>
         <div class="comp-row" id="comp-in" hidden><span class="comp-tag">Pilot</span><b id="n-me" data-raw></b><button class="ghost" id="b-rank" type="button">Ranking</button></div>
         <p class="note" id="n-msg" hidden></p>
       </div>
@@ -321,6 +322,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="seg" id="o-sky" role="radiogroup" aria-label="Shared sky"></div>
         <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="ghost" id="b-invite" type="button">Copy invite link</button></div>
         <input id="n-link" class="link" type="text" readonly hidden aria-label="Invite link">
+        <p class="note" id="n-lobby" hidden></p>
         <p class="note">Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.</p>
       </div>
       <div class="lab2">Language</div>
@@ -330,7 +332,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <label class="opt" for="o-inv"><input type="checkbox" id="o-inv"> Pilot-style pitch (pull back to climb)</label>
       <div class="row"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button></div>
       <div class="stamp" id="m-stamp">Restricted</div>
-      <p class="build">Build 16 · squadron invite links</p>
+      <p class="build">Build 17 · verified scores</p>
+      <p class="build"><a href="privacy.html" target="_blank" rel="noopener">Privacy and your data</a></p>
     </div>
   </div>
 
@@ -362,6 +365,11 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <p class="lede" style="font-size:13px">Each pilot's best score on every sortie, added up. Points and equipment are kept on the server.</p>
       <div class="seg" id="k-tabs" role="radiogroup" aria-label="Ranking"></div>
       <ol class="rank" id="k-list"></ol>
+      <div class="lab2">Your pilot</div>
+      <p class="note">A recovery code brings your pilot back on another device, or after the browser's data is cleared. Without it a lost pilot cannot be returned.</p>
+      <div class="row"><button class="ghost" id="b-rec" type="button">Get a recovery code</button><button class="ghost" id="b-del" type="button">Delete my pilot</button></div>
+      <input id="k-code" class="link" type="text" readonly hidden aria-label="Recovery code">
+      <p class="note" id="k-msg" hidden></p>
       <div class="row"><button class="go" id="b-kback" type="button">Back</button></div>
     </div>
   </div>
@@ -528,6 +536,15 @@ const DICT = {
   "Copy invite link": ["Davet bağlantısını kopyala", "Einladungslink kopieren"], "Link copied": ["Bağlantı kopyalandı", "Link kopiert"], "Copy this link and send it": ["Bu bağlantıyı kopyalayıp gönder", "Kopiere diesen Link und sende ihn"],
   "You are invited to a squadron. Enter a pilot name and join to fly together.": ["Bir filoya davet edildin. Birlikte uçmak için pilot adını yazıp katıl.", "Du bist in eine Staffel eingeladen. Gib einen Pilotennamen ein und tritt bei, um gemeinsam zu fliegen."],
   "Invite link": ["Davet bağlantısı", "Einladungslink"],
+  "I have a recovery code": ["Kurtarma kodum var", "Ich habe einen Wiederherstellungscode"], "Recovery code": ["Kurtarma kodu", "Wiederherstellungscode"], "Bring my pilot back": ["Pilotumu geri getir", "Meinen Piloten zurückholen"],
+  "Your pilot": ["Pilotun", "Dein Pilot"], "Get a recovery code": ["Kurtarma kodu al", "Wiederherstellungscode holen"], "Delete my pilot": ["Pilotumu sil", "Meinen Piloten löschen"], "Press again to delete for good": ["Kalıcı olarak silmek için tekrar bas", "Zum endgültigen Löschen erneut drücken"],
+  "A recovery code brings your pilot back on another device, or after the browser's data is cleared. Without it a lost pilot cannot be returned.": ["Kurtarma kodu, pilotunu başka bir cihazda ya da tarayıcı verileri silindikten sonra geri getirir. Kod olmadan kaybolan pilot geri verilemez.", "Ein Wiederherstellungscode holt deinen Piloten auf ein anderes Gerät zurück, oder nachdem die Browserdaten gelöscht wurden. Ohne ihn kann ein verlorener Pilot nicht zurückgegeben werden."],
+  "Write this code down and keep it private. It works once, together with your pilot name. A new code cancels this one.": ["Bu kodu bir yere yaz ve kimseyle paylaşma. Pilot adınla birlikte bir kez çalışır. Yeni kod alırsan bu kod iptal olur.", "Schreib diesen Code auf und halte ihn geheim. Er funktioniert einmal, zusammen mit deinem Pilotennamen. Ein neuer Code macht diesen ungültig."],
+  "Name or recovery code is wrong.": ["Ad ya da kurtarma kodu yanlış.", "Name oder Wiederherstellungscode ist falsch."], "Too many tries. Try again in an hour.": ["Çok fazla deneme. Bir saat sonra tekrar dene.", "Zu viele Versuche. Versuch es in einer Stunde erneut."],
+  "This device already has a pilot with sorties flown.": ["Bu cihazda zaten sorti uçmuş bir pilot var.", "Auf diesem Gerät gibt es schon einen Piloten mit geflogenen Einsätzen."], "This pilot is suspended.": ["Bu pilot askıya alındı.", "Dieser Pilot ist gesperrt."],
+  "Your pilot and all its records were deleted.": ["Pilotun ve tüm kayıtları silindi.", "Dein Pilot und alle seine Daten wurden gelöscht."], "Score not accepted by the server.": ["Puan sunucu tarafından kabul edilmedi.", "Punkte wurden vom Server nicht angenommen."],
+  "This week": ["Bu hafta", "Diese Woche"], "Nobody else is in this squadron yet.": ["Bu filoda henüz başka kimse yok.", "Noch niemand sonst in dieser Staffel."], "In this squadron now (the number is the sortie being flown):": ["Şu an bu filoda (sayı, uçulan sortidir):", "Jetzt in dieser Staffel (die Zahl ist der geflogene Einsatz):"],
+  "Privacy and your data": ["Gizlilik ve verilerin", "Datenschutz und deine Daten"], "verified scores": ["doğrulanmış puanlar", "geprüfte Punkte"],
   "Shared sky": ["Ortak gökyüzü", "Gemeinsamer Himmel"], "Squadron code": ["Filo kodu", "Staffelcode"],
   "Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.": ["Aynı sortideki pilotlar birbirini canlı görür ve puan için yarışır. Yalnızca arkadaşlarınla uçmak için bir filo kodu paylaş; herkese açık gökyüzü için boş bırak.", "Piloten im selben Einsatz sehen einander live und kämpfen um die Punkte. Teile einen Staffelcode, um nur mit Freunden zu fliegen; lass ihn leer für den offenen Himmel."],
   "speed": ["hız", "Tempo"], "agility": ["çeviklik", "Wendigkeit"], "armour": ["zırh", "Panzerung"], "firepower": ["ateş gücü", "Feuerkraft"], "the ridge": ["sırt", "der Kamm"]
@@ -2280,7 +2297,7 @@ function fillHangar() {
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
 }
 function board() { hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
-function startGame() { initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); skyJoin(); }
+function startGame() { initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); skyJoin(); netStart(); }
 function pause() { if (state !== 'play') return; hush(); state = 'pause'; show('s-pause'); $('b-resume').focus(); }
 function resume() { if (state !== 'pause') return; state = 'play'; show(null); last = performance.now(); canvas.focus(); }
 function finish() {
@@ -2407,7 +2424,8 @@ function tick(dt, now) {
 /* ------------------------------------------------------------------ online: pilots, ranking, shared sky
    Without a connection, or before a pilot has joined, the game runs exactly as it does offline.
    Once joined, points and equipment live on the server and the device only mirrors them. */
-const NET = { url: 'https://cefpfihmzyqxrskltylk.supabase.co', key: 'sb_publishable_-OokMVXmREjldxfZaoijyw_D7hPawvh', sb: null, me: null, uid: null, sky: 0, room: '', ch: null, peers: new Map(), sendT: 0, listT: 0, busy: false };
+const NET = { url: 'https://cefpfihmzyqxrskltylk.supabase.co', key: 'sb_publishable_-OokMVXmREjldxfZaoijyw_D7hPawvh', sb: null, me: null, uid: null, sky: 0, room: '', ch: null, peers: new Map(), sendT: 0, listT: 0, busy: false, sortie: null, lob: null };
+const BUILD = 17;
 try { NET.sky = localStorage.getItem('windfall-sky') === '1' ? 1 : 0; NET.room = (localStorage.getItem('windfall-room') || '').slice(0, 12); } catch (e) {}
 let invited = false;
 try { // an invite link carries the squadron code and the sortie: ?sq=CODE&m=3
@@ -2416,14 +2434,14 @@ try { // an invite link carries the squadron code and the sortie: ?sq=CODE&m=3
     try { localStorage.setItem('windfall-room', sq); localStorage.setItem('windfall-sky', '1'); } catch (e) {}
     history.replaceState(null, '', location.pathname); }
 } catch (e) {}
-const netErr = e => { const m = (e && e.message) || ''; return /name_taken/.test(m) ? 'That name is taken. Try another.' : /bad_name/.test(m) ? 'Use 3 to 16 letters or numbers.' : /not_enough/.test(m) ? 'Not enough points.' : /too_soon/.test(m) ? 'Score not recorded: too soon after the last sortie.' : 'No connection to the competition server.'; };
+const netErr = e => { const m = (e && e.message) || ''; return /name_taken/.test(m) ? 'That name is taken. Try another.' : /bad_name/.test(m) ? 'Use 3 to 16 letters or numbers.' : /not_enough/.test(m) ? 'Not enough points.' : /banned/.test(m) ? 'This pilot is suspended.' : /too_many/.test(m) ? 'Too many tries. Try again in an hour.' : /has_pilot/.test(m) ? 'This device already has a pilot with sorties flown.' : 'No connection to the competition server.'; };
 function netMsg(t) { const el = $('n-msg'); el.hidden = !t; el.textContent = t || ''; }
 async function rpc(fn, args) { const { data, error } = await NET.sb.rpc(fn, args || {}); if (error) throw error; return data; }
 function netUi() { $('comp').hidden = !NET.sb; $('comp-out').hidden = !!NET.me; $('comp-in').hidden = !NET.me; $('sky-box').hidden = !NET.me; if (NET.me) $('n-me').textContent = NET.me.name; }
 function adopt(p) { // the server's copy of the pilot replaces the device's
   if (!p || !p.id) return false; NET.me = p; CAR.xp = p.xp | 0; CAR.rp = p.rp | 0; for (const k in CAR.up) CAR.up[k] = clamp((p.up || {})[k] | 0, 0, 3);
   CAR.own = (p.own || []).filter(n => n >= 4 && n < PLANES.length); CAR.plane = Number.isInteger(p.plane) ? clamp(p.plane, -1, PLANES.length - 1) : -1; for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = ((p.stars || [])[i] | 0) & 7;
-  saveCar(); netUi(); return true;
+  saveCar(); netUi(); lobbySync(); return true;
 }
 async function netInit() {
   if (!NET.url || !window.supabase) return;
@@ -2432,25 +2450,55 @@ async function netInit() {
   netUi();
   try { const { data } = await NET.sb.auth.getSession(); if (!data || !data.session) return; NET.uid = data.session.user.id; const pl = CAR.plane; if (adopt(await rpc('my_pilot')) && state === 'menu') { if (pl !== CAR.plane) loadMission(mIdx); fillBoard(); } } catch (e) {}
 }
+async function netSession() { // an anonymous session is made the first time it is needed
+  let { data } = await NET.sb.auth.getSession();
+  if (data && data.session) { const u = await NET.sb.auth.getUser(); if (u.error && u.error.status && u.error.status < 500) { try { await NET.sb.auth.signOut({ scope: 'local' }); } catch (e) {} data = null; } } // the account behind a kept session may be gone
+  if (!data || !data.session) { const r = await NET.sb.auth.signInAnonymously(); if (r.error) throw r.error; data = r.data; }
+  NET.uid = data.session.user.id;
+}
 async function netJoin() {
   const name = $('n-name').value.replace(/\s+/g, ' ').trim(); if (name.length < 3) { netMsg('Use 3 to 16 letters or numbers.'); return; }
   if (NET.busy) return; NET.busy = true; netMsg('Connecting…');
   try {
-    let { data } = await NET.sb.auth.getSession();
-    if (!data || !data.session) { const r = await NET.sb.auth.signInAnonymously(); if (r.error) throw r.error; data = r.data; }
-    NET.uid = data.session.user.id; const pl = CAR.plane;
+    await netSession(); const pl = CAR.plane;
     adopt(await rpc('join_pilot', { p_name: name, p_seed: { xp: CAR.xp, rp: CAR.rp, up: CAR.up, own: CAR.own, stars: CAR.stars } }));
     if (pl !== CAR.plane && (pl < 4 || CAR.own.includes(pl))) { try { adopt(await rpc('buy_plane', { p_i: pl })); } catch (e) {} }
     netMsg(''); if (pl !== CAR.plane) loadMission(mIdx); fillBoard();
   } catch (e) { netMsg(netErr(e)); }
   NET.busy = false;
 }
+async function netClaim() { // bring a pilot to this device with its name and recovery code
+  const name = $('n-name').value.replace(/\s+/g, ' ').trim(), code = $('n-code').value.replace(/[^A-Za-z0-9]/g, '');
+  if (name.length < 3 || code.length !== 16) { netMsg('Name or recovery code is wrong.'); return; }
+  if (NET.busy) return; NET.busy = true; netMsg('Connecting…');
+  try {
+    await netSession(); const pl = CAR.plane;
+    if (adopt(await rpc('claim_pilot', { p_name: name, p_code: code }))) { netMsg(''); $('n-code').value = ''; $('comp-code').hidden = true; if (pl !== CAR.plane) loadMission(mIdx); fillBoard(); }
+    else netMsg('Name or recovery code is wrong.');
+  } catch (e) { netMsg(netErr(e)); }
+  NET.busy = false;
+}
+let sortieSeq = 0;
+function netStart(again) { // tell the server a sortie has begun; the score is checked against this moment
+  if (!again) { NET.sortie = null; sortieSeq++; } if (!NET.me) return; const n = sortieSeq;
+  rpc('start_sortie', { p_mission: mIdx, p_diff: CAR.diff, p_build: BUILD }).then(id => { if (n === sortieSeq) NET.sortie = id; })
+    .catch(e => { if (!again && /too_soon/.test((e && e.message) || '')) setTimeout(() => { if (n === sortieSeq && state !== 'menu') netStart(true); }, 3400); });
+}
 function netScore(got) {
-  const el = $('end-net'); el.hidden = !NET.me; if (!NET.me) return; el.textContent = 'Recording your score…';
-  rpc('submit_score', { p_mission: mIdx, p_diff: CAR.diff, p_score: score, p_time: Math.round(time), p_won: !!endWon, p_stars: got,
-    p_stats: { kills, boats: boatKills, tanks: tankKills, trucks: truckKills, troops: troopKills, bombers: bomberKills, acc: shots ? Math.round(hits / shots * 100) : 0 } })
-    .then(async p => { adopt(p); let pos = ''; try { const me = (await rpc('leaderboard', { p_mission: null, p_limit: 1 })).find(r => r.me); if (me) pos = ' · #' + me.pos; } catch (e) {} el.textContent = 'Score recorded' + pos; })
-    .catch(e => { el.textContent = /too_soon/.test((e && e.message) || '') ? netErr(e) : 'Score not recorded: no connection.'; });
+  const el = $('end-net'); el.hidden = !NET.me; if (!NET.me) return;
+  const sid = NET.sortie; NET.sortie = null; if (!sid) { el.textContent = 'Score not recorded: no connection.'; return; }
+  el.textContent = 'Recording your score…'; let n = 0;
+  const args = { p_sortie: sid, p_score: score, p_time: Math.round(time), p_won: !!endWon, p_stars: got,
+    p_stats: { kills, boats: boatKills, tanks: tankKills, trucks: truckKills, troops: troopKills, bombers: bomberKills, acc: shots ? Math.round(hits / shots * 100) : 0 } };
+  const done = async p => { adopt(p); let pos = ''; try { const me = (await rpc('leaderboard', { p_mission: null, p_limit: 1, p_period: 'all' })).find(r => r.me); if (me) pos = ' · #' + me.pos; } catch (e) {} el.textContent = 'Score recorded' + pos; };
+  const go = () => rpc('submit_score', args).then(done).catch(e => {
+    const m = (e && e.message) || '';
+    if (/already_scored/.test(m)) { rpc('my_pilot').then(done).catch(() => { el.textContent = 'Score recorded'; }); return; } // an earlier try got through
+    if (/banned/.test(m)) { el.textContent = 'This pilot is suspended.'; return; }
+    if (/bad_|expired|no_pilot|not_signed/.test(m)) { el.textContent = 'Score not accepted by the server.'; return; }
+    if (++n < 3) setTimeout(go, 2500 * n); else el.textContent = 'Score not recorded: no connection.';
+  });
+  go();
 }
 function netBuy(fn, args) {
   if (NET.busy) return; NET.busy = true; $('h-msg').hidden = true;
@@ -2459,11 +2507,11 @@ function netBuy(fn, args) {
 let rankTab = 0;
 async function fillRank() {
   $('k-me').textContent = NET.me ? NET.me.name : '';
-  $('k-tabs').innerHTML = ['Overall', 'This sortie'].map((o, i) => '<label><input type="radio" name="rank" value="' + i + '"' + (i === rankTab ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
+  $('k-tabs').innerHTML = ['Overall', 'This week', 'This sortie'].map((o, i) => '<label><input type="radio" name="rank" value="' + i + '"' + (i === rankTab ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
   $('k-tabs').querySelectorAll('input').forEach(el => { el.onchange = () => { rankTab = +el.value; fillRank(); }; });
   const ol = $('k-list'); ol.innerHTML = '<li class="k-wait">Loading…</li>';
   try {
-    const rows = await rpc('leaderboard', { p_mission: rankTab ? mIdx : null, p_limit: 20 });
+    const rows = await rpc('leaderboard', { p_mission: rankTab === 2 ? mIdx : null, p_limit: 20, p_period: rankTab === 1 ? 'week' : 'all' });
     if (!rows.length) { ol.innerHTML = '<li class="k-wait">No scores yet. Be the first.</li>'; return; }
     ol.innerHTML = rows.map(r => '<li' + (r.me ? ' class="me"' : '') + '><i>' + (r.pos | 0) + '</i><b data-raw></b><span>' + (r.score | 0) + '</span></li>').join('');
     ol.querySelectorAll('b').forEach((b, i) => { b.textContent = rows[i].name; });
@@ -2471,12 +2519,31 @@ async function fillRank() {
 }
 // shared sky: everyone in the same sortie and squadron sees each other; each pilot still fights their own enemies
 const skyPlane = () => CAR.plane >= 0 ? CAR.plane : [0, 1, 2, 3, 1, 0, 2][mIdx] || 0;
-function skyLeave() { if (NET.ch) { try { NET.sb.removeChannel(NET.ch); } catch (e) {} NET.ch = null; } for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear(); $('pilots').hidden = true; }
+const roomKey = () => (NET.room || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'open';
+// squadron lobby: who else has this squadron code open right now, and which sortie they are flying
+function lobbyLeave() { if (NET.lob) { try { NET.sb.removeChannel(NET.lob); } catch (e) {} NET.lob = null; } NET.lobKey = ''; $('n-lobby').hidden = true; }
+function lobbyTrack() { if (NET.lob && NET.me) { try { NET.lob.track({ n: NET.me.name, m: state === 'menu' ? -1 : mIdx }); } catch (e) {} } }
+function lobbyShow() {
+  const el = $('n-lobby'); if (!NET.lob) { el.hidden = true; return; }
+  const st = NET.lob.presenceState(), names = [];
+  for (const k in st) { if (k === NET.uid) continue; const d = (st[k] && st[k][0]) || {}; names.push(String(d.n || 'Pilot').replace(/[<>&]/g, '').slice(0, 16) + (Number.isInteger(d.m) && d.m >= 0 && d.m < MISSIONS.length ? ' (' + (d.m + 1) + ')' : '')); }
+  el.hidden = false; el.textContent = ''; const lab = document.createElement('span'); lab.textContent = names.length ? 'In this squadron now (the number is the sortie being flown):' : 'Nobody else is in this squadron yet.'; el.appendChild(lab);
+  if (names.length) { const b = document.createElement('b'); b.setAttribute('data-raw', ''); b.textContent = ' ' + names.slice(0, 8).join(', ') + (names.length > 8 ? ' +' + (names.length - 8) : ''); el.appendChild(b); }
+}
+let lobT = 0;
+function lobbySync() { // (re)join the lobby of the current squadron code, a moment after the last change
+  clearTimeout(lobT); lobT = setTimeout(() => {
+    const key = NET.me && NET.sky && NET.sb ? NET.uid + ':' + roomKey() : ''; if (key === (NET.lobKey || '') && (NET.lob || !key)) return;
+    lobbyLeave(); NET.lobKey = key; if (!key) return;
+    const ch = NET.lob = NET.sb.channel('sq:' + roomKey(), { config: { private: true, presence: { key: NET.uid } } });
+    ch.on('presence', { event: 'sync' }, () => { if (NET.lob === ch) lobbyShow(); }).subscribe(st => { if (st === 'SUBSCRIBED' && NET.lob === ch) { lobbyTrack(); lobbyShow(); } });
+  }, 500);
+}
+function skyLeave() { if (NET.ch) { try { NET.sb.removeChannel(NET.ch); } catch (e) {} NET.ch = null; } for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear(); $('pilots').hidden = true; setTimeout(lobbyTrack, 0); }
 function skyJoin() {
   skyLeave(); if (!NET.me || !NET.sky || !NET.sb) return;
-  const room = (NET.room || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'open';
-  NET.ch = NET.sb.channel('sky:' + mIdx + ':' + room, { config: { broadcast: { self: false } } });
-  NET.ch.on('broadcast', { event: 'p' }, m => skyGot(m.payload)).subscribe(); NET.sendT = 0; NET.listT = 0;
+  NET.ch = NET.sb.channel('sky:' + mIdx + ':' + roomKey(), { config: { private: true, broadcast: { self: false } } });
+  NET.ch.on('broadcast', { event: 'p' }, m => skyGot(m.payload)).subscribe(); NET.sendT = 0; NET.listT = 0; lobbyTrack();
 }
 function skyGot(d) {
   if (!d || typeof d.i !== 'string' || d.i === NET.uid || !Array.isArray(d.p) || !Array.isArray(d.q) || d.p.length !== 3 || d.q.length !== 4 || !d.p.concat(d.q).every(v => typeof v === 'number' && isFinite(v))) return;
@@ -2507,21 +2574,41 @@ function skyTick(dt) {
   }
 }
 $('b-join').onclick = netJoin; $('n-name').onkeydown = e => { if (e.key === 'Enter') netJoin(); e.stopPropagation(); }; $('n-name').onkeyup = e => e.stopPropagation();
-$('b-rank').onclick = () => { fillRank(); show('s-rank'); $('b-kback').focus(); }; $('b-kback').onclick = () => { fillBoard(); show('s-menu'); };
+const kMsg = t => { $('k-msg').hidden = !t; $('k-msg').textContent = t || ''; };
+$('b-restore').onclick = () => { $('comp-code').hidden = !$('comp-code').hidden; if (!$('comp-code').hidden) $('n-code').focus(); };
+$('b-claim').onclick = netClaim; $('n-code').onkeydown = e => { if (e.key === 'Enter') netClaim(); e.stopPropagation(); }; $('n-code').onkeyup = e => e.stopPropagation();
+$('k-code').onkeydown = e => e.stopPropagation(); $('k-code').onkeyup = e => e.stopPropagation();
+$('b-rec').onclick = async () => {
+  if (NET.busy) return; NET.busy = true;
+  try { const c = await rpc('make_recovery'), box = $('k-code'); box.hidden = false; box.value = c; box.focus(); box.select(); kMsg('Write this code down and keep it private. It works once, together with your pilot name. A new code cancels this one.'); }
+  catch (e) { kMsg(netErr(e)); }
+  NET.busy = false;
+};
+let delArm = 0;
+$('b-del').onclick = async () => { // two presses: the first only arms it
+  const b = $('b-del');
+  if (Date.now() > delArm) { delArm = Date.now() + 5000; b.textContent = 'Press again to delete for good'; setTimeout(() => { if (delArm && Date.now() >= delArm) { delArm = 0; b.textContent = 'Delete my pilot'; } }, 5100); return; }
+  delArm = 0; b.textContent = 'Delete my pilot'; if (NET.busy) return; NET.busy = true;
+  try { await rpc('delete_me'); } catch (e) { kMsg(netErr(e)); NET.busy = false; return; }
+  try { await NET.sb.auth.signOut({ scope: 'local' }); } catch (e) {}
+  NET.me = null; NET.uid = null; NET.sortie = null; NET.busy = false; lobbyLeave(); netUi(); fillBoard(); show('s-menu'); netMsg('Your pilot and all its records were deleted.');
+};
+$('b-rank').onclick = () => { $('k-code').hidden = true; $('k-code').value = ''; kMsg(''); fillRank(); show('s-rank'); $('b-kback').focus(); }; $('b-kback').onclick = () => { fillBoard(); show('s-menu'); };
 $('o-sky').innerHTML = ['Off', 'On'].map((o, i) => '<label><input type="radio" name="sky" value="' + i + '"' + (i === NET.sky ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
-$('o-sky').querySelectorAll('input').forEach(el => { el.onchange = () => { NET.sky = +el.value; try { localStorage.setItem('windfall-sky', '' + NET.sky); } catch (e) {} }; });
+$('o-sky').querySelectorAll('input').forEach(el => { el.onchange = () => { NET.sky = +el.value; try { localStorage.setItem('windfall-sky', '' + NET.sky); } catch (e) {} lobbySync(); }; });
 $('b-invite').onclick = () => {
   if (!NET.room.replace(/[^A-Za-z0-9]/g, '')) { NET.room = Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random() * 32 | 0]).join(''); $('n-room').value = NET.room; try { localStorage.setItem('windfall-room', NET.room); } catch (e) {} }
   if (!NET.sky) { NET.sky = 1; const on = $('o-sky').querySelector('input[value="1"]'); if (on) on.checked = true; try { localStorage.setItem('windfall-sky', '1'); } catch (e) {} }
+  lobbySync();
   const url = location.origin + location.pathname + '?sq=' + NET.room.replace(/[^A-Za-z0-9]/g, '').toUpperCase() + '&m=' + mIdx, b = $('b-invite'), box = $('n-link');
   const shown = () => { box.hidden = false; box.value = url; box.focus(); box.select(); b.textContent = 'Copy this link and send it'; };
   try { navigator.clipboard.writeText(url).then(() => { b.textContent = 'Link copied'; setTimeout(() => { b.textContent = 'Copy invite link'; }, 2200); }, shown); } catch (e) { shown(); }
 };
 $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.stopPropagation();
-$('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
+$('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { tr, setLang, NET, skyGot, skyJoin, netJoin, fillRank, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { tr, setLang, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
