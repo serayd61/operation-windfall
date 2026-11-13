@@ -1,0 +1,38 @@
+{
+  "name": "Operation Windfall",
+  "short_name": "Windfall",
+  "description": "A WWII air-combat game in the browser: carrier take-offs and landings, dogfights, bombing and ground attack across four theatres. English, Türkçe, Deutsch.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
+  "orientation": "any",
+  "background_color": "#0c1210",
+  "theme_color": "#0c1210",
+  "categories": [
+    "games",
+    "action"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
