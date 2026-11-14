@@ -232,6 +232,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .rank li.k-wait { display: block; font: 400 14px/1.4 var(--f-type); color: var(--type-dim); }
 .pilots { position: absolute; left: var(--gl); top: calc(234px + var(--sat)); min-width: 132px; padding: 6px 9px 5px; background: var(--ink-plate); border-left: 2px solid var(--go); text-shadow: none; font: 600 12px/1.5 var(--f-hud); letter-spacing: .08em; color: var(--hud); }
 .pilots div { display: flex; justify-content: space-between; gap: 12px; } .pilots div.me { color: var(--go); } #obj-t[data-tail]::after { content: attr(data-tail); }
+    .du-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; margin: 10px 0 16px; } .du-cols .rank li.bot b { font-weight: 400; } @media (max-width: 620px) { .du-cols { grid-template-columns: 1fr; } }
     .pilots div.foe { color: #ff8a70; } .pilots span { font-variant-numeric: tabular-nums; }
 .touch .pilots { top: calc(204px + var(--sat)); }
 @media (orientation: landscape) and (max-height: 440px) { .pilots { top: auto; bottom: calc(96px + var(--sab)); } .pilots div:nth-child(n+4) { display: none; } }
@@ -326,8 +327,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="ghost" id="b-invite" type="button">Copy invite link</button></div>
         <input id="n-link" class="link" type="text" readonly hidden aria-label="Invite link">
         <p class="note" id="n-lobby" hidden></p>
-        <div class="comp-row"><button class="ghost" id="b-duel" type="button">Team dogfight 2 v 2</button></div>
-        <p class="note">Test mode: an air-start dogfight with everyone in the same squadron code, bots fill the empty seats. First side to ten wins. Nothing is scored for the ranking.</p>
+        <div class="comp-row"><button class="ghost" id="b-duel" type="button">Team dogfight 4 v 4</button></div>
+        <p class="note">Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking.</p>
         <p class="note">Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.</p>
       </div>
       <div class="lab2">Language</div>
@@ -408,6 +409,18 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="row"><button class="go" id="b-again" type="button">Fly again</button><button class="ghost" id="b-retry" type="button">Fly it again</button><button class="ghost" id="b-board2" type="button">Sortie board</button></div>
     </div>
   </div>
+  <div class="screen" id="s-duel" hidden>
+    <div class="sheet">
+      <div class="sheet-head"><span>Team dogfight</span><span id="du-status">Victory</span></div>
+      <h1 id="du-score" data-raw>0 : 0</h1>
+      <p class="note"><span>Ranking points earned</span>: <b id="du-pts" data-raw>0</b></p>
+      <div class="du-cols">
+        <div><span class="lab" id="du-al">Blue</span><ol class="rank" id="du-a"></ol></div>
+        <div><span class="lab" id="du-bl">Red</span><ol class="rank" id="du-b"></ol></div>
+      </div>
+      <div class="row"><button class="go" id="b-duel2" type="button">Fly again</button><button class="ghost" id="b-board3" type="button">Sortie board</button></div>
+    </div>
+  </div>
   <div id="fatal" hidden></div>
 </div>
 
@@ -485,7 +498,8 @@ const DICT = {
   "You are hit hard!": ["Ağır hasar aldın!", "Schwer getroffen!"], "Break off and climb!": ["Çatışmadan çık, yüksel!", "Abbrechen und steigen!"],
   "Good kill!": ["Güzel vuruş!", "Guter Abschuss!"], "Splash one!": ["Bir tane düştü!", "Einer weniger!"], "He is going down!": ["Düşüyor!", "Er stürzt ab!"],
   "Team dogfight 2 v 2": ["Takım it dalaşı 2'ye 2", "Team-Luftkampf 2 gegen 2"], "Looking for a match": ["Maç aranıyor", "Suche ein Match"], "Connection lost. Reconnecting": ["Bağlantı koptu. Yeniden bağlanılıyor", "Verbindung verloren. Neuer Versuch"], "No connection to the match server.": ["Maç sunucusuna bağlanılamadı.", "Keine Verbindung zum Match-Server."], "The match server did not accept this pilot.": ["Maç sunucusu bu pilotu kabul etmedi.", "Der Match-Server hat diesen Piloten abgelehnt."],
-  "Test mode: an air-start dogfight with everyone in the same squadron code, bots fill the empty seats. First side to ten wins. Nothing is scored for the ranking.": ["Test modu: aynı filo kodundaki herkesle havada başlayan it dalaşı; boş yerleri botlar doldurur. On puana ilk ulaşan takım kazanır. Sıralamaya puan yazılmaz.", "Testmodus: Luftkampf mit Luftstart für alle mit demselben Staffelcode, Bots füllen die freien Plätze. Wer zuerst zehn Punkte hat, gewinnt. Nichts zählt für die Rangliste."],
+  "Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking.": ["Dörde dört, beş dakika, havada başlangıç. Boş yerleri botlar doldurur; aynı filo kodunu girenler aynı takımda uçar. 25 puana ilk ulaşan takım kazanır. Vuruşlar ve galibiyetler takım it dalaşı sıralamasına yazılır.", "Vier gegen vier, fünf Minuten, Luftstart. Bots füllen die freien Plätze; Piloten mit demselben Staffelcode fliegen auf derselben Seite. Wer zuerst 25 Punkte hat, gewinnt. Abschüsse und Siege zählen für die Team-Luftkampf-Rangliste."],
+  "Team dogfight": ["Takım it dalaşı", "Team-Luftkampf"], "Blue": ["Mavi", "Blau"], "Red": ["Kırmızı", "Rot"], "Ranking points earned": ["Kazanılan sıralama puanı", "Erzielte Ranglistenpunkte"], "First side to 25 wins.": ["25 puana ilk ulaşan kazanır.", "Wer zuerst 25 hat, gewinnt."], "Team dogfight 4 v 4": ["Takım it dalaşı 4'e 4", "Team-Luftkampf 4 gegen 4"],
   "Team dogfight · you are BLUE": ["Takım it dalaşı · MAVİ takımdasın", "Team-Luftkampf · du bist BLAU"], "Team dogfight · you are RED": ["Takım it dalaşı · KIRMIZI takımdasın", "Team-Luftkampf · du bist ROT"],
   "You are on BLUE": ["MAVİ takımdasın", "Du bist bei BLAU"], "You are on RED": ["KIRMIZI takımdasın", "Du bist bei ROT"], "Back in the fight in 3": ["3 saniyede geri dönüyorsun", "In 3 Sekunden wieder dabei"], "Back in the fight": ["Yeniden havadasın", "Wieder im Kampf"],
   "Victory": ["Zafer", "Sieg"], "Defeat": ["Yenilgi", "Niederlage"], "Draw": ["Berabere", "Unentschieden"], "Aircraft lost": ["Uçak kaybedildi", "Flugzeug verloren"],
@@ -2332,11 +2346,11 @@ function updateHud(dt) {
   hitFlash = Math.max(0, hitFlash - dt * 1.8); $('vig').style.opacity = Math.max(hitFlash, P.hp < 35 && P.alive ? .35 : 0).toFixed(2);
 }
 
-/* ------------------------------------------------------------------ duel: 2 v 2 on the match server
+/* ------------------------------------------------------------------ duel: 4 v 4 on the match server
    Every pilot with the same squadron code (or none: the open room) flies one air-start dogfight. The match
    server (server/src/index.js) owns the sides, the bots in the empty seats, every aircraft's health, the score
    and the clock. This side only reports where it is and what its guns found; the server decides what counts. */
-const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, botT: 0, us: 0, them: 0, goal: 10, left: 480, hitQ: new Map(), mates: 1,
+const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, botT: 0, us: 0, them: 0, goal: 25, left: 300, tb: [], hitQ: new Map(), mates: 1,
   url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map() };
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
@@ -2359,7 +2373,7 @@ async function duelConnect(n) {
 function duelStart() {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
   const i = duelIdx(); if (i < 0) return; DUEL.on = true; if (mIdx !== i) loadMission(i);
-  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = 480; DUEL.id = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
+  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = 300; DUEL.goal = 25; DUEL.tb = []; DUEL.id = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
   state = 'play'; show(null); canvas.focus(); duelSpawn(); updateObjective(); warn('Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
   radio(M.cs + ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.');
 }
@@ -2387,7 +2401,7 @@ function duelMsg(m) {
     for (const [id, p] of NET.peers) { const r = DUEL.ro.get(id); if (!r || r.team !== p.team) { world.remove(p.mesh); NET.peers.delete(id); } }
     NET.listT = 0;
   } else if (m.t === 'in') {
-    DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 10; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
+    DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
     duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
   } else if (m.t === 'full') { DUEL.full = true;
@@ -2402,12 +2416,12 @@ function duelMsg(m) {
     if (m.by === DUEL.id) { feed('You shot down ' + r.name); callT = 0; call('kill', 'Good kill!', 2); } else feed(r.name + (r.team === DUEL.team ? ' is down' : ' shot down'));
   } else if (m.t === 'r') { if (!P.alive) { duelSpawn(); warn('Back in the fight', true); }
   } else if (m.t === 'end') {
-    if (DUEL.over) return; duelScore(m.sc); updateObjective(); const won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them; DUEL.over = 7; hush(); radioQ.length = 0;
+    if (DUEL.over) return; duelScore(m.sc); DUEL.tb = Array.isArray(m.tb) ? m.tb.filter(r => Array.isArray(r) && r.length >= 6) : []; updateObjective(); const won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them; DUEL.over = 7; hush(); radioQ.length = 0;
     warn(tie ? 'Draw' : won ? 'Victory' : 'Defeat', won || tie); radio(tie ? 'That is time. Honours even.' : won ? 'That is the match. Your side has it. Well flown.' : 'That is the match. They had the better of us today.');
   }
 }
 function duelTick(dt) {
-  if (DUEL.over) { DUEL.over -= dt; if (DUEL.over <= 0) { DUEL.on = false; board(); } return; }
+  if (DUEL.over) { DUEL.over -= dt; if (DUEL.over <= 0) duelDone(); return; }
   if (!DUEL.ws || !DUEL.id) { // not in a room yet, or the line dropped
     DUEL.retry -= dt;
     if (DUEL.retry <= 0) { if (++DUEL.tries > 4) { DUEL.on = false; board(); netMsg('No connection to the match server.'); return; } DUEL.retry = 6; duelConnect(DUEL.n); }
@@ -2415,13 +2429,24 @@ function duelTick(dt) {
   if (!P.alive) { DUEL.respT -= dt; if (DUEL.respT <= 0 && !DUEL.ws) { duelSpawn(); } }
   DUEL.botT -= dt; if (DUEL.botT <= 0) { DUEL.botT = 1; if (wing) wing.mesh.visible = false; updateObjective(); }
 }
+function duelDone() { // the match is over: both sides' sheets, then fly again or go home
+  const tb = DUEL.tb, won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them, me = tb.find(r => r[0] === DUEL.id);
+  DUEL.on = false; DUEL.over = 0; hush(); skyLeave(); state = 'menu'; reset();
+  $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0;
+  [DUEL.team, 1 - DUEL.team].forEach((t, i) => {
+    const ol = $(i ? 'du-b' : 'du-a'); ol.textContent = ''; $(i ? 'du-bl' : 'du-al').textContent = t ? 'Red' : 'Blue';
+    tb.filter(r => (r[2] ? 1 : 0) === t).sort((a, b) => b[3] - a[3] || a[4] - b[4]).forEach((r, n) => { const li = document.createElement('li'), a = document.createElement('i'), b = document.createElement('b'), c = document.createElement('span');
+      if (r[0] === DUEL.id) li.className = 'me'; else if (r[5]) li.className = 'bot'; a.textContent = n + 1; b.setAttribute('data-raw', ''); b.textContent = String(r[1]).slice(0, 16); c.textContent = (r[3] | 0) + ' / ' + (r[4] | 0); li.appendChild(a); li.appendChild(b); li.appendChild(c); ol.appendChild(li); });
+  });
+  show('s-duel'); $('b-duel2').focus();
+}
 function duelSend() { // hits ride along with the position beat
   for (const [to, d] of DUEL.hitQ) duelTell({ t: 'h', to, d: Math.round(d * 10) / 10 });
   DUEL.hitQ.clear();
 }
 
 /* ------------------------------------------------------------------ flow */
-function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
+function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
@@ -2477,7 +2502,7 @@ function finish() {
   show('s-end'); $('b-again').focus();
 }
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
-$('b-duel').onclick = duelStart; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-duel').onclick = duelStart; $('b-duel2').onclick = duelStart; $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
@@ -2661,11 +2686,11 @@ function netBuy(fn, args) {
 let rankTab = 0;
 async function fillRank() {
   $('k-me').textContent = NET.me ? NET.me.name : '';
-  $('k-tabs').innerHTML = ['Overall', 'This week', 'This sortie'].map((o, i) => '<label><input type="radio" name="rank" value="' + i + '"' + (i === rankTab ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
+  $('k-tabs').innerHTML = ['Overall', 'This week', 'This sortie', 'Team dogfight'].map((o, i) => '<label><input type="radio" name="rank" value="' + i + '"' + (i === rankTab ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
   $('k-tabs').querySelectorAll('input').forEach(el => { el.onchange = () => { rankTab = +el.value; fillRank(); }; });
   const ol = $('k-list'); ol.innerHTML = '<li class="k-wait">Loading…</li>';
   try {
-    const rows = await rpc('leaderboard', { p_mission: rankTab === 2 ? mIdx : null, p_limit: 20, p_period: rankTab === 1 ? 'week' : 'all' });
+    const rows = rankTab === 3 ? await rpc('duel_board', { p_limit: 20, p_period: 'all' }) : await rpc('leaderboard', { p_mission: rankTab === 2 ? mIdx : null, p_limit: 20, p_period: rankTab === 1 ? 'week' : 'all' });
     if (!rows.length) { ol.innerHTML = '<li class="k-wait">No scores yet. Be the first.</li>'; return; }
     ol.innerHTML = rows.map(r => '<li' + (r.me ? ' class="me"' : '') + '><i>' + (r.pos | 0) + '</i><b data-raw></b><span>' + (r.score | 0) + '</span></li>').join('');
     ol.querySelectorAll('b').forEach((b, i) => { b.textContent = rows[i].name; });

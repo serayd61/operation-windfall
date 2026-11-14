@@ -1,10 +1,10 @@
-/* Operation Windfall match server: one Durable Object per 2 v 2 room.
+/* Operation Windfall match server: one Durable Object per 4 v 4 room.
    The room owns the sides, the bots, every aircraft's health, the score and the clock.
    A client only reports where it is and what it thinks it hit; the room decides whether that counts. */
 import { DurableObject } from 'cloudflare:workers';
 
-const HZ = 15, GOAL = 10, CAP = 480, SEATS = 2, MAXH = SEATS * 2;
-const BOT_HP = 45, BOT_NAMES = [['Dusty', 'Mac', 'Sparks'], ['Falke', 'Adler', 'Wolf']];
+const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
+const BOT_HP = 45, BOT_NAMES = [['Dusty', 'Mac', 'Sparks', 'Lucky', 'Tex'], ['Falke', 'Adler', 'Wolf', 'Habicht', 'Luchs']];
 const PI = Math.PI;
 const rnd = (a, b) => a + Math.random() * (b - a);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -27,10 +27,11 @@ export class Match extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
     this.conns = new Set(); this.ents = new Map(); this.timer = null; this.c = null;
-    this.sc = [0, 0]; this.start = 0; this.over = 0; this.last = 0; this.botN = 0; this.dirty = false;
+    this.sc = [0, 0]; this.start = 0; this.over = 0; this.last = 0; this.botN = 0; this.dirty = false; this.open = true;
   }
 
-  async fetch() {
+  async fetch(req) {
+    try { this.open = (new URL(req.url).searchParams.get('room') || 'open').toLowerCase().replace(/[^a-z0-9]/g, '') in { open: 1, '': 1 }; } catch (e) {}
     const pair = new WebSocketPair(), ws = pair[1]; ws.accept();
     const conn = { ws, ent: null, busy: false, at: Date.now() }; this.conns.add(conn);
     ws.addEventListener('message', ev => { try { this.got(conn, ev.data); } catch (e) {} });
@@ -71,12 +72,12 @@ export class Match extends DurableObject {
       if (this.humans() >= MAXH) { this.send(conn, { t: 'full' }); return this.drop(conn); }
       if (!this.c) this.c = Array.isArray(m.c) && m.c.length === 2 && m.c.every(num) ? [clamp(m.c[0], -6000, 6000), clamp(m.c[1], -6000, 6000)] : [0, -1900];
       const cnt = [0, 0]; for (const x of this.ents.values()) if (!x.bot) cnt[x.team]++;
-      const team = cnt[0] < cnt[1] ? 0 : cnt[1] < cnt[0] ? 1 : this.sc[1] < this.sc[0] ? 1 : 0;
+      const team = !this.open ? (cnt[0] < SEATS ? 0 : 1) : cnt[0] < cnt[1] ? 0 : cnt[1] < cnt[0] ? 1 : this.sc[1] < this.sc[0] ? 1 : 0;
       const ent = this.make(p.id, String(p.name || 'Pilot').replace(/[<>&]/g, '').slice(0, 16), team, false);
-      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; ent.conn = conn; ent.fresh = false; conn.ent = ent;
+      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
       if (!this.start) { this.start = Date.now(); this.sc = [0, 0]; this.over = 0; }
       this.fill();
-      this.send(conn, { t: 'in', id: ent.id, team, goal: GOAL, left: this.left(), sc: this.sc, c: this.c });
+      this.send(conn, { t: 'in', id: ent.id, team, goal: GOAL, seats: SEATS, left: this.left(), sc: this.sc, c: this.c });
       return;
     }
     e.seen = Date.now();
@@ -186,12 +187,21 @@ export class Match extends DurableObject {
     }
     if (this.dirty) { this.dirty = false; this.all({ t: 'ro', e: [...this.ents.values()].map(e => [e.id, e.name, e.team, e.k, e.bot ? 1 : 0]) }); }
     this.all({ t: 's', l: this.left(), sc: this.sc, e: [...this.ents.values()].map(e => [e.id, e.alive && e.fresh ? 1 : 0, r1(e.p[0]), r1(e.p[1]), r1(e.p[2]), r3(e.q[0]), r3(e.q[1]), r3(e.q[2]), r3(e.q[3]), e.f, e.kills, Math.round(e.hp)]) });
-    if (!this.over && (this.sc[0] >= GOAL || this.sc[1] >= GOAL || this.left() <= 0)) { this.over = 9; for (const e of this.ents.values()) e.f = 0; this.all({ t: 'end', sc: this.sc }); }
+    if (!this.over && (this.sc[0] >= GOAL || this.sc[1] >= GOAL || this.left() <= 0)) { this.over = 9; for (const e of this.ents.values()) e.f = 0; this.all({ t: 'end', sc: this.sc, tb: [...this.ents.values()].map(e => [e.id, e.name, e.team, e.kills, e.deaths, e.bot ? 1 : 0]) }); this.ctx.waitUntil(this.report().catch(() => {})); }
+  }
+
+  /* the result goes to the ranking; only this server knows the key the database asks for */
+  async report() {
+    if (!this.env.DUEL_KEY) return; const now = Date.now(), win = this.sc[0] === this.sc[1] ? -1 : this.sc[0] > this.sc[1] ? 0 : 1, rows = [];
+    for (const e of this.ents.values()) if (!e.bot && e.uid && (now - e.since > 60000 || e.kills > 0)) rows.push({ id: e.uid, k: e.kills, d: e.deaths, w: e.team === win ? 1 : 0 });
+    if (!rows.length) return;
+    await fetch(this.env.SUPABASE_URL + '/rest/v1/rpc/duel_report', { method: 'POST', body: JSON.stringify({ p_key: this.env.DUEL_KEY, p_rows: rows }),
+      headers: { apikey: this.env.SUPABASE_KEY, Authorization: 'Bearer ' + this.env.SUPABASE_KEY, 'Content-Type': 'application/json' } });
   }
 
   fresh() { // the next match in the same room
     this.over = 0; this.sc = [0, 0]; this.start = Date.now();
-    for (const e of this.ents.values()) { e.kills = 0; e.deaths = 0; e.alive = true; e.hp = e.bot ? BOT_HP : 100; e.hitAt = 0; if (e.bot) this.place(e); else { e.fresh = false; if (e.conn) this.send(e.conn, { t: 'r' }); } }
+    for (const e of this.ents.values()) { e.kills = 0; e.deaths = 0; e.since = Date.now(); e.alive = true; e.hp = e.bot ? BOT_HP : 100; e.hitAt = 0; if (e.bot) this.place(e); else { e.fresh = false; if (e.conn) this.send(e.conn, { t: 'r' }); } }
     this.all({ t: 'new', left: CAP, sc: this.sc });
   }
 }
