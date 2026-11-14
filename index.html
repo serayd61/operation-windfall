@@ -1611,8 +1611,9 @@ function tone(midi, t, dur, vol, type, cut) {
 function drum(t, vol, hp, dur) { const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; f.type = 'highpass'; f.frequency.value = hp; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur); s.connect(f); f.connect(g); g.connect(musGain); s.start(t, Math.random() * .5, dur + .02); }
 function musicTick() {
   if (!ac || !musGain) return; const playing = state === 'play';
-  musGain.gain.setTargetAtTime(CAR.mus && !document.hidden && state !== 'pause' ? (playing ? .5 : 1) : 0, ac.currentTime, .25);
-  if (!CAR.mus || document.hidden || ac.state !== 'running') { musT = 0; return; }
+  // no score in the air: the cockpit has engine, guns and radio only. Music is for the menus and the debrief.
+  musGain.gain.setTargetAtTime(CAR.mus && !document.hidden && !playing && state !== 'pause' ? 1 : 0, ac.currentTime, .25);
+  if (!CAR.mus || document.hidden || ac.state !== 'running' || playing || state === 'pause') { musT = 0; return; }
   if (musT < ac.currentTime) musT = ac.currentTime + .06;
   const sd = 60 / 104 / 2, hot = playing && (enemies.length > 0 || phase === 'extract');
   while (musT < ac.currentTime + .4) {
