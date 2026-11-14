@@ -232,6 +232,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .rank li.k-wait { display: block; font: 400 14px/1.4 var(--f-type); color: var(--type-dim); }
 .pilots { position: absolute; left: var(--gl); top: calc(234px + var(--sat)); min-width: 132px; padding: 6px 9px 5px; background: var(--ink-plate); border-left: 2px solid var(--go); text-shadow: none; font: 600 12px/1.5 var(--f-hud); letter-spacing: .08em; color: var(--hud); }
 .pilots div { display: flex; justify-content: space-between; gap: 12px; } .pilots div.me { color: var(--go); } #obj-t[data-tail]::after { content: attr(data-tail); }
+    .daily { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1.5px solid var(--type); } .daily li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 2px; border-bottom: 1px solid rgba(41, 40, 31, .3); font: 700 14px/1.2 var(--f-hud); letter-spacing: .06em; }
+    .daily li em { font-style: normal; color: var(--type-dim); font-variant-numeric: tabular-nums; } .daily li button { padding: 7px 10px 5px; min-width: 96px; } .daily li.got { color: var(--type-dim); } .daily li.got span:first-child { text-decoration: line-through; }
     .du-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; margin: 10px 0 16px; } .du-cols .rank li.bot b { font-weight: 400; } @media (max-width: 620px) { .du-cols { grid-template-columns: 1fr; } }
     .pilots div.foe { color: #ff8a70; } .pilots span { font-variant-numeric: tabular-nums; }
 .touch .pilots { top: calc(204px + var(--sat)); }
@@ -315,6 +317,11 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="comp-row" id="comp-code" hidden><label for="n-code">Recovery code</label><input id="n-code" type="text" maxlength="19" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX"><button class="ghost" id="b-claim" type="button">Bring my pilot back</button></div>
         <div class="comp-row" id="comp-in" hidden><span class="comp-tag">Pilot</span><b id="n-me" data-raw></b><button class="ghost" id="b-rank" type="button">Ranking</button></div>
         <p class="note" id="n-msg" hidden></p>
+        <div id="daily" hidden>
+          <div class="lab2">Daily orders</div>
+          <ul class="daily" id="d-list"></ul>
+          <p class="note">A new day starts at midnight UTC. Collect your pay every day to build the streak.</p>
+        </div>
       </div>
       <div class="seg" id="m-pick" role="radiogroup" aria-label="Choose a sortie"></div>
       <h1 id="m-title">Operation Windfall</h1>
@@ -499,6 +506,9 @@ const DICT = {
   "Good kill!": ["Güzel vuruş!", "Guter Abschuss!"], "Splash one!": ["Bir tane düştü!", "Einer weniger!"], "He is going down!": ["Düşüyor!", "Er stürzt ab!"],
   "Team dogfight 2 v 2": ["Takım it dalaşı 2'ye 2", "Team-Luftkampf 2 gegen 2"], "Looking for a match": ["Maç aranıyor", "Suche ein Match"], "Connection lost. Reconnecting": ["Bağlantı koptu. Yeniden bağlanılıyor", "Verbindung verloren. Neuer Versuch"], "No connection to the match server.": ["Maç sunucusuna bağlanılamadı.", "Keine Verbindung zum Match-Server."], "The match server did not accept this pilot.": ["Maç sunucusu bu pilotu kabul etmedi.", "Der Match-Server hat diesen Piloten abgelehnt."],
   "Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking.": ["Dörde dört, beş dakika, havada başlangıç. Boş yerleri botlar doldurur; aynı filo kodunu girenler aynı takımda uçar. 25 puana ilk ulaşan takım kazanır. Vuruşlar ve galibiyetler takım it dalaşı sıralamasına yazılır.", "Vier gegen vier, fünf Minuten, Luftstart. Bots füllen die freien Plätze; Piloten mit demselben Staffelcode fliegen auf derselben Seite. Wer zuerst 25 Punkte hat, gewinnt. Abschüsse und Siege zählen für die Team-Luftkampf-Rangliste."],
+  "Daily orders": ["Günlük emirler", "Tagesbefehle"], "Daily pay": ["Günlük maaş", "Tagessold"], "Collect": ["Al", "Abholen"], "Collected": ["Alındı", "Abgeholt"],
+  "A new day starts at midnight UTC. Collect your pay every day to build the streak.": ["Yeni gün UTC gece yarısında başlar. Seriyi büyütmek için maaşını her gün al.", "Ein neuer Tag beginnt um Mitternacht UTC. Hol deinen Sold jeden Tag ab, um die Serie auszubauen."],
+  "Fly 2 sorties": ["2 sorti uç", "Fliege 2 Einsätze"], "Win a sortie": ["Bir sorti kazan", "Gewinne einen Einsatz"], "Score 3000 points in sorties": ["Sortilerde 3000 puan topla", "Erziele 3000 Punkte in Einsätzen"], "Fly 2 team dogfights": ["2 takım it dalaşı uç", "Fliege 2 Team-Luftkämpfe"], "Shoot down 8 aircraft in team dogfights": ["Takım it dalaşında 8 uçak düşür", "Schieße 8 Flugzeuge im Team-Luftkampf ab"], "Win a team dogfight": ["Bir takım it dalaşı kazan", "Gewinne einen Team-Luftkampf"],
   "Team dogfight": ["Takım it dalaşı", "Team-Luftkampf"], "Blue": ["Mavi", "Blau"], "Red": ["Kırmızı", "Rot"], "Ranking points earned": ["Kazanılan sıralama puanı", "Erzielte Ranglistenpunkte"], "First side to 25 wins.": ["25 puana ilk ulaşan kazanır.", "Wer zuerst 25 hat, gewinnt."], "Team dogfight 4 v 4": ["Takım it dalaşı 4'e 4", "Team-Luftkampf 4 gegen 4"],
   "Team dogfight · you are BLUE": ["Takım it dalaşı · MAVİ takımdasın", "Team-Luftkampf · du bist BLAU"], "Team dogfight · you are RED": ["Takım it dalaşı · KIRMIZI takımdasın", "Team-Luftkampf · du bist ROT"],
   "You are on BLUE": ["MAVİ takımdasın", "Du bist bei BLAU"], "You are on RED": ["KIRMIZI takımdasın", "Du bist bei ROT"], "Back in the fight in 3": ["3 saniyede geri dönüyorsun", "In 3 Sekunden wieder dabei"], "Back in the fight": ["Yeniden havadasın", "Wieder im Kampf"],
@@ -2475,7 +2485,7 @@ function fillHangar() {
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
 }
-function board() { DUEL.on = false; hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
+function board() { DUEL.on = false; hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); dailyLoad(); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
 function startGame() { if (DUEL.on) return duelStart(); initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); skyJoin(); netStart(); }
 function pause() { if (state !== 'play') return; hush(); state = 'pause'; show('s-pause'); $('b-resume').focus(); }
 function resume() { if (state !== 'pause') return; state = 'play'; show(null); last = performance.now(); canvas.focus(); }
@@ -2620,7 +2630,7 @@ function netUi() { $('comp').hidden = !NET.sb; $('comp-out').hidden = !!NET.me; 
 function adopt(p) { // the server's copy of the pilot replaces the device's
   if (!p || !p.id) return false; NET.me = p; CAR.xp = p.xp | 0; CAR.rp = p.rp | 0; for (const k in CAR.up) CAR.up[k] = clamp((p.up || {})[k] | 0, 0, 3);
   CAR.own = (p.own || []).filter(n => n >= 4 && n < PLANES.length); CAR.plane = Number.isInteger(p.plane) ? clamp(p.plane, -1, PLANES.length - 1) : -1; for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = ((p.stars || [])[i] | 0) & 7;
-  saveCar(); netUi(); lobbySync(); return true;
+  saveCar(); netUi(); lobbySync(); dailyLoad(); return true;
 }
 async function netInit() {
   if (!NET.url || !window.supabase) return;
@@ -2684,6 +2694,24 @@ function netBuy(fn, args) {
   rpc(fn, args).then(p => { adopt(p); planeDirty = true; fillHangar(); }).catch(e => { $('h-msg').hidden = false; $('h-msg').textContent = netErr(e); }).then(() => { NET.busy = false; });
 }
 let rankTab = 0;
+// daily pay and the day's three orders; the competition server counts the progress, the game only shows it
+const DAILY_T = { sorties: 'Fly 2 sorties', win: 'Win a sortie', score: 'Score 3000 points in sorties', duel: 'Fly 2 team dogfights', dkills: 'Shoot down 8 aircraft in team dogfights', dwin: 'Win a team dogfight' };
+function dailyShow(st) {
+  const box = $('daily'), ul = $('d-list'); if (!st || !st.login || !Array.isArray(st.tasks) || !NET.me) { box.hidden = true; return; }
+  if (typeof st.rp === 'number') { CAR.rp = st.rp | 0; NET.me.rp = CAR.rp; saveCar(); $('h-rp').textContent = CAR.rp + ' RP'; }
+  ul.textContent = '';
+  const row = (slot, text, note, rp, ready, got) => {
+    const li = document.createElement('li'), a = document.createElement('span'), b = document.createElement('em'), c = document.createElement('button'), ct = document.createElement('span'), cn = document.createElement('b');
+    a.textContent = text; b.setAttribute('data-raw', ''); b.textContent = note; c.type = 'button'; c.className = ready && !got ? 'go' : 'ghost'; c.disabled = !ready || got; ct.textContent = got ? 'Collected' : 'Collect'; cn.setAttribute('data-raw', ''); cn.textContent = got ? '' : ' +' + rp;
+    c.appendChild(ct); c.appendChild(cn); if (got) li.className = 'got';
+    c.onclick = async () => { c.disabled = true; try { dailyShow(await rpc('daily_claim', { p_slot: slot })); } catch (e) { dailyLoad(); } };
+    li.appendChild(a); li.appendChild(b); li.appendChild(c); ul.appendChild(li);
+  };
+  row(0, 'Daily pay', '\u00d7' + (st.streak | 0), st.login.rp | 0, true, !!st.login.claimed);
+  for (const t of st.tasks) row(t.slot | 0, DAILY_T[t.key] || String(t.key), (t.have | 0) + ' / ' + (t.goal | 0), t.rp | 0, (t.have | 0) >= (t.goal | 0), !!t.claimed);
+  box.hidden = false;
+}
+async function dailyLoad() { if (!NET.me || !NET.sb) { $('daily').hidden = true; return; } try { dailyShow(await rpc('daily_state')); } catch (e) { $('daily').hidden = true; } }
 async function fillRank() {
   $('k-me').textContent = NET.me ? NET.me.name : '';
   $('k-tabs').innerHTML = ['Overall', 'This week', 'This sortie', 'Team dogfight'].map((o, i) => '<label><input type="radio" name="rank" value="' + i + '"' + (i === rankTab ? ' checked' : '') + '><span>' + o + '</span></label>').join('');
@@ -2791,7 +2819,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { dailyShow, DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
