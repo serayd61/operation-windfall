@@ -7,7 +7,8 @@ Paket kimliği (Bundle ID): `com.operationwindfall.app` · Sürüm: 1.0.1 (derle
 | Dosya | Nereye |
 | --- | --- |
 | `operation-windfall-1.0.1.ipa` | App Store Connect'e yüklenecek imzalı paket (Transporter ya da Xcode ile) |
-| `screenshots/iphone-6.9/1-menu.png`, `2-takeoff.png`, `3-flight.png` (2868×1320) | iPhone 6,9" ekran görüntüleri (diğer iPhone boyutları bundan otomatik ölçeklenir) |
+| `screenshots/iphone-6.3/1-menu.png`, `2-takeoff.png`, `3-flight.png` (2622×1206) | App Store Connect'e yüklenen ekran görüntüleri (6,9" yuvası 2868×1320 dosyalarını kabul etmedi) |
+| `screenshots/iphone-6.9/` (2868×1320) | Aynı üç görüntünün büyük hali, yedek |
 
 Uygulama simgesi paketin içindedir; ayrıca yüklenmez.
 
@@ -25,7 +26,7 @@ Uygulama simgesi paketin içindedir; ayrıca yüklenmez.
 **Açıklama:** `play-store/LISTING.md` içindeki English tam açıklama ile aynı.
 
 ### Türkçe
-**Alt başlık:** 2. Dünya Savaşı hava muharebesi
+**Alt başlık:** Uçak gemisinden hava savaşı
 **Tanıtım metni:** Sallanan uçak gemisinden kalk, hedefe kadar savaş ve uçağını eve getir. Yedi sorti, canlı sıralama ve ortak gökyüzü.
 **Anahtar kelimeler:** savaş,uçak,hava muharebesi,it dalaşı,pilot,uçak gemisi,bombardıman,arcade,filo,uçuş
 **Açıklama:** `play-store/LISTING.md` içindeki Türkçe tam açıklama ile aynı.
@@ -40,15 +41,19 @@ Uygulama simgesi paketin içindedir; ayrıca yüklenmez.
 
 Bunlar senin adına verilen yasal beyanlardır; göndermeden önce oku.
 
-- **Yaş derecelendirmesi:** Çizgi film / fantastik şiddet: seyrek-hafif. Gerçekçi şiddet: seyrek-hafif (uçak, gemi, araç ve uzaktan görünen asker figürleri vurulur; kan yok). Diğer tüm başlıklar: yok. Kumar, sınırsız web erişimi, kullanıcı içeriği/sohbet: hayır.
+- **Yaş derecelendirmesi (girilen):** Çizgi film / fantastik şiddet: sık. Gerçekçi şiddet: seyrek (uçak, gemi, araç ve uzaktan görünen asker figürleri vurulur; kan yok). Silahlar: sık. Diğer tüm başlıklar: yok. Kumar, sınırsız web erişimi, kullanıcı içeriği/sohbet: hayır. Sonuç: 13+.
 - **Uygulama gizliliği (App Privacy):** Veri toplanıyor: evet. Takip (tracking) için kullanılmıyor.
   - *Tanımlayıcılar → Kullanıcı kimliği* (rastgele hesap numarası): uygulama işlevselliği, kullanıcıyla ilişkili.
-  - *İletişim bilgileri → Ad* (pilot takma adı; yalnızca yarışmaya katılırsan): uygulama işlevselliği, kullanıcıyla ilişkili.
+  - Pilot takma adı ayrıca "Ad" olarak beyan edilmedi; Apple'ın tanımında ekran adları *Kullanıcı kimliği* kapsamındadır.
   - *Kullanım verileri → Ürün etkileşimi* ve *Kullanıcı içeriği → Oyun içeriği* (puanlar, sortiler): uygulama işlevselliği, kullanıcıyla ilişkili.
 - **Dışa aktarım uyumluluğu (şifreleme):** Pakette `ITSAppUsesNonExemptEncryption = false` ayarlı; yalnızca standart HTTPS kullanılıyor, ek soru çıkmaz.
 - **Giriş bilgisi:** Gerekmiyor. İnceleme notu önerisi: "No account or sign-in is required. Tap TAKE OFF on the menu to start a sortie. Entering a pilot name is optional and only joins the online ranking; the pilot and all its data can be deleted from the same menu."
 - **Reklam / IDFA:** Yok. **Uygulama içi satın alma:** Yok (ileride eklenirse Apple'ın uygulama içi satın alma sistemi zorunlu).
 - **İçerik hakları:** Üçüncü taraf içerik yok.
+
+## Durum (14 Kasım 2026)
+
+Uygulama kaydı açıldı (Apple ID 6834730334), derleme 1.0.1 (1) yüklendi ve sürüm sayfasında seçildi. Metinler (EN/TR/DE), ekran görüntüleri, kategori, yaş derecelendirmesi, fiyat (ücretsiz, tüm ülkeler) ve gizlilik yanıtları girildi. Kalanlar: gizlilik yanıtlarını **Publish** ile yayınlamak, inceleme iletişim bilgileri (ad, telefon, e-posta), "Sign-in required" işaretini kaldırmak ve incelemeye göndermek.
 
 ## Başvuru adımları
 
