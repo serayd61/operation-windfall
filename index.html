@@ -135,6 +135,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 
 .radio { position: absolute; left: 50%; bottom: calc(98px + var(--sab)); transform: translateX(-50%); width: min(540px, calc(100vw - var(--gl) - var(--gr))); padding: 10px 14px 8px; background: var(--ink-plate); border-left: 2px solid var(--sight); opacity: 0; transition: opacity .3s; text-shadow: none; }
 .radio.on { opacity: 1; }
+.radio.urgent { border-left-color: var(--warn, #ff6a4a); }
+.radio.urgent p { font-weight: 700; font-size: 17px; }
 .radio b { display: block; font: 700 12px/1 var(--f-hud); letter-spacing: .24em; color: var(--sight); margin-bottom: 6px; text-transform: uppercase; }
 .radio p { margin: 0; font: 400 15px/1.4 var(--f-type); color: var(--hud); }
 
@@ -469,6 +471,16 @@ const DICT = {
   "Break off and stop them before the fleet is hit.": ["Bırak ve filo vurulmadan onları durdur.", "Brich ab und halte sie auf, bevor die Flotte getroffen wird."], "Break off and stop it before the fleet is hit.": ["Bırak ve filo vurulmadan onu durdur.", "Brich ab und halte ihn auf, bevor die Flotte getroffen wird."],
   "you are leaving the operations area.": ["harekât bölgesinden çıkıyorsun.", "du verlässt das Einsatzgebiet."], "Turning you back.": ["Seni geri çeviriyoruz.", "Wir drehen dich um."],
   "cleared for take-off.": ["kalkış serbest.", "Start frei."], "Deck is yours.": ["Güverte senin.", "Das Deck gehört dir."], "Runway is yours.": ["Pist senin.", "Die Bahn gehört dir."], "Ease the nose up at one hundred.": ["Yüz milde burnu yavaşça kaldır.", "Bei hundert die Nase sanft heben."],
+  "Bandit on your six!": ["Düşman arkanda!", "Feind auf sechs Uhr!"], "Break left!": ["Sola kır!", "Nach links abdrehen!"], "Break right!": ["Sağa kır!", "Nach rechts abdrehen!"],
+  "Bandit on your left!": ["Solunda düşman uçağı!", "Feindjäger links!"], "Bandit on your right!": ["Sağında düşman uçağı!", "Feindjäger rechts!"], "He is above you.": ["Senden yüksekte.", "Er ist über dir."], "He is below you.": ["Senden alçakta.", "Er ist unter dir."],
+  "Bandit dead ahead!": ["Düşman tam önünde!", "Feind direkt voraus!"], "Take the shot!": ["Ateş et!", "Feuer!"], "Bandit closing behind you!": ["Düşman arkandan yaklaşıyor!", "Feind nähert sich von hinten!"], "Keep turning!": ["Dönmeye devam et!", "Weiter kurven!"],
+  "Taking hits from behind!": ["Arkadan vuruluyorsun!", "Treffer von hinten!"], "Turn hard!": ["Sert dön!", "Hart kurven!"], "Fire from your left!": ["Soldan ateş!", "Feuer von links!"], "Fire from your right!": ["Sağdan ateş!", "Feuer von rechts!"], "Break away!": ["Uzaklaş!", "Weg da!"],
+  "Ground fire from below!": ["Aşağıdan ateş açıyorlar!", "Beschuss von unten!"], "Climb!": ["Yüksel!", "Steigen!"], "Flak!": ["Uçaksavar!", "Flak!"], "Change your height!": ["İrtifa değiştir!", "Höhe wechseln!"],
+  "Machine guns in the camp below!": ["Aşağıdaki kamptan makineli ateşi!", "MG-Feuer aus dem Lager unter dir!"], "Stay fast!": ["Hızını koru!", "Schnell bleiben!"],
+  "Enemy tanks below, on your left!": ["Aşağıda düşman tankları, solunda!", "Feindpanzer unter dir, links!"], "Enemy tanks below, on your right!": ["Aşağıda düşman tankları, sağında!", "Feindpanzer unter dir, rechts!"], "Enemy tanks below, dead ahead!": ["Aşağıda düşman tankları, tam önünde!", "Feindpanzer unter dir, voraus!"], "Hit them!": ["Vur onları!", "Greif an!"],
+  "Pull up!": ["Burnunu kaldır!", "Hochziehen!"], "Stalling!": ["Hız düştü!", "Strömungsabriss!"], "Nose down!": ["Burnu indir!", "Nase runter!"],
+  "You are hit hard!": ["Ağır hasar aldın!", "Schwer getroffen!"], "Break off and climb!": ["Çatışmadan çık, yüksel!", "Abbrechen und steigen!"],
+  "Good kill!": ["Güzel vuruş!", "Guter Abschuss!"], "Splash one!": ["Bir tane düştü!", "Einer weniger!"], "He is going down!": ["Düşüyor!", "Er stürzt ab!"],
   "Radio check.": ["Telsiz kontrol.", "Funkprobe."], "Reading you five by five.": ["Seni beşe beş duyuyorum.", "Höre dich fünf von fünf."],
   // tips
   "Follow the amber marker on the compass.": ["Pusuladaki sarı işareti izle.", "Folge der gelben Marke auf dem Kompass."], "It points at the nearest target.": ["En yakın hedefi gösterir.", "Sie zeigt auf das nächste Ziel."],
@@ -1532,7 +1544,7 @@ function updateGround(dt) {
     S.near = Math.hypot(S.cx - P.pos.x, S.cz - P.pos.z); if (S.near > 1900) continue;
     if (S.camp && S.campLeft > 0) { // the camp: call it out once, and let its machine-gun have a go
       if (!campCall && S.near < 1300 && !P.gnd) { campCall = true; radio('Enemy infantry are camped behind the line at ' + S.name + ', by the flag. Strafe them or put a bomb in the middle.'); }
-      S.aaT -= dt; if (S.aaT <= 0) { if (P.alive && !P.gnd && S.campLeft > 3 && S.campV.distanceTo(P.pos) < 520) { aimShot(S.campV, 280, .07, M.foe.dmg * .5); S.aaN++; S.aaT = S.aaN % 6 ? .14 : rand(2.4, 3.8); } else S.aaT = .5; }
+      S.aaT -= dt; if (S.aaT <= 0) { if (P.alive && !P.gnd && S.campLeft > 3 && S.campV.distanceTo(P.pos) < 520) { aimShot(S.campV, 280, .07, M.foe.dmg * .5); call('camp', 'Machine guns in the camp below! Stay fast!', 22); S.aaN++; S.aaT = S.aaN % 6 ? .14 : rand(2.4, 3.8); } else S.aaT = .5; }
     }
     S.shellT -= dt;
     if (S.shellT <= 0) { S.shellT = rand(.9, 2.8); const p = S.at(rand(S.dT - 8, S.dS + 30), rand(-1.05, 1.05) * S.half), y = groundAt(p[0], p[1]); if (y > 1) shellBurst(_g1.set(p[0], y + 1, p[1]), rand(7, 13), S); else spawnFx(_g1.set(p[0], 1, p[1]), rand(12, 20), 'splash'); }
@@ -1613,12 +1625,17 @@ function musicTick() {
   }
 }
 let voiceSel = null;
+const V_MALE = /(^|[^a-z])(male|daniel|arthur|oliver|alex|fred|aaron|gordon|rishi|thomas|tom|reed|eddy|rocko|ralph|albert|bruce|george|david|mark|ryan|guy|james|cem|tolga|ahmet|markus|viktor|yannick|martin|stefan|conrad|killian|klaus)([^a-z]|$)/i,
+  V_FEMALE = /(female|samantha|victoria|karen|moira|tessa|fiona|kate|serena|susan|allison|ava|zoe|nicky|martha|catherine|hazel|zira|sonia|libby|jenny|aria|yelda|emel|anna|petra|helena|katja|hedda|flo|sandy|shelley|grandma)/i;
+function voiceRank(v, want) { const n = v.name || ''; return (V_FEMALE.test(n) ? -4 : V_MALE.test(n) ? 4 : 0) + (v.lang === want ? 1 : 0) + (v.localService ? .5 : 0); }
+function pickVoice(vs, want, lc) { let best = null, bs = -99; for (const v of vs) { if (!v.lang || v.lang.toLowerCase().indexOf(lc) !== 0) continue; const k = voiceRank(v, want); if (k > bs) { bs = k; best = v; } } return best; }
 function hush() { try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
-function say(text) {
+function say(text, urgent) {
   if (!CAR.voice || muted || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
   try {
-    text = tr(text); const vs = speechSynthesis.getVoices(), lc = LANGS[LI][0], want = LI === 1 ? 'tr-TR' : LI === 2 ? 'de-DE' : skinNow().mark === 'us' ? 'en-US' : 'en-GB'; voiceSel = vs.find(v => v.lang === want) || vs.find(v => v.lang && v.lang.indexOf(lc) === 0) || null; if (LI && !voiceSel) return;
-    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text.replace(/·/g, ',')); if (voiceSel) u.voice = voiceSel; u.lang = voiceSel ? voiceSel.lang : want; u.rate = 1.12; u.pitch = .8; u.volume = .95; speechSynthesis.speak(u);
+    text = tr(text); const vs = speechSynthesis.getVoices(), lc = LANGS[LI][0], want = LI === 1 ? 'tr-TR' : LI === 2 ? 'de-DE' : skinNow().mark === 'us' ? 'en-US' : 'en-GB'; voiceSel = pickVoice(vs, want, lc); if (LI && !voiceSel) return;
+    const man = voiceSel && V_MALE.test(voiceSel.name || '') && !V_FEMALE.test(voiceSel.name || '');
+    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text.replace(/·/g, ',')); if (voiceSel) u.voice = voiceSel; u.lang = voiceSel ? voiceSel.lang : want; u.rate = urgent ? 1.3 : 1.16; u.pitch = man ? .78 : .5; u.volume = 1; u.onend = () => burst(2400, 'bandpass', .04, .04); speechSynthesis.speak(u);
   } catch (e) {}
 }
 function burst(freq, type, dur, vol) {
@@ -1760,7 +1777,7 @@ function reset() {
   spotPlane(); setGate(1);
   downs = 0; failed = false; flakCall = -99; modeT = M.mode === 'escort' ? 12 : 6; waveI = 0; waveLive = false; resetPals();
   score = 0; bomberKills = 0; fleetHits = 0; siteBreaks = 0; tipI = 0; raidT = 0; D = DIFFS[CAR.diff]; resetWing();
-  time = 0; kills = 0; boatKills = 0; shots = 0; hits = 0; cut = 0; phase = 'targets'; seen = false; endT = 0; shake = 0; hitFlash = 0; radioQ.length = 0; radioT = 0; target = null; leadFoe = null;
+  time = 0; kills = 0; boatKills = 0; shots = 0; hits = 0; cut = 0; phase = 'targets'; seen = false; endT = 0; shake = 0; hitFlash = 0; radioQ.length = 0; radioT = 0; callT = 0; scanT = 0; for (const k in callCd) delete callCd[k]; target = null; leadFoe = null;
   $('radio').classList.remove('on'); $('feed').textContent = ''; for (const c of ['pull', 'six', 'stall']) $(c).classList.remove('on'); $('gloc').style.opacity = 0; updateObjective(); snapCam = true; resetGround(); patrolCall = false;
   if (!M.mode && M.patrol && objs.length) { spawnFighters(M.patrol, objs[0].aim); for (const e of enemies) { e.patrol = objs[0].aim; e.orb = rand(0, 6.28); } }
 }
@@ -1768,10 +1785,35 @@ function reset() {
 /* ------------------------------------------------------------------ radio, feed, objective */
 const radioQ = []; let radioT = 0;
 function radio(text) { radioQ.push([M.ctl, text]); }
+const callCd = {}; let callT = 0, scanT = 0;
+function call(key, text, cd) { // short combat call: cuts in ahead of everything else, rate-limited per kind and overall
+  if (!P.alive || P.gnd || state !== 'play' || time < callT || time < (callCd[key] || 0)) return false;
+  callCd[key] = time + (cd || 14); callT = time + 4.2; radioQ.unshift([M.ctl, text, 1]); radioT = 0; return true;
+}
+function sideOf(pos) { // where a point lies relative to the nose: [ahead, right, up] as unit-ish components
+  const dx = pos.x - P.pos.x, dy = pos.y - P.pos.y, dz = pos.z - P.pos.z, d = Math.hypot(dx, dy, dz) || 1, fx = -Math.sin(P.yaw), fz = -Math.cos(P.yaw);
+  return [(dx * fx + dz * fz) / d, (dx * Math.cos(P.yaw) - dz * Math.sin(P.yaw)) / d, dy / d, d];
+}
+function scanThreats(dt) {
+  scanT -= dt; if (scanT > 0 || !P.alive || P.gnd) return; scanT = .8;
+  let near = null, nd = 800;
+  for (const e of enemies) { if (e.kind !== 'fighter' || e.dead || e.falling || e.prey) continue; const d = e.pos.distanceTo(P.pos); if (d < nd) { nd = d; near = e; } }
+  if (near) {
+    const [f, r, u] = sideOf(near.pos), hi = u > .28 ? ' He is above you.' : u < -.28 ? ' He is below you.' : '';
+    if (f > .75) { if (nd < 520) call('ahead', 'Bandit dead ahead! Take the shot!', 18); }
+    else if (f < -.6) call('behind', 'Bandit closing behind you! Keep turning!', 13);
+    else call('side', (r > 0 ? 'Bandit on your right!' : 'Bandit on your left!') + hi, 13);
+    return;
+  }
+  if (P.pos.y < 420) {
+    let tk = null, td = 950; for (const k of gtanks) { if (!k.foe || !k.alive || k.soft) continue; const d = Math.hypot(k.aim.x - P.pos.x, k.aim.z - P.pos.z); if (d < td) { td = d; tk = k; } }
+    if (tk) { const [f, r] = sideOf(tk.aim), hf = Math.hypot(f, r) || 1; call('tank', 'Enemy tanks below, ' + (f / hf > .8 ? 'dead ahead!' : r > 0 ? 'on your right!' : 'on your left!') + ' Hit them!', 24); }
+  }
+}
 function tickRadio(dt) {
   radioT -= dt;
   if (radioT <= 0) {
-    if (radioQ.length) { const [f, t] = radioQ.shift(); $('radio-from').textContent = f; $('radio-text').textContent = t; $('radio').classList.add('on'); radioT = Math.max(5.4, 1.4 + t.length * .062); burst(2400, 'bandpass', .05, .05); say(t); }
+    if (radioQ.length) { const [f, t, urgent] = radioQ.shift(); $('radio-from').textContent = f; $('radio-text').textContent = t; $('radio').classList.add('on'); $('radio').classList.toggle('urgent', !!urgent); radioT = urgent ? Math.max(2.6, 1 + t.length * .05) : Math.max(5.4, 1.4 + t.length * .062); burst(2400, 'bandpass', .05, .05); say(t, urgent); }
     else $('radio').classList.remove('on');
   }
 }
@@ -1811,7 +1853,7 @@ function downEnemy(e) {
   e.falling = true; e.fallT = e.kind === 'bomber' ? 7 : 4; spawnFx(e.pos, 14, 'flash'); spawnFx(e.pos, 10, 'fire'); sfxBoom(12, e.pos);
   if (e.byWing) feed('Wingman scores');
   else if (e.kind === 'bomber') { bomberKills++; addScore(250); feed('Bomber down', '' + bomberKills); if (!enemies.some(x => x.kind === 'bomber' && !x.falling && !x.dead)) radio('Raid broken up. The ' + M.homeName.toLowerCase() + ' sends its thanks.'); }
-  else { kills++; addScore(100); feed('Fighter down', '' + kills); }
+  else { kills++; addScore(100); feed('Fighter down', '' + kills); call('kill', ['Good kill!', 'Splash one!', 'He is going down!'][kills % 3], 2); }
   if (e.kind === 'fighter') downs++;
 }
 function aimShot(from, speed, spread, dmg, flak) { // lead the player a little, with scatter
@@ -1821,7 +1863,7 @@ function aimShot(from, speed, spread, dmg, flak) { // lead the player a little, 
   spawnBullet(from, _a, speed, false, dmg, flak ? t * rand(.9, 1.08) : 3.2, flak);
 }
 function updateEnemies(dt) {
-  let six = false; const F = M.foe;
+  let six = false, sixSide = 0; const F = M.foe;
   for (const e of enemies) {
     if (e.dead) continue;
     const dist = e.pos.distanceTo(P.pos);
@@ -1866,7 +1908,7 @@ function updateEnemies(dt) {
         continue;
       }
       _b.copy(P.pos).sub(e.pos).normalize(); const onMe = e.dir.dot(_b);
-      if (P.alive && e.evadeT <= 0 && dist < 520 && onMe > .93 && _b.dot(P.fwd) > .2) six = true;
+      if (P.alive && e.evadeT <= 0 && dist < 520 && onMe > .93 && _b.dot(P.fwd) > .2) { six = true; sixSide = sideOf(e.pos)[1]; }
       e.fireCd -= dt;
       if (P.alive && e.evadeT <= 0 && dist < 480 && e.fireCd <= 0 && onMe > F.cone) { aimShot(e.pos, 300, F.spread, F.dmg); e.burstN++; e.fireCd = e.burstN >= 5 ? (e.burstN = 0, rand(1.4, 2.2)) : .15; }
     } else {
@@ -1878,7 +1920,7 @@ function updateEnemies(dt) {
     }
   }
   enemies = enemies.filter(e => !e.dead);
-  $('six').classList.toggle('on', six);
+  $('six').classList.toggle('on', six); if (six) call('six', 'Bandit on your six! ' + (sixSide > 0 ? 'Break left!' : 'Break right!'), 11);
 }
 function updateObjs(dt) {
   const F = M.foe;
@@ -2042,9 +2084,15 @@ function drawRadar() {
   rc.fillStyle = '#f3eede'; rc.beginPath(); rc.moveTo(c, c - 11); rc.lineTo(c + 7, c + 8); rc.lineTo(c, c + 4); rc.lineTo(c - 7, c + 8); rc.fill();
 }
 /* ------------------------------------------------------------------ player */
+function hitFrom(v) { // v: velocity of the round that just hit us
+  const sp = v.length() || 1, f = (v.x * -Math.sin(P.yaw) + v.z * -Math.cos(P.yaw)) / sp, r = (v.x * Math.cos(P.yaw) - v.z * Math.sin(P.yaw)) / sp;
+  if (v.y / sp > .5) call('below', 'Ground fire from below! Climb!', 12);
+  else if (f > .6) call('hitback', 'Taking hits from behind! Turn hard!', 10);
+  else if (Math.abs(r) > .45) call('hitside', (r > 0 ? 'Fire from your left!' : 'Fire from your right!') + ' Break away!', 10);
+}
 function damagePlayer(d) {
   if (!P.alive) return; P.hp -= d * D.dmg * (1 - .12 * CAR.up.arm) / PM.arm; P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5); sfxHit();
-  if (P.hp <= 0) crash(M.cs + ' was shot down.');
+  if (P.hp <= 0) crash(M.cs + ' was shot down.'); else if (P.hp < 35 && !P.hurtCall) { P.hurtCall = true; callT = 0; call('hurt', 'You are hit hard! Break off and climb!', 40); } else if (P.hp > 70) P.hurtCall = false;
 }
 function crash(why) {
   if (!P.alive) return; P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; endT = 1.8; endWon = false; endWhy = why;
@@ -2101,7 +2149,7 @@ function updatePlayer(dt) {
   const tgt = P.gear && P.autoUp && !input.boost ? 52 : input.brake ? 50 : (input.boost ? M.vmax * (1 + .04 * CAR.up.eng) : M.v0) * PM.spd;
   P.speed += (tgt - P.speed) * (1 - Math.exp(-(input.brake ? 2 : 1.2) * dt)) - Math.sin(P.pitch) * (fl >= 3 ? 20 : 9) * dt;
   if (fl >= 3) { P.speed -= (Math.abs(P.roll) * 5 + Math.abs(input.y) * 4) * dt * (input.boost ? .4 : 1); if (P.speed < 47 && !P.gear) P.stall = true; else if (P.speed > 60 || P.gear) P.stall = false; }
-  P.speed = Math.max(P.speed, 30); $('stall').classList.toggle('on', P.stall);
+  P.speed = Math.max(P.speed, 30); $('stall').classList.toggle('on', P.stall); if (P.stall) call('stall', 'Stalling! Nose down!', 12);
   if (fl >= 4) { const load = Math.abs(P.roll) / 1.15 * (P.speed / M.v0) * (1 + Math.abs(input.y) * .4); P.g = clamp(P.g + (load > 1.45 ? dt * .45 : -dt * .7), 0, 1); $('gloc').style.opacity = (Math.max(0, P.g - .25) * 1.25).toFixed(2); }
   const cp = Math.cos(P.pitch); P.fwd.set(-Math.sin(P.yaw) * cp, Math.sin(P.pitch), -Math.cos(P.yaw) * cp);
   P.vel.copy(P.fwd).multiplyScalar(P.speed); P.pos.addScaledVector(P.vel, dt);
@@ -2115,7 +2163,7 @@ function updatePlayer(dt) {
     if (P.airT < 3 && P.gear) { P.pos.y = PAD.y + 2.75; P.pitch = Math.max(P.pitch, .02); plane.position.copy(P.pos); }
     else { touchdown(); return; }
   } else if (P.pos.y < ground + 2.5) { if (ground === 0) spawnFx(P.pos, 40, 'splash'); crash(ground > 0 ? M.cs + ' flew into the ground.' : M.cs + ' hit the water.'); return; }
-  $('pull').classList.toggle('on', !P.gear && P.pos.y - ground < 45 && P.pitch < .15);
+  const low = !P.gear && P.pos.y - ground < 45 && P.pitch < .15; $('pull').classList.toggle('on', low); if (low && P.vel.y < -6) call('pull', 'Pull up! Pull up!', 9);
   if (time - P.lastHit > 6 && P.hp < 100) P.hp = Math.min(100, P.hp + 7 * dt);
   if (P.hp < 45) { P.smokeT -= dt; if (P.smokeT <= 0) { P.smokeT = .06; spawnFx(_c.copy(P.pos).addScaledVector(P.fwd, -5), rand(3, 5), 'trail'); } }
   // guns
@@ -2137,14 +2185,14 @@ function updateBullets(dt) {
     let off = false;
     if (b.life <= 0) {
       off = true;
-      if (b.flak) { spawnFx(p, 26, 'flak'); spawnFx(p, 12, 'flash'); const d = p.distanceTo(P.pos); burst(200, 'lowpass', .5, clamp(.5 - d / 900, 0, .5)); if (P.alive && d < 32) damagePlayer(b.dmg * (1 - d / 44)); }
+      if (b.flak) { spawnFx(p, 26, 'flak'); spawnFx(p, 12, 'flash'); const d = p.distanceTo(P.pos); burst(200, 'lowpass', .5, clamp(.5 - d / 900, 0, .5)); if (P.alive && d < 32) damagePlayer(b.dmg * (1 - d / 44)); if (P.alive && d < 95) call('flak', 'Flak! Change your height!', 15); }
     } else if (p.y < 0) { off = true; if (b.friendly) spawnFx(p, 7, 'splash'); }
     else if (p.y < 210) { const gh = heightAt(p.x, p.z); if (gh > p.y) { off = true; if (b.friendly) { spawnFx(p, 5, 'trail'); if (!b.wing && hitMen(p.x, p.z, 4.6)) hits++; } } else if (b.friendly && !b.wing && p.y - gh < 3.6 && hitMen(p.x, p.z, 3.2)) { off = true; hits++; } }
     if (!off && b.friendly) {
       for (const e of enemies) { if (e.dead || e.falling) continue; if ((e.aim || e.pos).distanceToSquared(p) < e.r * e.r) { e.hp -= b.dmg; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 5, 'flash'); if (e.hp <= 0) { e.byWing = b.wing; downEnemy(e); } break; } }
       if (!off && p.y < 260) for (const k of gtanks) if (k.foe && k.alive && k.S.near < 1900 && k.aim.distanceToSquared(p) < 42) { off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); hurtTank(k, b.dmg * (k.soft ? 1 : M.front.armour)); break; }
       if (!off) for (const o of objs) if (o.alive && inObj(o, p, 1)) { const armour = o.kind === 'battery' || o.kind === 'cruiser' ? .35 : o.kind === 'radar' ? 1 : .6; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); hurtObj(o, b.dmg * armour); break; }
-    } else if (!off && P.alive && p.distanceToSquared(P.pos) < 49) { off = true; damagePlayer(b.dmg); }
+    } else if (!off && P.alive && p.distanceToSquared(P.pos) < 49) { off = true; damagePlayer(b.dmg); hitFrom(b.vel); }
     if (off) { b.on = false; b.m.visible = false; }
   }
 }
@@ -2409,7 +2457,7 @@ function tick(dt, now) {
   if (state === 'play') {
     time += P.alive && !endT ? dt : 0; readInput();
     if (mIdx === 0 && !done.includes(0) && tipI < TIPS.length && time > TIPS[tipI][0]) radio(TIPS[tipI++][1]);
-    updatePlayer(dt); updateEnemies(dt); updateObjs(dt); updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); tickRadio(dt); skyTick(dt);
+    updatePlayer(dt); updateEnemies(dt); updateObjs(dt); updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); scanThreats(dt); tickRadio(dt); skyTick(dt);
     beacon.rotation.y += dt * .4; beacon.material.opacity = .15 + Math.sin(now / 300) * .05;
     updateCamera(dt); updateHud(dt);
     if (engGain) { engGain.gain.value = P.alive ? .05 : 0; const f = 44 + P.speed * .6; engOsc.frequency.value = f; engOsc2.frequency.value = f * .502; }
@@ -2608,7 +2656,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { tr, setLang, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
