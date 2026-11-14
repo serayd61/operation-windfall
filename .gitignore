@@ -5,3 +5,4 @@ node_modules
 /android/
 play-store/*.aab
 play-store/*.apk
+app-store/*.ipa

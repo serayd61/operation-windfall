@@ -2,14 +2,15 @@
   "name": "operation-windfall-app",
   "version": "1.0.1",
   "private": true,
-  "description": "Android wrapper for Operation Windfall (Capacitor); the game files are copied from the repo root.",
+  "description": "Android and iOS wrapper for Operation Windfall (Capacitor); the game files are copied from the repo root.",
   "scripts": {
     "www": "rm -rf www && mkdir -p www && cp -R ../index.html ../privacy.html ../vendor ../icons www/",
-    "sync": "npm run www && cap sync android"
+    "sync": "npm run www && cap sync"
   },
   "dependencies": {
     "@capacitor/android": "8.6.2",
-    "@capacitor/core": "8.6.2"
+    "@capacitor/core": "8.6.2",
+    "@capacitor/ios": "^8.6.2"
   },
   "devDependencies": {
     "@capacitor/cli": "8.6.2"
