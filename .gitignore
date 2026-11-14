@@ -6,3 +6,5 @@ node_modules
 play-store/*.aab
 play-store/*.apk
 app-store/*.ipa
+.dev.vars
+.wrangler

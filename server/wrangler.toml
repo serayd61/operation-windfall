@@ -1,0 +1,15 @@
+name = "windfall-match"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+
+[[durable_objects.bindings]]
+name = "MATCH"
+class_name = "Match"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Match"]
+
+[vars]
+SUPABASE_URL = "https://cefpfihmzyqxrskltylk.supabase.co"
+SUPABASE_KEY = "sb_publishable_-OokMVXmREjldxfZaoijyw_D7hPawvh"

@@ -1,0 +1,7 @@
+{
+  "name": "operation-windfall-server",
+  "private": true,
+  "description": "Match server for Operation Windfall team dogfights (Cloudflare Workers + Durable Objects).",
+  "scripts": { "dev": "wrangler dev", "deploy": "wrangler deploy" },
+  "devDependencies": { "wrangler": "^4" }
+}
