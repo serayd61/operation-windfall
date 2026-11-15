@@ -426,6 +426,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="mode"><h2>Team dogfight</h2><p class="note">Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking and pay requisition points.</p><div class="mode-foot"><span class="mode-n"><b id="on-df" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-duel" type="button">Fly</button></div></div>
         <div class="mode"><h2>Zone control</h2><p class="note">Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.</p><div class="mode-foot"><span class="mode-n"><b id="on-zone" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-zone" type="button">Fly</button></div></div>
         <div class="mode"><h2>Carrier strike</h2><p class="note">Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.</p><div class="mode-foot"><span class="mode-n"><b id="on-ship" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-ship" type="button">Fly</button></div></div>
+        <div class="mode"><h2>Island assault</h2><p class="note">Island assault: both sides have landed troops and tanks on the same island. Strafe their squads, break their tanks with rockets and bombs, and help your men take the three strongpoints. Every strongpoint held pays a point every three seconds. First side to 120 wins; fly low over your own beach to rearm.</p><div class="mode-foot"><span class="mode-n"><b id="on-land" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-land" type="button">Fly</button></div></div>
       </div>
       <div class="row"><button class="ghost" id="b-oback" type="button">Back</button></div>
     </div>
@@ -527,6 +528,10 @@ const DICT = {
   "Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.": ["Bölge hâkimiyeti: gökyüzünde üç halka. Bir halkayı almak için içinde karşı taraftan daha fazla uçakla uç; elindeki her halka üç saniyede bir puan, her vuruş iki puan kazandırır. 100 puana ilk ulaşan takım kazanır.", "Zonenkontrolle: drei Ringe am Himmel. Fliege mit mehr Flugzeugen als der Gegner in einem Ring, um ihn zu erobern; jeder gehaltene Ring bringt alle drei Sekunden einen Punkt, ein Abschuss zwei. Wer zuerst 100 Punkte hat, gewinnt."],
   "zone control.": ["bölge hâkimiyeti.", "Zonenkontrolle."], "Hold the rings.": ["Halkaları elinde tut.", "Haltet die Ringe."], "First side to 100 wins.": ["100 puana ilk ulaşan kazanır.", "Wer zuerst 100 hat, gewinnt."],
   "Zone A taken": ["A bölgesi alındı", "Zone A erobert"], "Zone B taken": ["B bölgesi alındı", "Zone B erobert"], "Zone C taken": ["C bölgesi alındı", "Zone C erobert"], "Zone A lost": ["A bölgesi kaybedildi", "Zone A verloren"], "Zone B lost": ["B bölgesi kaybedildi", "Zone B verloren"], "Zone C lost": ["C bölgesi kaybedildi", "Zone C verloren"],
+  "Island assault": ["Ada çıkarması", "Inselsturm"], "Island assault · you are RED": ["Ada çıkarması · KIRMIZI takımdasın", "Inselsturm · du bist ROT"], "Island assault · you are BLUE": ["Ada çıkarması · MAVİ takımdasın", "Inselsturm · du bist BLAU"],
+  "Island assault: both sides have landed troops and tanks on the same island. Strafe their squads, break their tanks with rockets and bombs, and help your men take the three strongpoints. Every strongpoint held pays a point every three seconds. First side to 120 wins; fly low over your own beach to rearm.": ["Ada çıkarması: iki taraf da aynı adaya asker ve tank çıkardı. Düşman mangalarını makineliyle tara, tanklarını roket ve bombayla vur, askerlerinin üç mevziyi almasına yardım et. Elde tutulan her mevzi üç saniyede bir puan verir. 120 puana ilk ulaşan kazanır; yeniden silahlanmak için kendi sahilinin üzerinden alçaktan uç.", "Inselsturm: Beide Seiten haben Truppen und Panzer auf derselben Insel gelandet. Beschieße ihre Trupps, knacke ihre Panzer mit Raketen und Bomben und hilf deinen Männern, die drei Stützpunkte zu nehmen. Jeder gehaltene Stützpunkt bringt alle drei Sekunden einen Punkt. Wer zuerst 120 hat, gewinnt; fliege tief über deinen eigenen Strand, um aufzumunitionieren."],
+  "Enemy tank destroyed": ["Düşman tankı imha edildi", "Feindpanzer zerstört"], "Enemy squad wiped out": ["Düşman mangası yok edildi", "Feindtrupp ausgeschaltet"], "We lost a tank": ["Bir tankımızı kaybettik", "Wir haben einen Panzer verloren"], "TROOPS": ["ASKER", "TRUPPEN"], "BEACH": ["SAHİL", "STRAND"],
+  "Our men are taking a beating down there!": ["Askerlerimiz aşağıda eziliyor!", "Unsere Männer werden da unten aufgerieben!"], "Good hit! Their armour is burning!": ["İyi vuruş! Zırhlıları yanıyor!", "Guter Treffer! Ihre Panzer brennen!"],
   "Carrier strike 4 v 4": ["Gemi avı 4'e 4", "Trägerjagd 4 gegen 4"], "Carrier strike": ["Gemi avı", "Trägerjagd"], "Carrier strike · you are RED": ["Gemi avı · KIRMIZI takımdasın", "Trägerjagd · du bist ROT"], "Carrier strike · you are BLUE": ["Gemi avı · MAVİ takımdasın", "Trägerjagd · du bist BLAU"],
   "Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.": ["Gemi avı: her takımın bir uçak gemisi var. Onlar seninkini batırmadan sen onlarınkini bomba ve roketle batır. Gemiler ateş açar; yeniden silahlanmak ve onarılmak için kendi geminin üzerinden alçaktan geç.", "Trägerjagd: Jede Seite hat einen Flugzeugträger. Versenke den gegnerischen mit Bomben und Raketen, bevor sie deinen versenken. Die Träger schießen zurück; fliege tief über deinen eigenen Träger, um aufzumunitionieren und zu reparieren."],
   "carrier strike.": ["gemi avı.", "Trägerjagd."], "Sink their carrier before they sink ours.": ["Onlar bizimkini batırmadan gemilerini batırın.", "Versenkt ihren Träger, bevor sie unseren versenken."], "Bombs and rockets only.": ["Yalnızca bomba ve roket işe yarar.", "Nur Bomben und Raketen zählen."],
@@ -1887,7 +1892,7 @@ function feed(what, note) {
   setTimeout(() => d.classList.add('out'), 3200); setTimeout(() => d.remove(), 4000);
 }
 function updateObjective() {
-  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'ship' ? (DUEL.team ? 'Carrier strike · you are RED' : 'Carrier strike · you are BLUE') : DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('')); return; } $('obj-t').removeAttribute('data-tail');
+  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'land' ? (DUEL.team ? 'Island assault · you are RED' : 'Island assault · you are BLUE') : DUEL.mode === 'ship' ? (DUEL.team ? 'Carrier strike · you are RED' : 'Carrier strike · you are BLUE') : DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('')); return; } $('obj-t').removeAttribute('data-tail');
   $('pips').querySelectorAll('i').forEach((p, i) => p.classList.toggle('done', i < cut));
   $('obj-n').textContent = cut + ' / ' + goalN();
   $('obj-t').textContent = phase === 'extract' ? (PAD.carrier ? 'Land on the carrier' : 'Land at the airstrip') : M.mode === 'dogfight' ? 'Shoot down the fighters' : M.mode === 'defend' ? 'Defend the ' + M.homeName.toLowerCase() : M.mode === 'escort' ? 'Protect the bombers' : cut === objs.length - 1 ? 'Destroy the last target' : 'Destroy the targets';
@@ -2192,6 +2197,8 @@ function updateOrd(dt) {
     if (!hit && !o.bomb) for (const e of enemies) if (!e.dead && !e.falling && (e.aim || e.pos).distanceToSquared(p) < (e.r + 5) * (e.r + 5)) { hit = true; break; }
     if (!hit) for (const k of gtanks) if (k.foe && k.alive && k.aim.distanceToSquared(p) < 64) { hit = true; break; }
     if (!hit && DUEL.on) for (const h of DUEL.ships) if (h.hp > 0 && p.y < 30 && Math.abs(p.x - h.pos.x) < 23 && Math.abs(p.z - h.pos.z) < 126) { hit = true; if (h.team !== DUEL.team) duelTell({ t: 'b', k: o.bomb ? 0 : 1 }); break; }
+    if (!hit && LAND.on) for (const u of LAND.units.values()) if (u.team !== DUEL.team && u.aim.distanceToSquared(p) < 64) { hit = true; break; }
+    if (hit && LAND.on) duelTell({ t: 'b', k: o.bomb ? 0 : 1, x: Math.round(p.x), z: Math.round(p.z) });
     if (hit) { o.on = false; o.g.visible = false; p.y = Math.max(p.y, 1); blast(p, (o.bomb ? 52 : 34) * (1 + .05 * CAR.up.ord), (o.bomb ? 330 : 150) * (1 + .15 * CAR.up.ord)); }
   }
 }
@@ -2254,10 +2261,11 @@ function updateBullets(dt) {
       off = true;
       if (b.flak) { spawnFx(p, 26, 'flak'); spawnFx(p, 12, 'flash'); const d = p.distanceTo(P.pos); burst(200, 'lowpass', .5, clamp(.5 - d / 900, 0, .5)); if (P.alive && d < 32) damagePlayer(b.dmg * (1 - d / 44)); if (P.alive && d < 95) call('flak', 'Flak! Change your height!', 15); }
     } else if (p.y < 0) { off = true; if (b.friendly) spawnFx(p, 7, 'splash'); }
-    else if (p.y < 210) { const gh = heightAt(p.x, p.z); if (gh > p.y) { off = true; if (b.friendly) { spawnFx(p, 5, 'trail'); if (!b.wing && hitMen(p.x, p.z, 4.6)) hits++; } } else if (b.friendly && !b.wing && p.y - gh < 3.6 && hitMen(p.x, p.z, 3.2)) { off = true; hits++; } }
+    else if (p.y < 210) { const gh = heightAt(p.x, p.z); if (gh > p.y) { off = true; if (b.friendly) { spawnFx(p, 5, 'trail'); if (LAND.on && !b.wing && landGun(p, b.dmg, 90)) { hits++; hitMark(); } if (!b.wing && hitMen(p.x, p.z, 4.6)) hits++; } } else if (b.friendly && !b.wing && p.y - gh < 3.6 && hitMen(p.x, p.z, 3.2)) { off = true; hits++; } }
     if (!off && b.friendly) {
       for (const e of enemies) { if (e.dead || e.falling) continue; if ((e.aim || e.pos).distanceToSquared(p) < e.r * e.r) { e.hp -= b.dmg; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 5, 'flash'); if (e.hp <= 0) { e.byWing = b.wing; downEnemy(e); } break; } }
       if (!off && DUEL.on && !b.wing) for (const [id, q] of NET.peers) if (q.alive && q.team !== DUEL.team && q.pos.distanceToSquared(p) < 110) { off = true; hits++; hitMark(); spawnFx(p, 5, 'flash'); duelHit(id, b.dmg); break; }
+      if (!off && LAND.on && !b.wing && p.y < 320 && landGun(p, b.dmg, 60)) { off = true; hits++; hitMark(); spawnFx(p, 5, 'flash'); }
       if (!off && p.y < 260) for (const k of gtanks) if (k.foe && k.alive && k.S.near < 1900 && k.aim.distanceToSquared(p) < 42) { off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); hurtTank(k, b.dmg * (k.soft ? 1 : M.front.armour)); break; }
       if (!off) for (const o of objs) if (o.alive && inObj(o, p, 1)) { const armour = o.kind === 'battery' || o.kind === 'cruiser' ? .35 : o.kind === 'radar' ? 1 : .6; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); hurtObj(o, b.dmg * armour); break; }
     } else if (!off && P.alive && p.distanceToSquared(P.pos) < 49) { off = true; damagePlayer(b.dmg); hitFrom(b.vel); }
@@ -2363,6 +2371,8 @@ function updateHud(dt) {
   for (const p of NET.peers.values()) if (p.alive) put(p.pos, DUEL.on && p.team !== DUEL.team ? 'e' : 'h', '\u2708 ' + p.name, p.pos.distanceTo(P.pos));
   if (DUEL.on) for (const h of DUEL.ships) if (h.hp > 0) put(h.aim, h.team === DUEL.team ? 'h' : 'e', '\u2693', h.aim.distanceTo(P.pos), h.hp / h.max);
   if (DUEL.on) for (const z of DUEL.zones) put(z.pos, z.own < 0 ? 'o' : z.own === DUEL.team ? 'h' : 'e', '\u25ce ' + z.name, Math.hypot(z.pos.x - P.pos.x, z.pos.z - P.pos.z), (z.v * (DUEL.team ? 1 : -1) + 1) / 2);
+  if (LAND.on) { for (const u of LAND.units.values()) if (u.team !== DUEL.team) { const d = u.aim.distanceTo(P.pos); if (d < (u.kind ? 1500 : 1000)) put(u.aim, 'e', u.kind ? 'TANK' : 'TROOPS', d, u.hp / u.max); }
+    const b = LAND.beach[DUEL.team]; if (b && (P.bombs < M.bombs || P.rkt < M.rockets || P.hp < 70)) put(b, 'h', 'BEACH', b.distanceTo(P.pos)); }
   for (; mi < marks.length; mi++) marks[mi].d.hidden = true;
   updateTarget(); drawRadar();
   let lso = '';
@@ -2392,13 +2402,13 @@ const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, 
   url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [], ships: [], cine: null, cineT: 0, dcam: '', dcamT: 0, streak: 0, killT: -99, wx: '', rain: null, boltT: 0, flash: 0, lamps: [] };
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
-  const side = DUEL.team ? 1 : -1; P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
+  const side = DUEL.team ? 1 : -1, lc = DUEL.mode === 'land' ? landC() : null; if (lc) P.pos.set(lc[0] + side * (1300 + rand(0, 300)), 480 + rand(-60, 60), lc[1] + 700 + rand(-250, 250)); else P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
   P.yaw = side > 0 ? Math.PI / 2 : -Math.PI / 2; P.pitch = 0; P.roll = 0; P.speed = 82; P.gnd = 0; P.gear = false; P.gearK = 0; P.rollT = 0; P.rot = 0; P.airT = 5; P.autoUp = true; P.ap = null; P.stall = false;
   P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
 function duelArm() { P.rkt = M.rockets; P.bombs = M.bombs; P.ordCd = 0; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true); }
-function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); weatherSet(null); }
+function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); landClear(); weatherSet(null); }
 /* weather for a match: the server picks it, so both sides fly through the same sky */
 const WX = {
   dusk: { hz: '#f29a5e', zn: '#39407c', sun: [-.82, .09, -.3], sunC: '#ff9850', sunI: 2.4, hemi: ['#d2a9bd', '#4a3f44', .85], fog: [800, 8200], deep: '#141d3a', shal: '#8a5c5c', dim: '#e6a488' },
@@ -2465,6 +2475,110 @@ function shipCam(dt) { // the last shot of the match: a slow turn around the sin
   camera.position.set(h.pos.x + Math.sin(a) * r, 46 + DUEL.cineT * 2.5, h.pos.z + Math.cos(a) * r); camera.lookAt(_a.set(h.pos.x, 12, h.pos.z));
 }
 const ZCOL = [0xe8e2c8, 0x7fd08a, 0xff6a50]; // nobody's, ours, theirs
+/* island assault: the match server runs the ground war flat on the map (squads and tanks, three strongpoints);
+   here its units are set on the terrain, and what our guns and ordnance find among them is reported back */
+const LAND = { on: false, units: new Map(), gq: new Map(), men: null, free: [], wrecks: [], beach: [], extra: [], geo: null, aaT: 0 };
+const SQ = 6, SQN = 16, FORM = [[0, -4], [-4, -1], [4, -1], [-7, 3], [7, 3], [0, 4]]; // men to a squad, squads drawn at once, and how they spread out
+const landIsle = () => ISL.reduce((a, s) => (s.r > a.r ? s : a));
+const landC = () => { const s = landIsle(); return [s.x, s.z]; };
+function landBeach() { // where each side comes ashore: the south-west and the south-east of the island
+  const s = landIsle(), out = [];
+  for (const sg of [-1, 1]) { let d = s.r; while (d > s.r * .4 && heightAt(s.x + sg * .6 * d, s.z + .8 * d) < 2.5) d -= 6; d -= 30; out.push(Math.round(s.x + sg * .6 * d), Math.round(s.z + .8 * d)); }
+  return out;
+}
+function landQuiet() { // the mission's own front line stands down: this island belongs to the match now
+  for (const k of gtanks) { k.alive = false; k.g.visible = false; } for (const m of men) m.mode = 5; if (menMesh) menMesh.visible = false; for (const S of SITES) S.campLeft = 0; frontWarned = true;
+}
+function landClear() {
+  for (const u of LAND.units.values()) if (u.g) world.remove(u.g); LAND.units.clear(); LAND.gq.clear();
+  for (const w of LAND.wrecks) world.remove(w.g); LAND.wrecks = [];
+  for (const m of LAND.extra) { world.remove(m); if (!m.geometry.userData.keep) m.geometry.dispose(); } LAND.extra = []; LAND.beach = [];
+  if (LAND.men) { world.remove(LAND.men); LAND.men = null; }
+  if (LAND.on) { LAND.on = false; for (const k of gtanks) k.g.visible = true; if (menMesh) menMesh.visible = true; }
+}
+function landSet(m) {
+  zonesSet(null); shipsSet(null); landClear(); LAND.on = true; landQuiet();
+  if (!LAND.geo) LAND.geo = [tankGeo(ARMY.us), tankGeo(ARMY.de)];
+  const c = Array.isArray(m.c) ? m.c : landC(), bag = col('#9a8d68'), steel = col('#55585a'), wood = col('#6b5a40'), ok = v => typeof v === 'number' && isFinite(v);
+  (Array.isArray(m.zp) ? m.zp : []).slice(0, 3).forEach((r, i) => { if (!Array.isArray(r) || !r.slice(0, 3).every(ok)) return; // a strongpoint: sandbags, a gun pit and a flag that shows who holds it
+    const y = groundAt(r[0], r[1]), mesh = new T.Mesh(new T.CylinderGeometry(r[2], r[2], 110, 40, 1, true), new T.MeshBasicMaterial({ color: ZCOL[0], transparent: true, opacity: .13, side: T.DoubleSide, depthWrite: false }));
+    mesh.position.set(r[0], y + 45, r[1]); world.add(mesh);
+    const B = new Batch(), F = frameAt(r[0], r[1], 0, 0, true); part(B, F, UC, steel, .32, 30, .32, 0, 15, 0);
+    for (let k = 0; k < 12; k++) { const a = k * .5236; part(B, F, UB, bag, 3.6, 1.5, 1.9, Math.cos(a) * 9, .7, Math.sin(a) * 9, 0, -a + 1.57); if (k % 2) part(B, F, UB, bag, 3.4, 1.3, 1.8, Math.cos(a + .26) * 9, 2, Math.sin(a + .26) * 9, 0, -a + 1.3); }
+    part(B, F, UC, steel, .22, 5.5, .22, 4, 3.2, 3, .8); part(B, F, UC, steel, .5, 1.6, .5, 4, .8, 4.2); for (const q of [[-5, -3], [-3.4, -4.6], [-5.6, 4]]) part(B, F, UB, wood, 2, 1.4, 1.6, q[0], .7, q[1], 0, q[0]);
+    const deco = new T.Mesh(B.geo(), GM); world.add(deco); LAND.extra.push(deco);
+    const fm = new T.MeshLambertMaterial({ color: ZCOL[0], side: T.DoubleSide }), flag = new T.Mesh(new T.BoxGeometry(11, 6.5, .25), fm); flag.position.set(r[0] + 5.8, y + 26.4, r[1]); world.add(flag); LAND.extra.push(flag);
+    DUEL.zones.push({ name: 'ABC'[i] || '?', pos: new V3(r[0], y + 34, r[1]), r: r[2], own: -1, v: 0, mesh, fm, flag }); });
+  (Array.isArray(m.bz) ? m.bz : []).slice(0, 2).forEach((r, team) => { if (!Array.isArray(r) || !r.slice(0, 2).every(ok)) return; // the beach: landing craft run up on the sand, stores piled above the waterline
+    let ox = r[0] - c[0], oz = r[1] - c[1]; const l = Math.hypot(ox, oz) || 1; ox /= l; oz /= l; const yaw = Math.atan2(ox, oz), B = new Batch(), hull = col(team ? '#6f7577' : '#5d6a72'), dk = col('#2b2f31');
+    for (let i = 0; i < 4; i++) { let d = 20; const lat = (i - 1.5) * 34; while (d < 160 && heightAt(r[0] + ox * d - oz * lat, r[1] + oz * d + ox * lat) > -1) d += 6;
+      _fr.position.set(r[0] + ox * (d + 4) - oz * lat, .1, r[1] + oz * (d + 4) + ox * lat); _fr.quaternion.setFromAxisAngle(_up, yaw + rand(-.12, .12)); _fr.updateMatrix(); const F = _fr.matrix.clone();
+      part(B, F, UB, hull, 5, 2.4, 13, 0, .9, 0); part(B, F, UB, dk, 4.2, .3, 10.5, 0, 1.9, .6); for (const x of [-2.5, 2.5]) part(B, F, UB, hull, .35, 1.5, 12.6, x, 2.6, 0);
+      part(B, F, UB, hull, 4.6, .3, 4.4, 0, 1.1, -8.3, .42); part(B, F, UB, hull, 3, 2.1, 2.2, 0, 3, 5.2); part(B, F, UB, dk, 2.6, .6, .12, 0, 3.5, 4.08); part(B, F, UC, dk, .09, 3.2, .09, 1.1, 5.6, 5.6); }
+    for (let i = 0; i < 9; i++) { const lat = rand(-60, 60), d = rand(-24, 4), x = r[0] + ox * d - oz * lat, z = r[1] + oz * d + ox * lat; if (heightAt(x, z) < 1.2) continue; const F = frameAt(x, z, rand(0, 6));
+      if (i % 3 === 0) { part(B, F, UB, col('#77794d'), 5, .16, 8, -1.6, 1.8, 0, 0, 0, .85); part(B, F, UB, col('#77794d'), 5, .16, 8, 1.6, 1.8, 0, 0, 0, -.85); part(B, F, UB, dk, 3, 1.7, 7.8, 0, .85, 0); }
+      else { part(B, F, UB, wood, 2.2, 1.4, 1.6, 0, .7, 0); part(B, F, UB, wood, 1.8, 1.2, 1.5, 2.3, .6, .3, 0, .5); if (i % 2) part(B, F, UC, steel, .55, 1.5, .55, -1.9, .75, .5); } }
+    const mesh = new T.Mesh(B.geo(), GM); world.add(mesh); LAND.extra.push(mesh); LAND.beach[team] = new V3(r[0], groundAt(r[0], r[1]) + 30, r[1]); });
+  LAND.men = new T.InstancedMesh(SOLDIER, GM, SQN * SQ); LAND.men.frustumCulled = false; _mn.scale.set(0, 0, 0); _mn.updateMatrix();
+  for (let i = 0; i < SQN * SQ; i++) { LAND.men.setMatrixAt(i, _mn.matrix); LAND.men.setColorAt(i, DEADC); } world.add(LAND.men); LAND.free = []; for (let i = SQN - 1; i >= 0; i--) LAND.free.push(i);
+}
+function landGot(list) { // the server's list of everything alive on the ground, five times a second
+  const seen = new Set();
+  for (const r of list) {
+    if (!Array.isArray(r) || r.length < 7 || !r.every(v => typeof v === 'number' && isFinite(v))) continue; seen.add(r[0]); let u = LAND.units.get(r[0]);
+    if (!u) { const kind = r[2] ? 1 : 0, team = r[1] ? 1 : 0;
+      u = { id: r[0], team, kind, x: r[3], z: r[4], tx: r[3], tz: r[4], hp: r[5], max: kind ? 220 : 60, f: 0, yaw: team ? -1.2 : 1.2, aim: new V3(r[3], groundAt(r[3], r[4]) + 2, r[4]), g: null, t: null, slot: -1, ph: rand(0, 6), shotT: rand(0, 1), dustT: 0, move: false };
+      if (kind) { const geo = LAND.geo[team]; u.g = new T.Group(); u.h = new T.Mesh(geo.h, GM); u.t = new T.Mesh(geo.t, GM); u.t.position.set(0, 2.65, -.2); u.g.add(u.h); u.g.add(u.t); world.add(u.g); }
+      else if (LAND.free.length && LAND.men) { u.slot = LAND.free.pop(); const c = col(ARMY[team ? 'de' : 'us'].inf), k = new T.Color(); for (let i = 0; i < SQ; i++) LAND.men.setColorAt(u.slot * SQ + i, k.copy(c).multiplyScalar(rand(.85, 1.12))); LAND.men.instanceColor.needsUpdate = true; }
+      LAND.units.set(u.id, u); }
+    u.tx = r[3]; u.tz = r[4]; u.hp = r[5]; u.f = r[6];
+  }
+  for (const [id, u] of LAND.units) if (!seen.has(id)) landDrop(u);
+}
+function landDrop(u) { // off the map: give the squad's place back
+  LAND.units.delete(u.id); if (u.g) world.remove(u.g);
+  if (u.slot >= 0 && LAND.men) { _mn.position.set(0, -50, 0); _mn.scale.set(0, 0, 0); _mn.updateMatrix(); for (let i = 0; i < SQ; i++) LAND.men.setMatrixAt(u.slot * SQ + i, _mn.matrix); LAND.men.instanceMatrix.needsUpdate = true; LAND.free.push(u.slot); u.slot = -1; }
+}
+function landKill(id, by) {
+  const u = LAND.units.get(id); if (!u) return; const mine = by === DUEL.id, foe = u.team !== DUEL.team;
+  if (u.kind) { // a tank burns where it stood
+    explode(u.aim, 20); u.h.material = u.t.material = BURNT; u.t.rotation.set(.14, u.t.rotation.y + .7, .24); u.t.position.y = 2.95; LAND.wrecks.push({ g: u.g, pos: u.aim.clone(), life: 50, t: 0 }); u.g = null;
+    if (LAND.wrecks.length > 8) world.remove(LAND.wrecks.shift().g);
+    if (mine) { feed('Enemy tank destroyed'); hitFlash = Math.max(hitFlash, .3); call('gtank', 'Good hit! Their armour is burning!', 12); } else if (!foe) { feed('We lost a tank'); call('gloss', 'Our men are taking a beating down there!', 40); }
+  } else { spawnFx(u.aim, 9, 'dirt'); spawnFx(u.aim, 7, 'smoke'); if (mine) { feed('Enemy squad wiped out'); hitFlash = Math.max(hitFlash, .2); } }
+  landDrop(u);
+}
+function landGun(p, dmg, r2) { // did this round find one of their units?
+  for (const u of LAND.units.values()) if (u.team !== DUEL.team && u.hp > 0 && u.aim.distanceToSquared(p) < (u.kind ? r2 * .7 : r2)) { LAND.gq.set(u.id, (LAND.gq.get(u.id) || 0) + dmg); return true; }
+  return false;
+}
+function landTick(dt) {
+  if (!LAND.on) return; let dirty = false;
+  for (const z of DUEL.zones) if (z.fm) { z.fm.color.setHex(ZCOL[z.own < 0 ? 0 : z.own === DUEL.team ? 1 : 2]); z.flag.rotation.y = Math.sin(time * 2.2 + z.pos.x) * .16; }
+  for (const u of LAND.units.values()) {
+    let dx = u.tx - u.x, dz = u.tz - u.z; const d = Math.hypot(dx, dz), sp = (u.kind ? 9 : 11) * 1.4;
+    if (d > 80) { u.x = u.tx; u.z = u.tz; } else if (d > .4) { const st = Math.min(d, sp * dt); u.x += dx / d * st; u.z += dz / d * st; }
+    u.move = d > 1.2; const tg = u.f ? LAND.units.get(u.f) : null; let want = u.yaw;
+    if (tg) want = Math.atan2(-(tg.x - u.x), -(tg.z - u.z)); else if (u.move) want = Math.atan2(-dx, -dz);
+    let dy = want - u.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); u.yaw += dy * Math.min(1, dt * (u.kind && tg ? .8 : 3));
+    const y = groundAt(u.x, u.z), near = Math.abs(u.x - P.pos.x) + Math.abs(u.z - P.pos.z) < 2600, foe = u.team !== DUEL.team; u.aim.set(u.x, y + (u.kind ? 2.2 : 1.6), u.z);
+    if (u.kind) { seat(u.g, u.x, u.z, u.yaw, 0); u.t.rotation.y = tg ? Math.atan2(-(tg.x - u.x), -(tg.z - u.z)) - u.yaw : 0;
+      if (u.move && near) { u.dustT -= dt; if (u.dustT <= 0) { u.dustT = .45; spawnFx(_g1.set(u.x + Math.sin(u.yaw) * 4, y + .6, u.z + Math.cos(u.yaw) * 4), 5, 'dirt'); } }
+    } else if (u.slot >= 0) { const n = Math.max(1, Math.ceil(u.hp / u.max * SQ)), cs = Math.cos(u.yaw), sn = Math.sin(u.yaw); dirty = true;
+      for (let i = 0; i < SQ; i++) { const f = FORM[i], px = u.x + f[0] * cs + f[1] * sn, pz = u.z - f[0] * sn + f[1] * cs, gy = groundAt(px, pz), run = u.move && !tg, dead = i >= n;
+        _mn.position.set(px, gy + (dead ? .35 : run ? Math.abs(Math.sin(u.ph + i * 1.7 + clock * 9)) * .3 : 0), pz); _mn.rotation.set(dead ? -1.45 : run ? -.28 : 0, u.yaw + (dead ? i : 0), 0); _mn.scale.set(1, !run && !dead ? .64 : 1, 1); _mn.updateMatrix(); LAND.men.setMatrixAt(u.slot * SQ + i, _mn.matrix); }
+    }
+    if (tg && near) { u.shotT -= dt; if (u.shotT <= 0) { // tracers for the squads, a shell and its burst for the tanks
+      if (u.kind) { u.shotT = rand(2.2, 3); _g1.set(u.x - Math.sin(u.yaw + u.t.rotation.y) * 6.5, y + 3.3, u.z - Math.cos(u.yaw + u.t.rotation.y) * 6.5); spawnFx(_g1, 5, 'flash'); spawnFx(_g1, 4, 'dirt'); groundShot(_g1, _g2.set(tg.x + rand(-7, 7), tg.aim.y, tg.z + rand(-7, 7)), foe, true, null); }
+      else { u.shotT = rand(.16, .4); const f = FORM[Math.random() * SQ | 0]; _g1.set(u.x + f[0], y + 1.9, u.z + f[1]); groundShot(_g1, _g2.set(tg.x + rand(-6, 6), tg.aim.y + rand(-.5, 1.5), tg.z + rand(-6, 6)), foe, false, null); } } }
+  }
+  if (dirty && LAND.men) LAND.men.instanceMatrix.needsUpdate = true;
+  for (const w of LAND.wrecks) { w.life -= dt; w.t -= dt; if (w.t <= 0 && w.life > 0) { w.t = .7; if (Math.abs(w.pos.x - P.pos.x) + Math.abs(w.pos.z - P.pos.z) < 2600) { spawnFx(_g1.copy(w.pos).setY(w.pos.y + 2), 10, 'column'); if (w.life > 30) spawnFx(_g1, 5, 'fire'); } } }
+  while (LAND.wrecks.length && LAND.wrecks[0].life <= 0) world.remove(LAND.wrecks.shift().g);
+  LAND.aaT -= dt; if (LAND.aaT <= 0) { LAND.aaT = .25; // the guns of a held strongpoint: bursts around whoever of the other side comes low
+    for (const z of DUEL.zones) { if (z.own < 0) continue; let n = 0; const puff = p => { if (n < 2 && p.y < 520 && Math.hypot(p.x - z.pos.x, p.z - z.pos.z) < 520) { n++; _e.set(p.x + rand(-40, 40), p.y + rand(-22, 22), p.z + rand(-40, 40)); spawnFx(_e, 6, 'smoke'); spawnFx(_e, 3, 'flash'); } };
+      if (P.alive && DUEL.team !== z.own) puff(P.pos); for (const q of NET.peers.values()) if (q.alive && q.team !== z.own) puff(q.pos); } }
+}
 function zonesSet(zp) { // the rings of zone control, drawn as tall faint columns
   for (const z of DUEL.zones) { world.remove(z.mesh); z.mesh.geometry.dispose(); z.mesh.material.dispose(); } DUEL.zones = [];
   if (!Array.isArray(zp)) return;
@@ -2481,19 +2595,19 @@ function duelTell(m) { if (DUEL.ws && DUEL.ws.readyState === 1) try { DUEL.ws.se
 async function duelConnect(n) {
   duelClose(); DUEL.n = n; DUEL.full = false; let tok = '';
   try { const r = await NET.sb.auth.getSession(); tok = r.data && r.data.session ? r.data.session.access_token : ''; } catch (e) {}
-  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + roomKey() + '&n=' + n + (DUEL.mode === 'zone' ? '&mode=zone' : DUEL.mode === 'ship' ? '&mode=ship' : '')); } catch (e) { DUEL.retry = 3; return; }
+  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + roomKey() + '&n=' + n + (DUEL.mode === 'df' ? '' : '&mode=' + DUEL.mode)); } catch (e) { DUEL.retry = 3; return; }
   DUEL.ws = ws; DUEL.retry = 6;
-  ws.onopen = () => { if (DUEL.ws === ws) duelTell({ t: 'hi', tok, dev: DUEL.dev || undefined, k: skyPlane(), c: [PAD.x, PAD.z - 1900] }); };
+  ws.onopen = () => { if (DUEL.ws === ws) duelTell({ t: 'hi', tok, dev: DUEL.dev || undefined, k: skyPlane(), c: DUEL.mode === 'land' ? landC() : [PAD.x, PAD.z - 1900], g: DUEL.mode === 'land' ? landBeach() : undefined }); };
   ws.onmessage = e => { if (DUEL.ws !== ws || !DUEL.on) return; let m; try { m = JSON.parse(e.data); } catch (x) { return; } if (m && typeof m === 'object') duelMsg(m); };
   ws.onclose = () => { if (DUEL.ws !== ws) return; DUEL.ws = null; if (!DUEL.on || DUEL.over) return; if (DUEL.full) duelConnect(n < 15 ? n + 1 : 0); else { DUEL.retry = 2; if (DUEL.id) warn('Connection lost. Reconnecting'); } };
 }
 function duelStart(mode) {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
-  if (mode === 'df' || mode === 'zone' || mode === 'ship') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship';
+  if (mode === 'df' || mode === 'zone' || mode === 'ship' || mode === 'land') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship', land = DUEL.mode === 'land';
   const i = duelIdx(); if (i < 0) return; DUEL.on = true; if (mIdx !== i) loadMission(i);
-  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship ? 420 : 300; DUEL.goal = zone ? 100 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.streak = 0; DUEL.dcam = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
-  state = 'play'; show(null); canvas.focus(); duelSpawn(); updateObjective(); warn('Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
-  radio(M.cs + (ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
+  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship || land ? 420 : 300; DUEL.goal = zone ? 100 : land ? 120 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.streak = 0; DUEL.dcam = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
+  state = 'play'; show(null); canvas.focus(); if (land) landQuiet(); duelSpawn(); updateObjective(); warn('Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
+  radio(M.cs + (land ? ', island assault. Our troops are ashore. Hit their tanks and squads and help our men take the strongpoints.' : ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
 }
 function duelDown(why, told) { // the player is out; the server brings him back
   if (!P.alive) return; P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; DUEL.respT = 8;
@@ -2505,7 +2619,7 @@ function duelHit(id, dmg) { DUEL.hitQ.set(id, (DUEL.hitQ.get(id) || 0) + dmg); }
 function duelScore(sc) { if (Array.isArray(sc) && sc.length === 2) { DUEL.us = sc[DUEL.team] | 0; DUEL.them = sc[1 - DUEL.team] | 0; } }
 function duelMsg(m) {
   if (m.t === 's') { // the server's picture of the fight, fifteen times a second
-    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; if (!DUEL.over) { duelScore(m.sc); if (Array.isArray(m.z)) zonesGot(m.z); if (Array.isArray(m.sh)) m.sh.forEach((v, i) => { const h = DUEL.ships[i]; if (h) h.hp = +v || 0; }); }
+    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; if (!DUEL.over) { duelScore(m.sc); if (Array.isArray(m.z)) zonesGot(m.z); if (Array.isArray(m.g)) landGot(m.g); if (Array.isArray(m.sh)) m.sh.forEach((v, i) => { const h = DUEL.ships[i]; if (h) h.hp = +v || 0; }); }
     for (const e of m.e) {
       if (!Array.isArray(e) || e.length < 12) continue;
       if (e[0] === DUEL.id) { kills = e[10] | 0; continue; }
@@ -2521,7 +2635,7 @@ function duelMsg(m) {
   } else if (m.t === 'in') {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
-    weatherSet(m.wx); zonesSet(m.zp); shipsSet(m.sp, m.shp); duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
+    weatherSet(m.wx); if (m.mode === 'land') landSet(m); else { zonesSet(m.zp); shipsSet(m.sp, m.shp); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
@@ -2538,6 +2652,7 @@ function duelMsg(m) {
     if (m.by === DUEL.id) { feed('Hit on the enemy carrier'); hitFlash = Math.max(hitFlash, .3); }
     if (h.team === DUEL.team) call('shiphit', 'Our carrier is under attack!', 25); else if (!h.told && h.hp < h.max * .35 && h.hp > 0) { h.told = true; call('shipburn', 'Their carrier is burning. Finish her!', 60); }
     if (h.hp <= 0) { hush(); radioQ.length = 0; radio(h.team === DUEL.team ? 'Our carrier is lost!' : 'Their carrier is going down!'); }
+  } else if (m.t === 'gk') { if (!DUEL.over) { duelScore(m.sc); landKill(m.i, m.by); }
   } else if (m.t === 'arm') { duelArm(); if (P.alive) P.hp = 100; feed('Rearmed and repaired');
   } else if (m.t === 'r') { if (!P.alive && !DUEL.over) { duelSpawn(); warn('Back in the fight', true); }
   } else if (m.t === 'end') {
@@ -2546,7 +2661,7 @@ function duelMsg(m) {
   }
 }
 function duelTick(dt) {
-  shipsTick(dt); weatherTick(dt);
+  shipsTick(dt); landTick(dt); weatherTick(dt);
   if (DUEL.over) { DUEL.over -= dt; if (DUEL.over <= 0) duelDone(); return; }
   if (!DUEL.ws || !DUEL.id) { // not in a room yet, or the line dropped
     DUEL.retry -= dt;
@@ -2558,7 +2673,7 @@ function duelTick(dt) {
 function duelDone() { // the match is over: both sides' sheets, then fly again or go home
   const tb = DUEL.tb, won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them, me = tb.find(r => r[0] === DUEL.id);
   DUEL.on = false; DUEL.over = 0; hush(); skyLeave(); state = 'menu'; reset();
-  $('du-mode').textContent = DUEL.mode === 'ship' ? 'Carrier strike' : DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
+  $('du-mode').textContent = DUEL.mode === 'land' ? 'Island assault' : DUEL.mode === 'ship' ? 'Carrier strike' : DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
   setTimeout(() => { if (NET.me && NET.sb) rpc('my_pilot').then(adopt).catch(() => {}); }, 2500); // the server's report has landed by now: pick up the pay
   [DUEL.team, 1 - DUEL.team].forEach((t, i) => {
     const ol = $(i ? 'du-b' : 'du-a'); ol.textContent = ''; $(i ? 'du-bl' : 'du-al').textContent = t ? 'Red' : 'Blue';
@@ -2570,6 +2685,8 @@ function duelDone() { // the match is over: both sides' sheets, then fly again o
 function duelSend() { // hits ride along with the position beat
   for (const [to, d] of DUEL.hitQ) duelTell({ t: 'h', to, d: Math.round(d * 10) / 10 });
   DUEL.hitQ.clear();
+  for (const [i, d] of LAND.gq) duelTell({ t: 'g', i, d: Math.round(d * 10) / 10 });
+  LAND.gq.clear();
 }
 
 /* ------------------------------------------------------------------ flow */
@@ -2631,14 +2748,14 @@ function finish() {
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
-  try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship']) $('on-' + k).textContent = '–'; }
+  try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = '–'; }
 }
 function onlineOpen() {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
   $('on-me').textContent = NET.me.name; show('s-online'); $('b-duel').focus(); onlineFill(); clearInterval(onlineT); onlineT = setInterval(() => { if ($('s-online').hidden) clearInterval(onlineT); else onlineFill(); }, 8000);
 }
 $('b-online').onclick = onlineOpen; $('b-oback').onclick = () => { fillBoard(); show('s-menu'); };
-$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
@@ -2945,7 +3062,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
