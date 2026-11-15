@@ -880,7 +880,7 @@ const SUN = new V3(0, 1, 0);
 const hemi = new T.HemisphereLight(0xffffff, 0x444444, 1); scene.add(hemi);
 const sunLight = new T.DirectionalLight(0xffffff, 2); scene.add(sunLight);
 const U = { hz: { value: new T.Color() }, zn: { value: new T.Color() }, sd: { value: SUN }, sc: { value: new T.Color() }, tm: { value: 0 }, deep: { value: new T.Color() }, shal: { value: new T.Color() },
-  fogC: { value: new T.Color() }, fogN: { value: 900 }, fogF: { value: 9500 }, hmap: { value: null } };
+  fogC: { value: new T.Color() }, fogN: { value: 900 }, fogF: { value: 9500 }, hmap: { value: null }, nz: { value: null } };
 const sky = new T.Mesh(new T.SphereGeometry(18000, 32, 20), new T.ShaderMaterial({
   side: T.BackSide, depthWrite: false, fog: false, uniforms: U,
   vertexShader: 'varying vec3 d; void main(){ d = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
@@ -896,7 +896,7 @@ scene.add(sky);
 const sea = new T.Mesh(new T.PlaneGeometry(60000, 60000), new T.ShaderMaterial({
   uniforms: U, fog: false,
   vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
-  fragmentShader: `uniform vec3 hz; uniform vec3 zn; uniform vec3 sd; uniform vec3 sc; uniform vec3 deep; uniform vec3 shal; uniform vec3 fogC; uniform float fogN; uniform float fogF; uniform float tm; uniform sampler2D hmap; varying vec3 vW;
+  fragmentShader: `uniform vec3 hz; uniform vec3 zn; uniform vec3 sd; uniform vec3 sc; uniform vec3 deep; uniform vec3 shal; uniform vec3 fogC; uniform float fogN; uniform float fogF; uniform float tm; uniform sampler2D hmap; uniform sampler2D nz; varying vec3 vW;
     vec2 wv(vec2 p, vec2 dir, float f, float a, float sp){ return dir * a * cos(dot(dir, p) * f + tm * sp); }
     void main(){
       vec2 p = vW.xz; vec3 toC = cameraPosition - vW; float dist = length(toC); vec3 v = toC / dist; float att = 1.0 / (1.0 + dist * 0.004);
@@ -906,12 +906,15 @@ const sea = new T.Mesh(new T.PlaneGeometry(60000, 60000), new T.ShaderMaterial({
       vec3 n = normalize(vec3(-g.x, 1.0, -g.y));
       vec2 uv = p / ${SPAN.toFixed(1)} + 0.5; float s = 0.0;
       if (uv.x > 0.0 && uv.x < 1.0 && uv.y > 0.0 && uv.y < 1.0) s = texture2D(hmap, uv).r;
-      vec3 base = mix(deep, shal, smoothstep(0.02, 0.5, s));
+      vec3 base = mix(deep, shal, smoothstep(0.02, 0.5, s)) * (0.86 + 0.3 * texture2D(nz, p * 0.0007 + tm * 0.0004).r);
+      float cs = smoothstep(0.5, 0.68, texture2D(nz, p * 0.00022 + tm * vec2(0.0021, 0.0013)).r); // drifting cloud shadow, the same one the land wears
       float fr = 0.03 + 0.97 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
       vec3 r = reflect(-v, n); r.y = abs(r.y);
       vec3 refl = mix(mix(hz, mix(zn, vec3(0.72, 0.9, 1.0), 0.5), smoothstep(0.0, 0.16, r.y)), zn, smoothstep(0.06, 0.7, r.y));
       vec3 c = mix(base, refl, fr * 0.85);
-      float sp = max(dot(r, sd), 0.0); c += sc * (pow(sp, 260.0) * 3.5 + pow(sp, 24.0) * 0.12);
+      float sp = max(dot(r, sd), 0.0); c *= 1.0 - 0.3 * cs; c += sc * (pow(sp, 260.0) * 3.5 + pow(sp, 24.0) * 0.12) * (1.0 - 0.85 * cs);
+      float wc = smoothstep(0.64, 0.8, texture2D(nz, q * vec2(0.021, 0.0065) + tm * vec2(0.012, 0.004)).g) * smoothstep(0.52, 0.72, texture2D(nz, q * 0.0031 - tm * vec2(0.003, 0.002)).r) * (1.0 - smoothstep(400.0, 2400.0, dist)) * (1.0 - smoothstep(0.05, 0.3, s));
+      c = mix(c, vec3(0.9) * (1.0 - 0.3 * cs), wc * 0.5); // whitecaps
       float foam = smoothstep(0.37, 0.5, s) * (0.55 + 0.45 * sin(s * 70.0 - tm * 1.6 + g.x * 9.0));
       foam += smoothstep(0.17, 0.2, abs(g.x + g.y)) * 0.0;
       c = mix(c, vec3(0.9), clamp(foam, 0.0, 1.0) * 0.75);
@@ -924,6 +927,14 @@ const sea = new T.Mesh(new T.PlaneGeometry(60000, 60000), new T.ShaderMaterial({
 sea.rotation.x = -Math.PI / 2; scene.add(sea);
 
 /* textures */
+const noiseTex = (() => { // tileable smooth noise: r = soft blobs, g = a finer grain
+  const S = 128, mk = passes => { let a = new Float32Array(S * S), b = new Float32Array(S * S); for (let i = 0; i < S * S; i++) a[i] = Math.random();
+    for (let k = 0; k < passes * 2; k++) { const dx = k % 2 ? 0 : 1, dy = 1 - dx; for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { let v = 0; for (let o = -3; o <= 3; o++) v += a[((y + o * dy + S) % S) * S + (x + o * dx + S) % S]; b[y * S + x] = v / 7; } const t = a; a = b; b = t; }
+    let lo = 1, hi = 0; for (const v of a) { if (v < lo) lo = v; if (v > hi) hi = v; } for (let i = 0; i < S * S; i++) a[i] = (a[i] - lo) / (hi - lo); return a; };
+  const r = mk(3), g = mk(1), d = new Uint8Array(S * S * 4); for (let i = 0; i < S * S; i++) { d[i * 4] = r[i] * 255; d[i * 4 + 1] = g[i] * 255; d[i * 4 + 2] = 0; d[i * 4 + 3] = 255; }
+  const t = new T.DataTexture(d, S, S, T.RGBAFormat); t.wrapS = t.wrapT = T.RepeatWrapping; t.magFilter = T.LinearFilter; t.minFilter = T.LinearMipmapLinearFilter; t.generateMipmaps = true; t.needsUpdate = true; return t;
+})();
+U.nz.value = noiseTex;
 const puffTex = canvasTex(128, (g, s) => { for (let i = 0; i < 26; i++) { const x = s / 2 + (Math.random() - .5) * s * .46, y = s / 2 + (Math.random() - .5) * s * .46, r = s * (.14 + Math.random() * .16); const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(255,255,255,.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, s, s); } });
 const glowTex = canvasTex(64, (g, s) => { const gr = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.35, 'rgba(255,220,160,.7)'); gr.addColorStop(1, 'rgba(255,160,60,0)'); g.fillStyle = gr; g.fillRect(0, 0, s, s); });
 const grainTex = canvasTex(512, (g, s) => { // ground cover: mottled patches, tufts and stones
@@ -934,6 +945,29 @@ const grainTex = canvasTex(512, (g, s) => { // ground cover: mottled patches, tu
 }, 90);
 const propTex = canvasTex(128, (g, s) => { const c = s / 2; let gr = g.createRadialGradient(c, c, 0, c, c, c); gr.addColorStop(0, 'rgba(20,20,20,.55)'); gr.addColorStop(.12, 'rgba(30,30,30,.35)'); gr.addColorStop(.8, 'rgba(40,40,40,.16)'); gr.addColorStop(.93, 'rgba(230,190,60,.2)'); gr.addColorStop(.98, 'rgba(230,190,60,.12)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, s, s); });
 
+/* the land: lit per pixel so that small relief, rock strata, wet sand and drifting cloud shadows can be drawn without more triangles */
+const TERM = new T.ShaderMaterial({ vertexColors: true, fog: false,
+  uniforms: { sd: U.sd, fogC: U.fogC, fogN: U.fogN, fogF: U.fogF, tm: U.tm, nz: U.nz, grain: { value: null }, hs: { value: hemi.color }, hg: { value: hemi.groundColor }, sl: { value: sunLight.color }, hi: { value: 1 }, si: { value: 1 } },
+  vertexShader: 'varying vec3 vW; varying vec3 vN; varying vec3 vC; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; vN = normal; vC = color; gl_Position = projectionMatrix * viewMatrix * w; }',
+  fragmentShader: `uniform vec3 sd; uniform vec3 fogC; uniform vec3 hs; uniform vec3 hg; uniform vec3 sl; uniform float fogN; uniform float fogF; uniform float tm; uniform float hi; uniform float si; uniform sampler2D grain; uniform sampler2D nz; varying vec3 vW; varying vec3 vN; varying vec3 vC;
+    void main(){
+      vec3 n0 = normalize(vN); float dist = length(cameraPosition - vW), nearK = 1.0 - smoothstep(250.0, 1500.0, dist), midK = 1.0 - smoothstep(2200.0, 6500.0, dist), land = smoothstep(0.5, 3.5, vW.y);
+      vec2 u1 = vW.xz * 0.011, u2 = vW.xz * 0.0017; const float e = 0.0117;
+      float a1 = texture2D(nz, u1).r, a2 = texture2D(nz, u2).r;
+      vec2 b = (vec2(texture2D(nz, u1 + vec2(e, 0.0)).r, texture2D(nz, u1 + vec2(0.0, e)).r) - a1) * 2.4 * nearK + (vec2(texture2D(nz, u2 + vec2(e, 0.0)).r, texture2D(nz, u2 + vec2(0.0, e)).r) - a2) * 3.4 * midK;
+      vec3 n = normalize(n0 + vec3(-b.x, 0.0, -b.y) * land); float slope = 1.0 - n0.y;
+      vec3 c = vC * mix(1.0, texture2D(grain, vW.xz / 84.4).r * 1.14, 0.3 + 0.7 * nearK) * (0.84 + 0.34 * a2 * midK + 0.16 * (a1 - 0.5) * nearK);
+      c *= mix(1.0, 0.74 + 0.56 * texture2D(nz, vec2(vW.y * 0.045, (vW.x + vW.z) * 0.0021)).r, smoothstep(0.14, 0.38, slope) * land); // strata on the steep faces
+      c = mix(c, c * vec3(0.6, 0.65, 0.7), smoothstep(1.6, -0.2, vW.y)); // wet sand at the waterline
+      float cs = smoothstep(0.5, 0.68, texture2D(nz, vW.xz * 0.00022 + tm * vec2(0.0021, 0.0013)).r);
+      c *= (mix(hg, hs, n.y * 0.5 + 0.5) * hi + sl * si * max(dot(n, sd), 0.0) * (1.0 - 0.8 * cs)) * (1.0 - 0.1 * cs);
+      c = mix(vec3(dot(c, vec3(0.3, 0.59, 0.11))), c, 1.2);
+      c = mix(c, fogC, smoothstep(fogN, fogF, dist));
+      gl_FragColor = vec4(c, 1.0);
+      #include <tonemapping_fragment>
+      #include <encodings_fragment>
+    }` });
+TERM.userData.keep = true;
 /* ------------------------------------------------------------------ world (rebuilt per mission) */
 let world = null, hmapTex = null;
 function buildTerrain(L) {
@@ -964,7 +998,7 @@ function buildTerrain(L) {
       ca.setXYZ(i, ca.getX(i) * k, ca.getY(i) * (k + (1 - k) * .12), ca.getZ(i) * (k + (1 - k) * .32));
     }
   }
-  world.add(new T.Mesh(g, new T.MeshLambertMaterial({ vertexColors: true, map: grainTex })));
+  { const tm = new T.Mesh(g, TERM); TERM.uniforms.grain.value = grainTex; tm.onBeforeRender = () => { TERM.uniforms.hi.value = hemi.intensity; TERM.uniforms.si.value = sunLight.intensity; }; world.add(tm); }
   // flora by theatre, rocks on the slopes and shores, farmsteads on the level ground
   const th = M.theatre || '', kinds = /Pacific/.test(th) ? ['palm', 'broad'] : /Medit/.test(th) ? ['cypress', 'broad'] : /Baltic/.test(th) ? ['fir', 'fir2'] : ['broad', 'fir'];
   const d = new T.Object3D(), t2 = new T.Color(), leaf = new T.Color(1, 1, 1), bark = new T.Color(1.25, .62, .36), K6 = new T.ConeGeometry(1, 1, 6, 1, true), K5 = new T.CylinderGeometry(1, 1, 1, 5, 1, true), IC = new T.IcosahedronGeometry(1, 0);
