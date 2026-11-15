@@ -142,6 +142,7 @@ export class Match extends DurableObject {
   }
 
   hurt(t, d, by) {
+    if (Date.now() < t.safe) return;
     t.hp -= d; t.hitAt = Date.now(); t.hitBy = by.id;
     if (t.bot) { if (Math.random() < .3) this.evade(t); } else if (t.conn) this.send(t.conn, { t: 'd', hp: Math.max(0, r1(t.hp)), by: by.id });
     if (t.hp <= 0) this.kill(t, by);
@@ -158,7 +159,7 @@ export class Match extends DurableObject {
 
   make(id, name, team, bot) {
     const e = { id, name, team, bot, k: 0, conn: null, alive: true, hp: bot ? BOT_HP : 100, p: [0, 0, 0], q: [0, 0, 0, 1], vel: [0, 0, 0], f: 0, kills: 0, deaths: 0,
-      resp: 0, zone: -1, hitAt: 0, hitBy: '', seen: Date.now(), pt: 0, budget: 200, fresh: true, yaw: 0, pitch: 0, roll: 0, v: 80, tgt: null, retT: 0, evT: 0, evYaw: 0, evPitch: 0, amb: 4, amr: 10, armed: true, armAt: Date.now(), role: bot && this.botN % 2 === 0 ? 'atk' : '' };
+      resp: 0, zone: -1, safe: Date.now() + 3000, hitAt: 0, hitBy: '', seen: Date.now(), pt: 0, budget: 200, fresh: true, yaw: 0, pitch: 0, roll: 0, v: 80, tgt: null, retT: 0, evT: 0, evYaw: 0, evPitch: 0, amb: 4, amr: 10, armed: true, armAt: Date.now(), role: bot && this.botN % 2 === 0 ? 'atk' : '' };
     this.place(e); this.ents.set(id, e); this.dirty = true; return e;
   }
 
@@ -233,7 +234,7 @@ export class Match extends DurableObject {
     if (now - this.toldT > 60000) this.tell();
     if (this.over) { this.over -= dt; if (this.over <= 0) this.fresh(); }
     for (const e of this.ents.values()) {
-      if (!e.alive) { e.resp -= dt; if (e.resp <= 0 && !this.over) { e.alive = true; e.hp = e.bot ? BOT_HP : 100; this.arm(e); if (e.bot) this.place(e); else if (e.conn) this.send(e.conn, { t: 'r' }); } continue; }
+      if (!e.alive) { e.resp -= dt; if (e.resp <= 0 && !this.over) { e.alive = true; e.hp = e.bot ? BOT_HP : 100; e.safe = Date.now() + 3000; this.arm(e); if (e.bot) this.place(e); else if (e.conn) this.send(e.conn, { t: 'r' }); } continue; }
       if (e.bot) this.bot(e, dt);
       else { e.budget = Math.min(260, e.budget + 170 * dt); if (now - e.hitAt > 6000 && e.hp < 100) e.hp = Math.min(100, e.hp + 7 * dt); }
     }

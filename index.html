@@ -533,6 +533,7 @@ const DICT = {
   "Hit on the enemy carrier": ["Düşman gemisine isabet", "Treffer auf dem feindlichen Träger"], "Our carrier is under attack!": ["Gemimiz saldırı altında!", "Unser Träger wird angegriffen!"], "Their carrier is going down!": ["Gemileri batıyor!", "Ihr Träger sinkt!"], "Our carrier is lost!": ["Gemimizi kaybettik!", "Unser Träger ist verloren!"], "Their carrier is burning. Finish her!": ["Gemileri yanıyor. İşini bitirin!", "Ihr Träger brennt. Gebt ihm den Rest!"],
   "Online battles 4 v 4": ["Çevrimiçi muharebeler 4'e 4", "Online-Gefechte 4 gegen 4"], "Online battles": ["Çevrimiçi muharebeler", "Online-Gefechte"], "Four against four": ["Dörde dört", "Vier gegen vier"], "Fly": ["Uç", "Fliegen"], "pilots flying now": ["pilot şu an uçuyor", "Piloten fliegen gerade"],
   "Bots fill the empty seats, so a match always starts at once. Pilots with the same squadron code fly on the same side. Every match draws its own weather.": ["Boş yerleri botlar doldurur, bu yüzden maç hemen başlar. Aynı filo kodunu girenler aynı takımda uçar. Her maçın havası ayrı seçilir.", "Bots füllen die freien Plätze, ein Match beginnt also sofort. Piloten mit demselben Staffelcode fliegen auf derselben Seite. Jedes Match bekommt sein eigenes Wetter."],
+  "Three in a row": ["Üst üste üç", "Drei in Folge"], "Double kill": ["Çifte vuruş", "Doppelabschuss"], "Five down! You are an ace today!": ["Beş uçak düştü! Bugün as pilotsun!", "Fünf unten! Heute bist du ein Ass!"], "Three in a row! Keep it up!": ["Üst üste üç! Böyle devam!", "Drei in Folge! Weiter so!"], "Two of them! Fine shooting!": ["İkisi birden! İyi atış!", "Gleich zwei! Sauber geschossen!"],
   "Team dogfight": ["Takım it dalaşı", "Team-Luftkampf"], "Blue": ["Mavi", "Blau"], "Red": ["Kırmızı", "Rot"], "Ranking points earned": ["Kazanılan sıralama puanı", "Erzielte Ranglistenpunkte"], "First side to 25 wins.": ["25 puana ilk ulaşan kazanır.", "Wer zuerst 25 hat, gewinnt."], "Team dogfight 4 v 4": ["Takım it dalaşı 4'e 4", "Team-Luftkampf 4 gegen 4"],
   "Team dogfight · you are BLUE": ["Takım it dalaşı · MAVİ takımdasın", "Team-Luftkampf · du bist BLAU"], "Team dogfight · you are RED": ["Takım it dalaşı · KIRMIZI takımdasın", "Team-Luftkampf · du bist ROT"],
   "You are on BLUE": ["MAVİ takımdasın", "Du bist bei BLAU"], "You are on RED": ["KIRMIZI takımdasın", "Du bist bei ROT"], "Back in the fight in 3": ["3 saniyede geri dönüyorsun", "In 3 Sekunden wieder dabei"], "Back in the fight": ["Yeniden havadasın", "Wieder im Kampf"],
@@ -2388,7 +2389,7 @@ function updateHud(dt) {
    server (server/src/index.js) owns the sides, the bots in the empty seats, every aircraft's health, the score
    and the clock. This side only reports where it is and what its guns found; the server decides what counts. */
 const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, botT: 0, us: 0, them: 0, goal: 25, left: 300, tb: [], hitQ: new Map(), mates: 1,
-  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [], ships: [], cine: null, cineT: 0, wx: '', rain: null, boltT: 0, flash: 0, lamps: [] };
+  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [], ships: [], cine: null, cineT: 0, dcam: '', dcamT: 0, streak: 0, killT: -99, wx: '', rain: null, boltT: 0, flash: 0, lamps: [] };
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
   const side = DUEL.team ? 1 : -1; P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
@@ -2454,6 +2455,12 @@ function shipsTick(dt) { // smoke, fire, flak bursts and the long way down
   }
 }
 function shipCam(dt) { // the last shot of the match: a slow turn around the sinking carrier
+  if (DUEL.on && !DUEL.cine && !P.alive && DUEL.dcam) { // shot down: watch whoever did it until we are back
+    DUEL.dcamT += dt; const q = NET.peers.get(DUEL.dcam), sh = /^ship/.test(DUEL.dcam) && DUEL.ships[+DUEL.dcam.slice(4)];
+    if (q && q.alive) { _a.set(0, 0, -1).applyQuaternion(q.mesh.quaternion); const a = DUEL.dcamT * .5; camera.position.set(q.pos.x - _a.x * 24 + Math.sin(a) * 9, q.pos.y + 6.5, q.pos.z - _a.z * 24 + Math.cos(a) * 9); camera.lookAt(q.pos); }
+    else if (sh) { const a = DUEL.dcamT * .3; camera.position.set(sh.pos.x + Math.sin(a) * 260, 70, sh.pos.z + Math.cos(a) * 260); camera.lookAt(sh.aim); }
+    return;
+  }
   const h = DUEL.cine; if (!h || !DUEL.on) return; DUEL.cineT += dt; const a = DUEL.cineT * .16 + (h.team ? 2 : .6), r = 330 - Math.min(90, DUEL.cineT * 9);
   camera.position.set(h.pos.x + Math.sin(a) * r, 46 + DUEL.cineT * 2.5, h.pos.z + Math.cos(a) * r); camera.lookAt(_a.set(h.pos.x, 12, h.pos.z));
 }
@@ -2484,14 +2491,14 @@ function duelStart(mode) {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
   if (mode === 'df' || mode === 'zone' || mode === 'ship') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship';
   const i = duelIdx(); if (i < 0) return; DUEL.on = true; if (mIdx !== i) loadMission(i);
-  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship ? 420 : 300; DUEL.goal = zone ? 100 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
+  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship ? 420 : 300; DUEL.goal = zone ? 100 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.streak = 0; DUEL.dcam = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
   state = 'play'; show(null); canvas.focus(); duelSpawn(); updateObjective(); warn('Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
   radio(M.cs + (ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
 }
 function duelDown(why, told) { // the player is out; the server brings him back
   if (!P.alive) return; P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; DUEL.respT = 8;
   for (const c of ['pull', 'six', 'stall']) $(c).classList.remove('on');
-  const by = time - DUEL.lastByT < 6 ? DUEL.lastBy : ''; const q = by && NET.peers.get(by); feed(q ? 'Shot down by ' + q.name : 'Aircraft lost'); warn('Back in the fight in 3');
+  const by = time - DUEL.lastByT < 6 ? DUEL.lastBy : ''; const q = by && NET.peers.get(by); feed(q ? 'Shot down by ' + q.name : 'Aircraft lost'); warn('Back in the fight in 3'); DUEL.dcam = by; DUEL.dcamT = 0; DUEL.streak = 0;
   if (!told) duelTell({ t: 'x' }); DUEL.lastBy = '';
 }
 function duelHit(id, dmg) { DUEL.hitQ.set(id, (DUEL.hitQ.get(id) || 0) + dmg); }
@@ -2524,7 +2531,8 @@ function duelMsg(m) {
     if (DUEL.over) return; duelScore(m.sc); updateObjective();
     if (m.i === DUEL.id) return duelDown('', true);
     const q = NET.peers.get(m.i), r = DUEL.ro.get(m.i); if (q) { explode(q.pos, 26); q.alive = false; q.mesh.visible = false; } if (!r) return;
-    if (m.by === DUEL.id) { feed('You shot down ' + r.name); callT = 0; call('kill', 'Good kill!', 2); } else feed(r.name + (r.team === DUEL.team ? ' is down' : ' shot down'));
+    if (m.by === DUEL.id) { feed('You shot down ' + r.name); DUEL.streak++; const quick = time - DUEL.killT < 7; DUEL.killT = time; callT = 0;
+      if (DUEL.streak === 5) { warn('Ace', true); call('ace', 'Five down! You are an ace today!', 1); } else if (DUEL.streak === 3) { warn('Three in a row', true); call('tri', 'Three in a row! Keep it up!', 1); } else if (quick && DUEL.streak > 1) { warn('Double kill', true); call('dbl', 'Two of them! Fine shooting!', 1); } else call('kill', 'Good kill!', 2); } else feed(r.name + (r.team === DUEL.team ? ' is down' : ' shot down'));
   } else if (m.t === 'sh') { // a bomb or rocket on one of the carriers
     const h = DUEL.ships[m.s ? 1 : 0]; if (!h || DUEL.over) return; h.hp = +m.hp || 0; shipSpot(h, _e); explode(_e, m.k ? 16 : 34); if (_e.distanceTo(P.pos) < 400) shake = Math.max(shake, .5);
     if (m.by === DUEL.id) { feed('Hit on the enemy carrier'); hitFlash = Math.max(hitFlash, .3); }
