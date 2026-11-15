@@ -1378,20 +1378,51 @@ function spawnBullet(pos, dir, speed, friendly, dmg, life, flak, size, wing) {
     b.m.material = friendly ? b.mf : b.me; b.m.position.copy(pos); b.m.lookAt(_d.copy(pos).add(dir)); b.m.visible = true; b.m.scale.setScalar(size || (flak ? .7 : 1.05)); return;
   }
 }
-// kind: [colour, seconds, rise, opacity, additive, growth]
-const FX = { flash: ['#ffb060', .42, 0, 1, 1, 1], fire: ['#ff8a3a', .9, 6, .9, 1, 1.4], smoke: ['#2c2825', 2.6, 13, .7, 0, 1.9], flak: ['#141312', 2.2, 3, .85, 0, 1.3], trail: ['#3a3532', 1.3, 5, .55, 0, 1.8], rtrail: ['#d8d4cc', 1.1, 2, .5, 0, 2.2], splash: ['#f2f7f7', .8, 14, .85, 0, 1.6], dirt: ['#6a5843', 1.2, 8, .8, 0, 1.6], column: ['#1d1b1a', 6, 15, .62, 0, 2.7, 6] };
-for (const k in FX) FX[k][0] = col(FX[k][0]);
-const fx = [];
-for (let i = 0; i < 400; i++) { const s = new T.Sprite(new T.SpriteMaterial({ map: puffTex, transparent: true, depthWrite: false })); s.visible = false; scene.add(s); fx.push({ m: s, t: 0, dur: 0, size: 1, rise: 0, op: 1, grow: 1, wind: 0 }); }
-function spawnFx(pos, size, kind) {
-  const k = FX[kind];
-  for (const f of fx) if (f.t >= f.dur) {
-    f.t = 0; f.dur = k[1]; f.size = size; f.rise = k[2]; f.op = k[3]; f.grow = k[5]; f.wind = k[6] || 0;
-    const m = f.m.material; m.color.copy(k[0]); m.map = k[4] ? glowTex : puffTex; m.blending = k[4] ? T.AdditiveBlending : T.NormalBlending; m.rotation = rand(0, 6); m.opacity = k[3];
-    f.m.position.copy(pos); f.m.scale.setScalar(size * .8); f.m.visible = true; return;
-  }
+// one instanced, depth-sorted draw call for every puff, flame and spark. c -> e colour over the life, d seconds, r rise, o opacity,
+// a additive (2 = a fireball that cools into smoke), g growth, w wind, dr drag, gv gravity, glow = a soft dot instead of a billow
+const FX = { flash: { c: '#ffd890', e: '#ff8a30', d: .3, o: .9, a: 1, g: 1.1, glow: 1 }, fire: { c: '#ffb040', e: '#d83a08', d: .9, r: 6, o: .95, a: .75, g: 1.4 },
+  ball: { c: '#ff9a28', e: '#231f1d', d: 2.6, r: 5, o: .97, a: 2, g: 1.05, dr: 2.6 }, smoke: { c: '#3b3632', e: '#1c1a19', d: 3.2, r: 12, o: .75, g: 1.9, dr: 1.6 },
+  flak: { c: '#141312', e: '#2a2826', d: 2.4, r: 3, o: .85, g: 1.3, dr: 2 }, trail: { c: '#2c2826', e: '#4a4541', d: 1.5, r: 5, o: .55, g: 1.8 }, rtrail: { c: '#e2ded6', e: '#b8b4ac', d: 1.1, r: 2, o: .5, g: 2.2 },
+  splash: { c: '#f4f8f8', e: '#cfe0e2', d: 1.9, r: 0, o: .92, g: 1.3, dr: 1.1, gv: 17 }, mist: { c: '#eef4f4', d: 1.6, r: 1, o: .4, g: 2.4, dr: 2.2 },
+  dirt: { c: '#6a5843', e: '#8b7b66', d: 1.3, r: 6, o: .8, g: 1.6, dr: 1.5, gv: 9 }, dust: { c: '#7f6e5a', e: '#9a8b78', d: 1.6, r: 2, o: .38, g: 2.3, dr: 2.4 },
+  column: { c: '#1d1b1a', e: '#4c4744', d: 6, r: 15, o: .62, g: 2.7, w: 6 }, spark: { c: '#fff2c4', e: '#ff5a12', d: 1.1, o: 1, a: 1, g: 0, dr: .7, gv: 55, glow: 1 }, chunk: { c: '#171412', d: 1.6, o: 1, g: 0, dr: .35, gv: 70, hard: 1 } };
+for (const k in FX) { const K = FX[k]; K.c = col(K.c); K.e = K.e ? col(K.e) : K.c; for (const q of ['r', 'a', 'w', 'dr', 'gv']) K[q] = K[q] || 0; }
+const FXN = 1500, fxP = new Float32Array(FXN * 3), fxV = new Float32Array(FXN * 3), fxT = new Float32Array(FXN), fxD = new Float32Array(FXN), fxS = new Float32Array(FXN), fxR = new Float32Array(FXN * 3), fxK = new Array(FXN), fxO = new Uint16Array(FXN), fxZ = new Float32Array(FXN);
+let fxH = 0;
+const fxGeo = new T.InstancedBufferGeometry(); fxGeo.setAttribute('position', new T.Float32BufferAttribute([-.5, -.5, 0, .5, -.5, 0, .5, .5, 0, -.5, .5, 0], 3)); fxGeo.setAttribute('uv', new T.Float32BufferAttribute([0, 0, 1, 0, 1, 1, 0, 1], 2)); fxGeo.setIndex([0, 1, 2, 0, 2, 3]);
+const fxAP = new T.InstancedBufferAttribute(new Float32Array(FXN * 4), 4), fxAC = new T.InstancedBufferAttribute(new Float32Array(FXN * 4), 4), fxAM = new T.InstancedBufferAttribute(new Float32Array(FXN * 4), 4);
+for (const a of [fxAP, fxAC, fxAM]) a.setUsage(T.DynamicDrawUsage); fxGeo.setAttribute('aP', fxAP); fxGeo.setAttribute('aC', fxAC); fxGeo.setAttribute('aM', fxAM); fxGeo.instanceCount = 0;
+const FXM = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.CustomBlending, blendSrc: T.OneFactor, blendDst: T.OneMinusSrcAlphaFactor, uniforms: { nz: U.nz, fogC: U.fogC, fogN: U.fogN, fogF: U.fogF, sc: U.sc, lit: { value: 1 } },
+  vertexShader: 'attribute vec4 aP; attribute vec4 aC; attribute vec4 aM; uniform float fogN; uniform float fogF; varying vec2 vUv; varying vec4 vC; varying vec4 vM; varying vec2 vF; void main() { vUv = uv; vC = aC; vM = aM; vec4 mv = viewMatrix * vec4(aP.xyz, 1.0); float c = cos(aM.x), s = sin(aM.x); vec2 q = vec2(position.x * c - position.y * s, position.x * s + position.y * c); vF = vec2(smoothstep(fogN, fogF, -mv.z), q.y + .5); mv.xy += q * aP.w; gl_Position = projectionMatrix * mv; }',
+  fragmentShader: 'uniform sampler2D nz; uniform vec3 fogC; uniform vec3 sc; uniform float lit; varying vec2 vUv; varying vec4 vC; varying vec4 vM; varying vec2 vF; void main() { float r = length(vUv - .5) * 2.; if (r > 1.) discard; float add = vM.y, a; vec3 c; '
+    + 'if (vM.z < 0.) { a = (1. - r) * (1. - r); c = vC.rgb + (1. - r) * (1. - r) * (1. - r) * .7; } else { float n = texture2D(nz, vUv * .5 + vM.w).r * .62 + texture2D(nz, vUv * 1.6 + vM.w * 3.1).g * .38; '
+    + 'a = smoothstep(1., .5, r + (n - .5) * .9) * smoothstep(vM.z - .06, vM.z + .14, n + (1. - r) * .3); vec3 cs = (vC.rgb * (.55 + .6 * vF.y) * (.72 + .56 * n) + sc * .07 * vF.y) * lit, ch = vC.rgb * (.5 + 1.1 * n) + vec3(1., .8, .45) * (1. - r) * (1. - r) * .5; c = mix(cs, ch, add); } '
+    + 'c = mix(c, fogC, vF.x * (1. - add)); a *= vC.a * (1. - vF.x * add * .8); gl_FragColor = vec4(c, 1.); \n#include <encodings_fragment>\n gl_FragColor = vec4(gl_FragColor.rgb * a, a * (1. - add)); }' });
+const fxMesh = new T.Mesh(fxGeo, FXM); fxMesh.frustumCulled = false; fxMesh.renderOrder = 5; scene.add(fxMesh);
+fxMesh.onBeforeRender = () => { FXM.uniforms.lit.value = clamp(.25 + hemi.intensity * .5 + sunLight.intensity * .35, .3, 1.1); };
+function puff(x, y, z, size, kind, vx, vy, vz) {
+  const K = FX[kind]; let i = fxH, n = FXN; while (n-- && fxT[i] < fxD[i]) i = (i + 1) % FXN; if (n < 0) return; fxH = (i + 1) % FXN;
+  fxT[i] = 0; fxD[i] = K.d * rand(.85, 1.15); fxS[i] = size; fxK[i] = K; fxP[i * 3] = x; fxP[i * 3 + 1] = y; fxP[i * 3 + 2] = z; fxV[i * 3] = vx || 0; fxV[i * 3 + 1] = vy || 0; fxV[i * 3 + 2] = vz || 0;
+  fxR[i * 3] = rand(0, 6.28); fxR[i * 3 + 1] = K.glow ? 0 : rand(-.5, .5); fxR[i * 3 + 2] = rand(0, 1);
 }
-function explode(pos, size) { spawnFx(pos, size * 1.3, 'flash'); spawnFx(pos, size, 'fire'); spawnFx(_e.copy(pos).setY(pos.y + size * .3), size * 1.3, 'smoke'); spawnFx(_e.set(pos.x + rand(-1, 1) * size * .4, pos.y, pos.z + rand(-1, 1) * size * .4), size, 'smoke'); sfxBoom(size, pos); }
+function spawnFx(pos, size, kind) {
+  if (kind === 'splash' && size > 11) { // a column of water that climbs and falls back, with spray round its foot
+    const n = lite() ? 3 : 5, s = size * .55; for (let i = 0; i < n; i++) puff(pos.x + rand(-1, 1) * s * .12, Math.max(.5, pos.y) + i * s * .1, pos.z + rand(-1, 1) * s * .12, s * rand(.42, .6) * (1 - i * .06), 'splash', rand(-1, 1) * s * .1, s * (1.1 + i * .5), rand(-1, 1) * s * .1);
+    for (let i = 0; i < n + 2; i++) { const a = i / (n + 2) * 6.28 + rand(0, .6); puff(pos.x, 1, pos.z, s * .2, 'mist', Math.cos(a) * s * 1.1, s * .12, Math.sin(a) * s * 1.1); } return;
+  }
+  puff(pos.x, pos.y, pos.z, size, kind);
+}
+function explode(pos, size) {
+  const m = lite() ? .5 : 1, s = size, gy = heightAt(pos.x, pos.z), low = pos.y - Math.max(0, gy) < s * .5, x = pos.x, y = pos.y, z = pos.z;
+  const dir = up => { const a = rand(0, 6.28), e = low ? rand(.1, 1.5) : rand(-1.5, 1.5), c = Math.cos(e); return _e.set(Math.cos(a) * c, Math.sin(e) + up, Math.sin(a) * c); };
+  puff(x, y, z, s * 1.7, 'flash'); puff(x, y, z, s * .9, 'fire');
+  for (let i = Math.round(5 * m); i--;) { const d = dir(.2), v = s * rand(.7, 1.5); puff(x + d.x * s * .2, y + d.y * s * .2, z + d.z * s * .2, s * rand(.38, .6), 'ball', d.x * v, d.y * v, d.z * v); }
+  for (let i = Math.round(4 * m); i--;) { const d = dir(.5), v = s * rand(.3, .7); puff(x + d.x * s * .3, y + s * .25, z + d.z * s * .3, s * rand(.45, .7), 'smoke', d.x * v, d.y * v, d.z * v); }
+  for (let i = Math.round(12 * m); i--;) { const d = dir(.4), v = s * rand(1.6, 4.2); puff(x, y, z, s * rand(.05, .1), 'spark', d.x * v, d.y * v, d.z * v); }
+  for (let i = Math.round(6 * m); i--;) { const d = dir(.6), v = s * rand(1.2, 2.6); puff(x, y, z, s * rand(.04, .09), 'chunk', d.x * v, d.y * v, d.z * v); }
+  if (low && gy > 0) for (let i = Math.round(9 * m), n = i; i--;) { const a = i / n * 6.28 + rand(0, .5), v = s * rand(1.3, 1.9); puff(x, gy + s * .06, z, s * .2, 'dust', Math.cos(a) * v, s * .06, Math.sin(a) * v); }
+  sfxBoom(size, pos);
+}
 const ord = []; // rockets and bombs in flight
 (function () {
   const steel = std('#4d5154', .5, .6), olive = std('#4a5236', .7, .2);
@@ -1910,7 +1941,7 @@ function loadMission(i) {
 function reset() {
   for (const e of enemies) world.remove(e.mesh); enemies = [];
   for (const b of bullets) { b.on = false; b.m.visible = false; }
-  for (const f of fx) { f.t = f.dur = 0; f.m.visible = false; }
+  fxT.fill(0); fxD.fill(0); fxGeo.instanceCount = 0;
   for (const o of ord) { o.on = false; o.g.visible = false; }
   for (const o of objs) { o.hp = o.hp0; o.alive = true; o.top.visible = true; o.top.rotation.set(0, 0, 0); o.top.scale.set(1, 1, 1); o.top.position.set(0, 0, 0); o.group.position.y = o.pos.y; o.group.rotation.z = 0; o.group.visible = true; o.fireCd = 2; o.sink = 0; o.boomT = 0; }
   P.told = false; P.told0 = false; P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.rkt = M.rockets; P.bombs = M.bombs; P.stall = false; P.g = 0; P.ordCd = 0;
@@ -2347,11 +2378,23 @@ function updateBullets(dt) {
   }
 }
 function updateFx(dt) {
-  for (const f of fx) {
-    if (f.t >= f.dur) continue; f.t += dt; const k = f.t / f.dur;
-    if (k >= 1) { f.m.visible = false; continue; }
-    f.m.scale.setScalar(f.size * 2.2 * (.36 + k * f.grow)); f.m.position.y += f.rise * dt; if (f.wind) f.m.position.x += f.wind * k * 2 * dt; f.m.material.opacity = f.op * (1 - k) * (k < .08 ? k / .08 : 1);
+  const cm = camera.matrixWorld.elements, cx = camera.position.x, cy = camera.position.y, cz = camera.position.z; let n = 0;
+  for (let i = 0; i < FXN; i++) {
+    if (fxT[i] >= fxD[i]) continue; fxT[i] += dt; const k = fxT[i] / fxD[i]; if (k >= 1) continue;
+    const K = fxK[i], j = i * 3, f = K.dr ? Math.exp(-K.dr * dt) : 1; fxV[j] *= f; fxV[j + 1] = fxV[j + 1] * f - K.gv * dt; fxV[j + 2] *= f;
+    fxP[j] += (fxV[j] + K.w * k * 2) * dt; fxP[j + 1] += (fxV[j + 1] + K.r) * dt; fxP[j + 2] += fxV[j + 2] * dt; fxR[j] += fxR[j + 1] * dt;
+    if (K.gv && fxP[j + 1] < 0) { fxT[i] = fxD[i]; continue; }
+    fxZ[i] = (fxP[j] - cx) * cm[8] + (fxP[j + 1] - cy) * cm[9] + (fxP[j + 2] - cz) * cm[10]; fxO[n++] = i;
   }
+  fxO.subarray(0, n).sort((a, b) => fxZ[a] - fxZ[b]); // farthest first
+  const P = fxAP.array, C = fxAC.array, M = fxAM.array;
+  for (let q = 0; q < n; q++) {
+    const i = fxO[q], j = i * 3, o = q * 4, K = fxK[i], k = fxT[i] / fxD[i], e = 1 - (1 - k) * (1 - k), a = K.a === 2 ? .7 * (1 - clamp((k - .14) / .36, 0, 1)) : K.a, kc = K.a === 2 ? clamp((k - .1) * 2.4, 0, 1) : k;
+    P[o] = fxP[j]; P[o + 1] = fxP[j + 1]; P[o + 2] = fxP[j + 2]; P[o + 3] = fxS[i] * 2.2 * (.36 + e * K.g);
+    C[o] = K.c.r + (K.e.r - K.c.r) * kc; C[o + 1] = K.c.g + (K.e.g - K.c.g) * kc; C[o + 2] = K.c.b + (K.e.b - K.c.b) * kc; C[o + 3] = K.o * (K.glow || K.hard ? 1 - k * k * k : (1 - k) * (k < .06 ? k / .06 : 1));
+    M[o] = fxR[j]; M[o + 1] = a; M[o + 2] = K.glow ? -1 : K.hard ? 0 : k * .8; M[o + 3] = fxR[j + 2];
+  }
+  fxGeo.instanceCount = n; fxAP.needsUpdate = fxAC.needsUpdate = fxAM.needsUpdate = true;
 }
 
 /* ------------------------------------------------------------------ camera */
