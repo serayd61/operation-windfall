@@ -6,9 +6,17 @@ compatibility_date = "2026-06-01"
 name = "MATCH"
 class_name = "Match"
 
+[[durable_objects.bindings]]
+name = "LOBBY"
+class_name = "Lobby"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["Match"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["Lobby"]
 
 [vars]
 SUPABASE_URL = "https://cefpfihmzyqxrskltylk.supabase.co"

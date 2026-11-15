@@ -18,6 +18,7 @@ const r1 = v => Math.round(v * 10) / 10, r3 = v => Math.round(v * 1000) / 1000;
 export default {
   async fetch(req, env) {
     const u = new URL(req.url);
+    if (u.pathname === '/stats') return env.LOBBY.get(env.LOBBY.idFromName('lobby')).fetch('https://lobby/stats');
     if (u.pathname !== '/ws') return new Response('windfall-match ok', { headers: { 'content-type': 'text/plain' } });
     if (req.headers.get('Upgrade') !== 'websocket') return new Response('expected websocket', { status: 426 });
     const room = (u.searchParams.get('room') || 'open').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 24) || 'open';
@@ -27,15 +28,32 @@ export default {
   },
 };
 
+/* how many pilots are flying each mode right now: every room reports its head count here */
+export class Lobby extends DurableObject {
+  constructor(ctx, env) { super(ctx, env); this.rooms = new Map(); }
+  async fetch(req) {
+    const now = Date.now();
+    if (req.method === 'POST') { try { const m = await req.json(); if (m.n > 0) this.rooms.set(String(m.key), { mode: m.mode, n: m.n | 0, t: now }); else this.rooms.delete(String(m.key)); } catch (e) {} return new Response('ok'); }
+    const out = { df: 0, zone: 0, ship: 0 }; for (const [k, r] of this.rooms) { if (now - r.t > 150000) this.rooms.delete(k); else if (r.mode in out) out[r.mode] += r.n; }
+    return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'cache-control': 'max-age=5' } });
+  }
+}
+
 export class Match extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
     this.conns = new Set(); this.ents = new Map(); this.timer = null; this.c = null;
     this.sc = [0, 0]; this.start = 0; this.over = 0; this.last = 0; this.botN = 0; this.dirty = false; this.open = true; this.mode = 'df'; this.scf = [0, 0]; this.zs = ZONES.map(() => ({ v: 0, own: -1 })); this.ships = [SHIP_HP, SHIP_HP];
-    this.guns = [{ id: 'ship0', team: 0, kills: 0 }, { id: 'ship1', team: 1, kills: 0 }];
+    this.guns = [{ id: 'ship0', team: 0, kills: 0 }, { id: 'ship1', team: 1, kills: 0 }]; this.key = ''; this.toldT = 0;
+  }
+
+  tell() { // the head count for the lobby
+    this.toldT = Date.now(); if (!this.key) return;
+    this.ctx.waitUntil(this.env.LOBBY.get(this.env.LOBBY.idFromName('lobby')).fetch('https://lobby/set', { method: 'POST', body: JSON.stringify({ key: this.key, mode: this.mode, n: this.humans() }) }).catch(() => {}));
   }
 
   async fetch(req) {
+    try { const u = new URL(req.url); this.key = (u.searchParams.get('room') || 'open') + '#' + (u.searchParams.get('mode') || 'df') + '#' + (u.searchParams.get('n') || 0); } catch (e) {}
     try { this.open = (new URL(req.url).searchParams.get('room') || 'open').toLowerCase().replace(/[^a-z0-9]/g, '') in { open: 1, '': 1 }; if (!this.humans()) { const q = new URL(req.url).searchParams.get('mode'); this.mode = q === 'zone' || q === 'ship' ? q : 'df'; } } catch (e) {}
     const pair = new WebSocketPair(), ws = pair[1]; ws.accept();
     const conn = { ws, ent: null, busy: false, at: Date.now() }; this.conns.add(conn);
@@ -51,7 +69,7 @@ export class Match extends DurableObject {
 
   drop(conn) {
     if (!this.conns.delete(conn)) return; try { conn.ws.close(1000, 'bye'); } catch (e) {}
-    if (conn.ent && conn.ent.conn === conn) { this.ents.delete(conn.ent.id); this.fill(); }
+    if (conn.ent && conn.ent.conn === conn) { this.ents.delete(conn.ent.id); this.fill(); this.tell(); }
     if (!this.conns.size) this.shut();
   }
   shut() { clearInterval(this.timer); this.timer = null; this.ents.clear(); this.zero(); this.sc = [0, 0]; this.start = 0; this.over = 0; this.c = null; }
@@ -93,7 +111,7 @@ export class Match extends DurableObject {
       const ent = this.make(p.id, String(p.name || 'Pilot').replace(/[<>&]/g, '').slice(0, 16), team, false);
       ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
       if (!this.start) { this.start = Date.now(); this.sc = [0, 0]; this.zero(); this.over = 0; }
-      this.fill();
+      this.fill(); this.tell();
       this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, wx: this.wx, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : undefined, left: this.left(), sc: this.sc, c: this.c });
       return;
     }
@@ -212,6 +230,7 @@ export class Match extends DurableObject {
     const now = Date.now(), dt = clamp((now - this.last) / 1000, .001, .25); this.last = now;
     for (const c of this.conns) { if (c.ent ? now - c.ent.seen > 10000 : now - c.at > 12000) this.drop(c); }
     if (!this.humans()) return;
+    if (now - this.toldT > 60000) this.tell();
     if (this.over) { this.over -= dt; if (this.over <= 0) this.fresh(); }
     for (const e of this.ents.values()) {
       if (!e.alive) { e.resp -= dt; if (e.resp <= 0 && !this.over) { e.alive = true; e.hp = e.bot ? BOT_HP : 100; this.arm(e); if (e.bot) this.place(e); else if (e.conn) this.send(e.conn, { t: 'r' }); } continue; }

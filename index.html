@@ -234,6 +234,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .pilots div { display: flex; justify-content: space-between; gap: 12px; } .pilots div.me { color: var(--go); } #obj-t[data-tail]::after { content: attr(data-tail); }
     .daily { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1.5px solid var(--type); } .daily li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 2px; border-bottom: 1px solid rgba(41, 40, 31, .3); font: 700 14px/1.2 var(--f-hud); letter-spacing: .06em; }
     .daily li em { font-style: normal; color: var(--type-dim); font-variant-numeric: tabular-nums; } .daily li button { padding: 7px 10px 5px; min-width: 96px; } .daily li.got { color: var(--type-dim); } .daily li.got span:first-child { text-decoration: line-through; }
+    .modes { display: grid; gap: 12px; margin: 6px 0 16px; } .mode { border: 1.5px solid var(--type); padding: 12px 14px 12px; display: grid; gap: 6px; } .mode h2 { margin: 0; font: 700 20px/1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .mode .note { margin: 0; }
+    .mode-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; } .mode-n { font: 700 12px/1.2 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; color: var(--type-dim); } .mode-n b { color: var(--type); font-size: 16px; }
     .du-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; margin: 10px 0 16px; } .du-cols .rank li.bot b { font-weight: 400; } @media (max-width: 620px) { .du-cols { grid-template-columns: 1fr; } }
     .pilots div.foe { color: #ff8a70; } .pilots span { font-variant-numeric: tabular-nums; }
 .touch .pilots { top: calc(204px + var(--sat)); }
@@ -334,10 +336,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="ghost" id="b-invite" type="button">Copy invite link</button></div>
         <input id="n-link" class="link" type="text" readonly hidden aria-label="Invite link">
         <p class="note" id="n-lobby" hidden></p>
-        <div class="comp-row"><button class="ghost" id="b-duel" type="button">Team dogfight 4 v 4</button><button class="ghost" id="b-zone" type="button">Zone control 4 v 4</button><button class="ghost" id="b-ship" type="button">Carrier strike 4 v 4</button></div>
-        <p class="note">Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking and pay requisition points.</p>
-        <p class="note">Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.</p>
-        <p class="note">Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.</p>
+        <div class="comp-row"><button class="go" id="b-online" type="button">Online battles 4 v 4</button></div>
         <p class="note">Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.</p>
       </div>
       <div class="lab2">Language</div>
@@ -416,6 +415,19 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div><span class="lab">Best time</span><b id="st-best">–</b></div>
       </div>
       <div class="row"><button class="go" id="b-again" type="button">Fly again</button><button class="ghost" id="b-retry" type="button">Fly it again</button><button class="ghost" id="b-board2" type="button">Sortie board</button></div>
+    </div>
+  </div>
+  <div class="screen" id="s-online" hidden>
+    <div class="sheet">
+      <div class="sheet-head"><span>Online battles</span><span id="on-me" data-raw></span></div>
+      <h1>Four against four</h1>
+      <p class="lede" style="font-size:13px">Bots fill the empty seats, so a match always starts at once. Pilots with the same squadron code fly on the same side. Every match draws its own weather.</p>
+      <div class="modes">
+        <div class="mode"><h2>Team dogfight</h2><p class="note">Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking and pay requisition points.</p><div class="mode-foot"><span class="mode-n"><b id="on-df" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-duel" type="button">Fly</button></div></div>
+        <div class="mode"><h2>Zone control</h2><p class="note">Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.</p><div class="mode-foot"><span class="mode-n"><b id="on-zone" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-zone" type="button">Fly</button></div></div>
+        <div class="mode"><h2>Carrier strike</h2><p class="note">Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.</p><div class="mode-foot"><span class="mode-n"><b id="on-ship" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-ship" type="button">Fly</button></div></div>
+      </div>
+      <div class="row"><button class="ghost" id="b-oback" type="button">Back</button></div>
     </div>
   </div>
   <div class="screen" id="s-duel" hidden>
@@ -519,6 +531,8 @@ const DICT = {
   "Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.": ["Gemi avı: her takımın bir uçak gemisi var. Onlar seninkini batırmadan sen onlarınkini bomba ve roketle batır. Gemiler ateş açar; yeniden silahlanmak ve onarılmak için kendi geminin üzerinden alçaktan geç.", "Trägerjagd: Jede Seite hat einen Flugzeugträger. Versenke den gegnerischen mit Bomben und Raketen, bevor sie deinen versenken. Die Träger schießen zurück; fliege tief über deinen eigenen Träger, um aufzumunitionieren und zu reparieren."],
   "carrier strike.": ["gemi avı.", "Trägerjagd."], "Sink their carrier before they sink ours.": ["Onlar bizimkini batırmadan gemilerini batırın.", "Versenkt ihren Träger, bevor sie unseren versenken."], "Bombs and rockets only.": ["Yalnızca bomba ve roket işe yarar.", "Nur Bomben und Raketen zählen."],
   "Hit on the enemy carrier": ["Düşman gemisine isabet", "Treffer auf dem feindlichen Träger"], "Our carrier is under attack!": ["Gemimiz saldırı altında!", "Unser Träger wird angegriffen!"], "Their carrier is going down!": ["Gemileri batıyor!", "Ihr Träger sinkt!"], "Our carrier is lost!": ["Gemimizi kaybettik!", "Unser Träger ist verloren!"], "Their carrier is burning. Finish her!": ["Gemileri yanıyor. İşini bitirin!", "Ihr Träger brennt. Gebt ihm den Rest!"],
+  "Online battles 4 v 4": ["Çevrimiçi muharebeler 4'e 4", "Online-Gefechte 4 gegen 4"], "Online battles": ["Çevrimiçi muharebeler", "Online-Gefechte"], "Four against four": ["Dörde dört", "Vier gegen vier"], "Fly": ["Uç", "Fliegen"], "pilots flying now": ["pilot şu an uçuyor", "Piloten fliegen gerade"],
+  "Bots fill the empty seats, so a match always starts at once. Pilots with the same squadron code fly on the same side. Every match draws its own weather.": ["Boş yerleri botlar doldurur, bu yüzden maç hemen başlar. Aynı filo kodunu girenler aynı takımda uçar. Her maçın havası ayrı seçilir.", "Bots füllen die freien Plätze, ein Match beginnt also sofort. Piloten mit demselben Staffelcode fliegen auf derselben Seite. Jedes Match bekommt sein eigenes Wetter."],
   "Team dogfight": ["Takım it dalaşı", "Team-Luftkampf"], "Blue": ["Mavi", "Blau"], "Red": ["Kırmızı", "Rot"], "Ranking points earned": ["Kazanılan sıralama puanı", "Erzielte Ranglistenpunkte"], "First side to 25 wins.": ["25 puana ilk ulaşan kazanır.", "Wer zuerst 25 hat, gewinnt."], "Team dogfight 4 v 4": ["Takım it dalaşı 4'e 4", "Team-Luftkampf 4 gegen 4"],
   "Team dogfight · you are BLUE": ["Takım it dalaşı · MAVİ takımdasın", "Team-Luftkampf · du bist BLAU"], "Team dogfight · you are RED": ["Takım it dalaşı · KIRMIZI takımdasın", "Team-Luftkampf · du bist ROT"],
   "You are on BLUE": ["MAVİ takımdasın", "Du bist bei BLAU"], "You are on RED": ["KIRMIZI takımdasın", "Du bist bei ROT"], "Back in the fight in 3": ["3 saniyede geri dönüyorsun", "In 3 Sekunden wieder dabei"], "Back in the fight": ["Yeniden havadasın", "Wieder im Kampf"],
@@ -2551,7 +2565,7 @@ function duelSend() { // hits ride along with the position beat
 }
 
 /* ------------------------------------------------------------------ flow */
-function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
+function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
@@ -2607,6 +2621,15 @@ function finish() {
   show('s-end'); $('b-again').focus();
 }
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
+let onlineT = 0;
+async function onlineFill() { // live head counts from the match server
+  try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship']) $('on-' + k).textContent = '–'; }
+}
+function onlineOpen() {
+  if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
+  $('on-me').textContent = NET.me.name; show('s-online'); $('b-duel').focus(); onlineFill(); clearInterval(onlineT); onlineT = setInterval(() => { if ($('s-online').hidden) clearInterval(onlineT); else onlineFill(); }, 8000);
+}
+$('b-online').onclick = onlineOpen; $('b-oback').onclick = () => { fillBoard(); show('s-menu'); };
 $('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
