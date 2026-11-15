@@ -859,10 +859,16 @@ function heightAt(x, z) {
   for (let i = 0; i < ISL.length; i++) {
     const s = ISL[i], dx = x - s.x, dz = z - s.z, d2 = dx * dx + dz * dz;
     if (d2 >= s.r * s.r) continue;
-    const d = Math.sqrt(d2) / s.r, t = 1 - d, sm = t * t * (3 - 2 * t);
-    const n = noise(x * .006 + s.x, z * .006 + s.z) * .6 + noise(x * .02, z * .02) * .25;
-    let v = Math.min(s.h, s.h * 1.7 * sm * (.55 + n));
-    if (s.pad) { const p = clamp((.2 - d) / .11, 0, 1); v = lerp(v, s.h, p * p * (3 - 2 * p)); }
+    const dl = Math.sqrt(d2), da = dl / s.r, d = da / (1 - .3 * noise(x * .0028 + s.x * .01, z * .0028 + s.z * .01) * Math.min(1, da * 2.2)); // bays bite into the round footprint, never past it
+    if (d >= 1) continue;
+    const t = 1 - d, sm = t * t * (3 - 2 * t);
+    const n = noise(x * .006 + s.x, z * .006 + s.z) * .6 + noise(x * .02, z * .02) * .25, rg = 1 - Math.abs(2 * noise(x * .0045 + 31, z * .0045 + s.x) - 1); // rg: ridge lines down the flanks
+    let v = s.h * 1.7 * sm * (.42 + n * .8 + 2 * rg * rg * sm * (1 - sm)); if (v > s.h) v = s.h + (v - s.h) * .22;
+    if (t < .3) { // sea cliffs on some stretches of coast; never where a landing comes ashore
+      const ck = noise(x * .0032 + 7.7, z * .0032 + s.z * .01);
+      if (ck > .5 && !(s.ux !== undefined && dx * s.ux + dz * s.uz > .45 * dl)) { const cl = Math.min(1, (ck - .5) * 5) * s.h * .22 * Math.min(1, t / .05); if (cl > v) v = cl; }
+    }
+    const da_ = da; if (s.pad) { const d = da_; const p = clamp((.2 - d) / .11, 0, 1); v = lerp(v, s.h, p * p * (3 - 2 * p)); }
     if (v > best) best = v;
   }
   if (AF) { // the airfield spit: a flat strip with dunes round it, sloping into the sea
@@ -1002,19 +1008,26 @@ function buildTerrain(L) {
   // flora by theatre, rocks on the slopes and shores, farmsteads on the level ground
   const th = M.theatre || '', kinds = /Pacific/.test(th) ? ['palm', 'broad'] : /Medit/.test(th) ? ['cypress', 'broad'] : /Baltic/.test(th) ? ['fir', 'fir2'] : ['broad', 'fir'];
   const d = new T.Object3D(), t2 = new T.Color(), leaf = new T.Color(1, 1, 1), bark = new T.Color(1.25, .62, .36), K6 = new T.ConeGeometry(1, 1, 6, 1, true), K5 = new T.CylinderGeometry(1, 1, 1, 5, 1, true), IC = new T.IcosahedronGeometry(1, 0);
-  const treeGeo = kind => { const B = new Batch();
-    if (kind === 'palm') { part(B, null, K5, bark, .32, 11, .32, .5, 5.5, 0, 0, 0, -.09); for (let i = 0; i < 6; i++) part(B, new T.Matrix4().makeRotationY(i / 6 * 6.283).setPosition(1, 10.6, 0), UP, leaf, .9, 5.6, .16, 0, 0, 2.5, Math.PI / 2 + .42); part(B, null, IC, bark, .6, .6, .6, 1, 10.9, 0); }
-    else if (kind === 'broad') { part(B, null, K5, bark, .55, 5, .55, 0, 2.5, 0); part(B, null, IC, leaf, 4.6, 3.8, 4.6, 0, 8, 0); part(B, null, IC, new T.Color(.86, .86, .86), 3.4, 2.9, 3.4, 2.2, 6.4, 1.2, .5, 1, 0); part(B, null, IC, new T.Color(1.1, 1.1, 1.1), 3, 2.6, 3, -1.6, 9.8, -1, 1, .4, 0); }
-    else if (kind === 'cypress') { part(B, null, K5, bark, .3, 2, .3, 0, 1, 0); part(B, null, K6, leaf, 1.7, 15, 1.7, 0, 9, 0); }
-    else { const w = kind === 'fir2' ? .8 : 1; part(B, null, K5, bark, .45, 4, .45, 0, 2, 0); part(B, null, K6, new T.Color(.85, .85, .85), 5 * w, 7, 5 * w, 0, 6, 0); part(B, null, K6, leaf, 3.9 * w, 6, 3.9 * w, 0, 10, 0); part(B, null, K6, new T.Color(1.12, 1.12, 1.12), 2.6 * w, 5.5, 2.6 * w, 0, 14, 0); }
+  const treeGeo = kind => { const B = new Batch(), sh = v => new T.Color(v, v, v);
+    if (kind === 'palm') { // a leaning trunk in three lengths, a crown of drooping fronds
+      part(B, null, K5, bark, .36, 4, .36, .15, 2, 0, 0, 0, -.08); part(B, null, K5, bark, .3, 4, .3, .62, 5.8, 0, 0, 0, -.16); part(B, null, K5, bark, .25, 3.6, .25, 1.35, 9.3, 0, 0, 0, -.24); part(B, null, IC, bark, .55, .5, .55, 1.8, 11.1, 0);
+      for (let i = 0; i < 9; i++) { const F = new T.Matrix4().makeRotationY(i / 9 * 6.283 + (i % 2) * .2).setPosition(1.8, 11.2, 0), c = sh(i % 3 === 0 ? .8 : i % 3 === 1 ? 1 : 1.15), up = i % 2 ? .5 : .28;
+        part(B, F, UB, c, 1.1, .08, 3.2, 0, .5 + up, 1.5, -up); part(B, F, UP, c, .75, 3.4, .1, 0, .55 + up * 1.2, 4.3, Math.PI / 2 + .55); }
+      for (const q of [[.3, 0], [-.2, .3], [0, -.3]]) part(B, null, IC, new T.Color(.5, .32, .18), .22, .25, .22, 1.8 + q[0], 10.7, q[1]); }
+    else if (kind === 'broad') { // a short bole, two boughs and a crown built from seven clumps, darker underneath
+      part(B, null, K5, bark, .6, 5, .6, 0, 2.5, 0); part(B, null, K5, bark, .28, 3.4, .28, 1.1, 5.6, .3, 0, 0, -.75); part(B, null, K5, bark, .26, 3.2, .26, -1, 5.8, -.4, .3, 0, .7);
+      for (const q of [[0, 8.2, 0, 4.2, 3.4, .95], [2.6, 7, 1.2, 3, 2.5, .8], [-2.4, 7.3, -1, 3.1, 2.6, .84], [.6, 7.2, -2.6, 2.8, 2.3, .78], [-.8, 7.5, 2.5, 2.9, 2.4, .9], [1.2, 10.4, .6, 2.9, 2.4, 1.14], [-1.4, 10.1, -.8, 2.7, 2.2, 1.08]]) part(B, null, IC, sh(q[5]), q[3], q[4], q[3], q[0], q[1], q[2], q[0], q[1], q[2]); }
+    else if (kind === 'cypress') { part(B, null, K5, bark, .3, 2, .3, 0, 1, 0); part(B, null, K6, sh(.85), 1.9, 9, 1.9, 0, 6, 0); part(B, null, K6, leaf, 1.5, 10, 1.5, 0, 10.5, 0); part(B, null, K6, sh(1.12), .9, 6, .9, 0, 15, 0); }
+    else { const w = kind === 'fir2' ? .78 : 1; part(B, null, K5, bark, .45, 5, .45, 0, 2.5, 0); // five tiers of boughs, each a little lighter than the one below
+      for (let i = 0; i < 5; i++) part(B, null, K6, sh(.74 + i * .1), (5.2 - i * .95) * w, 5.2 - i * .3, (5.2 - i * .95) * w, (i % 2 ? .12 : -.12), 5.4 + i * 2.9, (i % 2 ? -.1 : .1), 0, i * .7); }
     return B.geo(); };
-  const lt = lite(), N = Math.round(L.trees * (lt ? .6 : 1)), NR = lt ? 300 : 520, NB = lt ? 420 : 900, tc = col(L.tree), tA = new T.InstancedMesh(treeGeo(kinds[0]), GM, N), tB = new T.InstancedMesh(treeGeo(kinds[1]), GM, N); let nA = 0, nB = 0;
+  const lt = lite(), N = Math.round(L.trees * (lt ? .8 : 1.6)), NR = lt ? 300 : 520, NB = lt ? 420 : 900, tc = col(L.tree), tA = new T.InstancedMesh(treeGeo(kinds[0]), GM, N), tB = new T.InstancedMesh(treeGeo(kinds[1]), GM, N); let nA = 0, nB = 0;
   const slopeAt = (x, z) => Math.hypot(heightAt(x + 6, z) - heightAt(x - 6, z), heightAt(x, z + 6) - heightAt(x, z - 6)) / 12;
   const spot = () => { const s = ISL[Math.random() * ISL.length | 0], a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * s.r, x = s.x + Math.cos(a) * r, z = s.z + Math.sin(a) * r; return [x, z, heightAt(x, z), s, r]; };
   const putTree = (x, z, y, a) => { const low = kinds[0] === 'palm' ? y < 32 : noise(x * .004 + 3, z * .004) > .5, m = low ? tA : tB; if ((low ? nA : nB) >= N) return; d.position.set(x, y - 1, z); const sc = rand(.7, 1.4); d.scale.set(sc, sc * rand(.8, 1.3), sc); d.rotation.set(0, a, 0); d.updateMatrix(); const i = low ? nA++ : nB++; m.setMatrixAt(i, d.matrix); m.setColorAt(i, t2.copy(tc).multiplyScalar(rand(.75, 1.3))); };
-  for (let tries = 0, n = 0; tries < N * 6 && n < N; tries++) {
+  for (let tries = 0, n = 0; tries < N * 8 && n < N; tries++) {
     const [x, z, y, s, r] = spot();
-    if (y < 5 || y > 86 || (s.pad && r < s.r * .24) || noise(x * .012, z * .012) < .4 || scarAt(x, z) > rand(.06, .45)) continue;
+    if (y < 5 || y > 110 || slopeAt(x, z) > .62 || (s.pad && r < s.r * .24) || noise(x * .012, z * .012) < (tries % 5 ? .4 : .22) || scarAt(x, z) > rand(.06, .45)) continue;
     putTree(x, z, y, Math.random() * 6.283); n++;
   }
   if (AF) for (let i = 0; i < 60; i++) { const lz = rand(-AF.hl - 60, AF.hl + 60), lx = rand(72, 150) * (Math.random() > .5 ? 1 : -1), x = AF.x + lx * AF.c + lz * AF.s, z = AF.z - lx * AF.s + lz * AF.c, y = heightAt(x, z); if (y > 3) putTree(x, z, y, Math.random() * 6.283); }
@@ -1409,7 +1422,7 @@ function groundAt(x, z) { // height of the rendered terrain mesh, so that things
 function planFront() {
   SITES = []; const F = M.front; if (!F) return;
   for (const c of F.sites) {
-    const s = ISL[c.isl], ang = Math.atan2(START.x - s.x, START.z - s.z) + (c.off || 0), ux = Math.sin(ang), uz = Math.cos(ang);
+    const s = ISL[c.isl], ang = Math.atan2(START.x - s.x, START.z - s.z) + (c.off || 0), ux = Math.sin(ang), uz = Math.cos(ang); s.ux = ux; s.uz = uz;
     let dS = s.r; while (dS > s.r * .3 && heightAt(s.x + ux * dS, s.z + uz * dS) < 1.5) dS -= 4;
     const dT = Math.max(s.r * .25 + 40, dS - 250), half = clamp(s.r * .24, 110, 170), tg = M.targets.find(t => t.isl === c.isl);
     SITES.push({ c, s, ux, uz, wx: uz, wz: -ux, dS, dT, half, line: dT + 95, yaw: Math.atan2(ux, uz), cx: s.x + ux * (dS + dT) / 2, cz: s.z + uz * (dS + dT) / 2,
