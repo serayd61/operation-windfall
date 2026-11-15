@@ -982,9 +982,9 @@ function buildTerrain(L) {
   if (hmapTex) hmapTex.dispose();
   hmapTex = new T.DataTexture(data, S, S, T.LuminanceFormat); hmapTex.minFilter = hmapTex.magFilter = T.LinearFilter; hmapTex.needsUpdate = true; U.hmap.value = hmapTex;
 }
-const CLOUDM = new T.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: { map: { value: puffTex } },
+const CLOUDM = new T.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: { map: { value: puffTex }, dim: { value: new T.Color(1, 1, 1) } },
   vertexShader: 'attribute vec3 off; attribute vec3 sz; attribute vec4 tint; varying vec2 vUv; varying vec4 vTint; void main() { vUv = uv; vTint = tint; vec4 mv = modelViewMatrix * vec4(off, 1.0); vec2 p = position.xy * sz.xy; float c = cos(sz.z), s = sin(sz.z); mv.xy += vec2(p.x * c - p.y * s, p.x * s + p.y * c); gl_Position = projectionMatrix * mv; }',
-  fragmentShader: 'uniform sampler2D map; varying vec2 vUv; varying vec4 vTint; void main() { gl_FragColor = vec4(vTint.rgb, texture2D(map, vUv).a * vTint.a); \n#include <encodings_fragment>\n }' });
+  fragmentShader: 'uniform sampler2D map; uniform vec3 dim; varying vec2 vUv; varying vec4 vTint; void main() { gl_FragColor = vec4(vTint.rgb * dim, texture2D(map, vUv).a * vTint.a); \n#include <encodings_fragment>\n }' });
 let cloudMesh = null, SCEN = null, detail = 1;
 function buildClouds(C) {
   const base = col(C.c), n = Math.round(C.n * (lite() ? .6 : 1)) * 7, off = new Float32Array(n * 3), sz = new Float32Array(n * 3), tint = new Float32Array(n * 4); let i = 0;
@@ -2374,7 +2374,7 @@ function updateHud(dt) {
    server (server/src/index.js) owns the sides, the bots in the empty seats, every aircraft's health, the score
    and the clock. This side only reports where it is and what its guns found; the server decides what counts. */
 const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, botT: 0, us: 0, them: 0, goal: 25, left: 300, tb: [], hitQ: new Map(), mates: 1,
-  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [], ships: [], cine: null, cineT: 0 };
+  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [], ships: [], cine: null, cineT: 0, wx: '', rain: null, boltT: 0, flash: 0, lamps: [] };
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
   const side = DUEL.team ? 1 : -1; P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
@@ -2383,13 +2383,44 @@ function duelSpawn() { // air start on the team's side of the field, nose toward
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
 function duelArm() { P.rkt = M.rockets; P.bombs = M.bombs; P.ordCd = 0; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true); }
-function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); }
+function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); weatherSet(null); }
+/* weather for a match: the server picks it, so both sides fly through the same sky */
+const WX = {
+  dusk: { hz: '#f29a5e', zn: '#39407c', sun: [-.82, .09, -.3], sunC: '#ff9850', sunI: 2.4, hemi: ['#d2a9bd', '#4a3f44', .85], fog: [800, 8200], deep: '#141d3a', shal: '#8a5c5c', dim: '#e6a488' },
+  night: { hz: '#18233f', zn: '#04060f', sun: [.3, .52, -.5], sunC: '#a9bcec', sunI: 1.0, hemi: ['#3d4d78', '#0b0f18', .62], fog: [500, 6200], deep: '#02060f', shal: '#0d2233', dim: '#39435f' },
+  storm: { hz: '#5f686f', zn: '#2a3037', sun: [.2, .6, -.4], sunC: '#a8b1b6', sunI: .8, hemi: ['#8d979e', '#3a3f40', .95], fog: [260, 3400], deep: '#0e1c22', shal: '#2c4a4a', dim: '#6f777d' },
+};
+function weatherSet(kind) {
+  const E = WX[kind]; if (DUEL.wx === (E ? kind : '')) return; DUEL.wx = E ? kind : ''; DUEL.flash = 0; DUEL.boltT = rand(3, 7);
+  applyEnv(E || M.env); CLOUDM.uniforms.dim.value.set(E ? E.dim : '#ffffff');
+  if (DUEL.rain) { scene.remove(DUEL.rain); DUEL.rain.geometry.dispose(); DUEL.rain.material.dispose(); DUEL.rain = null; }
+  if (kind === 'storm') { // rain: short streaks in a box that travels with the camera
+    const n = MOBILE ? 420 : 900, a = new Float32Array(n * 6); for (let i = 0; i < n; i++) { const x = rand(-70, 70), y = rand(-45, 45), z = rand(-70, 70); a.set([x, y, z, x + .5, y - 3.2, z + .2], i * 6); }
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.BufferAttribute(a, 3));
+    DUEL.rain = new T.LineSegments(g, new T.LineBasicMaterial({ color: 0xcfd9e2, transparent: true, opacity: .32, fog: false, depthWrite: false })); DUEL.rain.frustumCulled = false; scene.add(DUEL.rain);
+  }
+}
+function weatherTick(dt) {
+  if (!DUEL.wx) return;
+  if (DUEL.rain) { const a = DUEL.rain.geometry.attributes.position, v = a.array, d = 95 * dt; for (let i = 1; i < v.length; i += 6) { v[i] -= d; v[i + 3] -= d; if (v[i] < -45) { v[i] += 90; v[i + 3] += 90; } } a.needsUpdate = true; DUEL.rain.position.copy(camera.position); }
+  if (DUEL.wx === 'storm') { // lightning: the whole sky jumps, the thunder follows
+    DUEL.boltT -= dt; if (DUEL.boltT <= 0) { DUEL.boltT = rand(4, 11); DUEL.flash = 1; const late = rand(500, 2200); setTimeout(() => { if (DUEL.wx === 'storm' && state === 'play') burst(85, 'lowpass', 2.8, .65); }, late); }
+    if (DUEL.flash > 0) { DUEL.flash = Math.max(0, DUEL.flash - dt * 3.2); const k = DUEL.flash * (Math.sin(DUEL.flash * 40) > -.2 ? 1 : .25), E = WX.storm;
+      hemi.intensity = E.hemi[2] * .58 * (1 + k * 5); U.hz.value.copy(col(E.hz)).lerp(_wc.set(0xe6efff), k * .8); U.zn.value.copy(col(E.zn)).lerp(_wc, k * .6); scene.fog.color.copy(U.hz.value); U.fogC.value.copy(U.hz.value); }
+  }
+  if (DUEL.wx === 'night') for (const l of DUEL.lamps) { l.t += dt; l.m.rotation.set(.55 + Math.sin(l.t * .31 + l.p) * .35, l.t * .22 + l.p, 0, 'YXZ'); }
+}
+const _wc = new T.Color();
 function shipsSet(sp, max) { // carrier strike: one carrier a side
-  for (const h of DUEL.ships) world.remove(h.mesh); DUEL.ships = []; DUEL.cine = null;
+  for (const h of DUEL.ships) world.remove(h.mesh); DUEL.ships = []; DUEL.cine = null; DUEL.lamps = [];
   if (!Array.isArray(sp)) return;
   sp.slice(0, 2).forEach((r, team) => { if (!Array.isArray(r) || !r.slice(0, 2).every(v => typeof v === 'number' && isFinite(v))) return;
     const mesh = buildShip('carrier', team !== DUEL.team); mesh.position.set(r[0], 0, r[1]); world.add(mesh);
-    DUEL.ships.push({ team, mesh, pos: new V3(r[0], 0, r[1]), aim: new V3(r[0], 22, r[1]), hp: +max || 1600, max: +max || 1600, sunk: 0, fxT: 0, aaT: 0, told: false }); });
+    DUEL.ships.push({ team, mesh, pos: new V3(r[0], 0, r[1]), aim: new V3(r[0], 22, r[1]), hp: +max || 1600, max: +max || 1600, sunk: 0, fxT: 0, aaT: 0, told: false });
+    if (DUEL.wx === 'night') for (const z of [-70, 60]) { // searchlights sweeping from the deck
+      const geo = new T.ConeGeometry(70, 1100, 14, 1, true); geo.translate(0, 550, 0);
+      const m = new T.Mesh(geo, new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: .075, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, fog: false }));
+      m.position.set(0, 16, z); mesh.add(m); DUEL.lamps.push({ m, t: 0, p: rand(0, 6) }); } });
 }
 const shipSpot = (h, out) => out.set(h.pos.x + rand(-14, 14), 15, h.pos.z + rand(-105, 105));
 function shipsTick(dt) { // smoke, fire, flak bursts and the long way down
@@ -2469,7 +2500,7 @@ function duelMsg(m) {
   } else if (m.t === 'in') {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
-    zonesSet(m.zp); shipsSet(m.sp, m.shp); duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
+    weatherSet(m.wx); zonesSet(m.zp); shipsSet(m.sp, m.shp); duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
@@ -2493,7 +2524,7 @@ function duelMsg(m) {
   }
 }
 function duelTick(dt) {
-  shipsTick(dt);
+  shipsTick(dt); weatherTick(dt);
   if (DUEL.over) { DUEL.over -= dt; if (DUEL.over <= 0) duelDone(); return; }
   if (!DUEL.ws || !DUEL.id) { // not in a room yet, or the line dropped
     DUEL.retry -= dt;
@@ -2883,7 +2914,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>

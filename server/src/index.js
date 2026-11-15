@@ -6,6 +6,7 @@ import { DurableObject } from 'cloudflare:workers';
 const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
 const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill
 const SHIPX = 1900, SHIP_HP = 1600, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
+const SKIES = ['day', 'day', 'dusk', 'night', 'storm']; // each match draws its weather
 const BOT_HP = 45, BOT_NAMES = [['Dusty', 'Mac', 'Sparks', 'Lucky', 'Tex'], ['Falke', 'Adler', 'Wolf', 'Habicht', 'Luchs']];
 const PI = Math.PI;
 const rnd = (a, b) => a + Math.random() * (b - a);
@@ -55,7 +56,7 @@ export class Match extends DurableObject {
   }
   shut() { clearInterval(this.timer); this.timer = null; this.ents.clear(); this.zero(); this.sc = [0, 0]; this.start = 0; this.over = 0; this.c = null; }
 
-  zero() { this.scf = [0, 0]; for (const z of this.zs) { z.v = 0; z.own = -1; } this.ships = [SHIP_HP, SHIP_HP]; if (this.mode === 'ship') this.sc = [100, 100]; }
+  zero() { this.wx = SKIES[Math.floor(Math.random() * SKIES.length)]; this.scf = [0, 0]; for (const z of this.zs) { z.v = 0; z.own = -1; } this.ships = [SHIP_HP, SHIP_HP]; if (this.mode === 'ship') this.sc = [100, 100]; }
   cap() { return this.mode === 'ship' ? SHIP_CAP : CAP; }
   spos(team) { const c = this.c || [0, -1900]; return [c[0] + (team ? SHIPX : -SHIPX), c[1]]; }
   near(e, team) { const p = this.spos(team); return Math.hypot(e.p[0] - p[0], e.p[2] - p[1]); }
@@ -93,7 +94,7 @@ export class Match extends DurableObject {
       ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
       if (!this.start) { this.start = Date.now(); this.sc = [0, 0]; this.zero(); this.over = 0; }
       this.fill();
-      this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : undefined, left: this.left(), sc: this.sc, c: this.c });
+      this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, wx: this.wx, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : undefined, left: this.left(), sc: this.sc, c: this.c });
       return;
     }
     e.seen = Date.now();
