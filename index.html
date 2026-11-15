@@ -1410,18 +1410,45 @@ const GM = new T.MeshLambertMaterial({ vertexColors: true }), BURNT = new T.Mesh
 const part = (B, F, geo, c, sx, sy, sz, x, y, z, rx, ry, rz) => { _o.position.set(x, y, z); _o.rotation.set(rx || 0, ry || 0, rz || 0); _o.scale.set(sx, sy, sz); _o.updateMatrix(); B.add(geo, c, F ? _mt.multiplyMatrices(F, _o.matrix) : _o.matrix); };
 const frameAt = (x, z, yaw, sink, flat) => { if (flat) { _fr.position.set(x, groundAt(x, z) - (sink || 0), z); _fr.quaternion.setFromAxisAngle(_up, yaw); } else seat(_fr, x, z, yaw, sink); _fr.updateMatrix(); return _fr.matrix.clone(); };
 const grey = v => new T.Color(v, v, v);
-const SOLDIER = (() => { // tinted per army through the instance colour
-  const B = new Batch(); part(B, null, UB, grey(.72), .55, 1.2, .4, 0, .6, 0); part(B, null, UB, grey(1), .78, 1.15, .45, 0, 1.75, 0); part(B, null, US, new T.Color(1.5, 1.15, .95), .27, .3, .27, 0, 2.6, 0);
-  part(B, null, US, grey(.42), .37, .24, .37, 0, 2.78, 0); part(B, null, UB, grey(.1), .09, .09, 1.7, .42, 1.85, -.5); part(B, null, UB, grey(.6), .5, .6, .3, 0, 1.8, .36);
+const SOLDIER = (() => { // tinted per army through the instance colour; faces -Z, caught in mid-stride with the rifle held across the body
+  const B = new Batch(), boot = grey(.2), cloth = grey(1), dark = grey(.62), web = grey(.4), skin = new T.Color(1.5, 1.15, .95), wood = new T.Color(.62, .4, .24), steel = grey(.1);
+  for (const sx of [-1, 1]) { const x = sx * .2, sw = sx * .3;
+    part(B, null, UB, dark, .27, .62, .3, x, 1.05, -sw * .14, sw); part(B, null, UB, dark, .24, .6, .27, x, .52, -sw * .3 + .06, sw * .4 + .25); part(B, null, UB, boot, .27, .2, .5, x, .1, -sw * .34 - .04); }
+  part(B, null, UB, web, .72, .16, .42, 0, 1.42, 0); part(B, null, UB, cloth, .7, .62, .4, 0, 1.8, 0, -.06); part(B, null, UB, cloth, .88, .42, .44, 0, 2.2, -.03, -.06);
+  for (const x of [-.14, .14]) part(B, null, UB, web, .09, .82, .46, x, 1.9, -.01, -.06); for (const x of [-.24, .24]) part(B, null, UB, web, .2, .2, .12, x, 1.52, -.24);
+  part(B, null, UB, cloth, .2, .56, .22, .5, 2.08, -.1, -.7); part(B, null, UB, cloth, .18, .5, .2, .4, 1.86, -.42, -1.45, .5); part(B, null, UB, skin, .13, .13, .14, .25, 1.84, -.62);
+  part(B, null, UB, cloth, .2, .56, .22, -.5, 2.1, -.16, -1.0); part(B, null, UB, cloth, .18, .5, .2, -.36, 1.98, -.56, -1.5, -.5); part(B, null, UB, skin, .13, .13, .14, -.18, 1.98, -.84);
+  part(B, null, UC, skin, .11, .16, .11, 0, 2.47, 0); part(B, null, US, skin, .23, .27, .25, 0, 2.68, -.02); part(B, null, US, grey(.42), .35, .23, .37, 0, 2.82, 0); part(B, null, UC, grey(.38), .39, .05, .41, 0, 2.74, 0);
+  part(B, null, UB, wood, .09, .16, .62, .2, 1.82, -.2, .28, .32); part(B, null, UB, steel, .07, .09, 1.25, -.02, 1.98, -.98, .08, .32); part(B, null, UB, wood, .08, .1, .6, -.1, 1.93, -.74, .08, .32);
+  part(B, null, UB, grey(.58), .56, .62, .26, 0, 1.92, .34); part(B, null, UC, grey(.72), .13, .64, .13, 0, 2.32, .34, 0, 0, Math.PI / 2); part(B, null, UC, web, .11, .26, .09, .36, 1.5, .2); part(B, null, UB, wood, .05, .7, .05, -.2, 1.95, .5, 0, 0, .15); part(B, null, UB, steel, .14, .2, .03, -.25, 2.36, .5, 0, 0, .15);
   const g = B.geo(); g.userData.keep = true; return g;
 })();
 function tankGeo(A) { // nose along -Z; the turret is a separate piece
-  const a = col(A.a), b = col(A.b), dk = col('#262724'), mk = col(A.mark), H = new Batch(), Tu = new Batch();
-  for (const x of [-1.8, 1.8]) { part(H, null, UB, dk, 1, 1.5, 8.6, x, .75, 0); part(H, null, UB, b, 1.3, .14, 8.3, x, 1.58, 0); for (let z = -3.4; z <= 3.4; z += 1.7) part(H, null, UC, col('#3a3b36'), .62, .16, .62, x * 1.29, .72, z, 0, 0, Math.PI / 2); }
-  part(H, null, UB, a, 2.7, 1.2, 8, 0, 1.35, 0); part(H, null, UB, a, 3.3, .8, 5.4, 0, 2.25, .4); part(H, null, UB, b, 3.1, .9, 2.4, 0, 2.0, -3.0, .5); part(H, null, UB, b, 2.6, .35, 2, 0, 2.78, 2.5);
-  part(H, null, UB, dk, .5, .5, .9, 1, 2.3, 4.2); part(H, null, UB, b, 1.4, .5, .6, -.6, 2.5, 3.7);
-  part(Tu, null, UB, a, 2.9, 1.1, 3.2, 0, .55, 0); part(Tu, null, UB, b, 2.3, 1, 1, 0, .55, -1.9); part(Tu, null, UB, b, 2.2, .7, .9, 0, .45, 1.9); part(Tu, null, UC, dk, .17, 4.6, .17, 0, .6, -4.4, Math.PI / 2);
-  part(Tu, null, UC, dk, .26, .7, .26, 0, .6, -6.5, Math.PI / 2); part(Tu, null, UC, b, .52, .28, .52, .5, 1.22, .4); for (const x of [-1.47, 1.47]) part(Tu, null, UB, mk, .06, .62, .62, x, .6, .3);
+  const a = col(A.a), b = col(A.b), dk = col('#262724'), rub = col('#161715'), stl = col('#3a3b36'), mk = col(A.mark), wood = col('#6b5a40'), lamp = col('#e2dcb4'), c2 = col(A.a).multiplyScalar(1.12), H = new Batch(), Tu = new Batch(), R = Math.PI / 2;
+  for (const x of [-1.8, 1.8]) { const o = Math.sign(x);
+    part(H, null, UB, rub, 1, .22, 7.6, x, .11, 0); part(H, null, UB, rub, 1, .2, 7.9, x, 1.34, 0); for (const z of [-3.95, 3.95]) part(H, null, UC, rub, .68, 1, .68, x, .72, z, 0, 0, R);
+    for (let z = -3.7; z <= 3.7; z += .37) part(H, null, UB, dk, 1.06, .07, .12, x, 1.46, z); // track links
+    for (let z = -3; z <= 3; z += 1.5) { part(H, null, UC, stl, .56, .2, .56, x + o * .46, .6, z, 0, 0, R); part(H, null, UC, a, .3, .24, .3, x + o * .48, .6, z, 0, 0, R); part(H, null, UC, rub, .12, .28, .12, x + o * .5, .6, z, 0, 0, R); }
+    for (const z of [-3.95, 3.95]) { part(H, null, UC, stl, .6, .22, .6, x + o * .46, .74, z, 0, 0, R); part(H, null, UC, dk, .2, .3, .2, x + o * .48, .74, z, 0, 0, R); }
+    for (const z of [-2, 0, 2]) part(H, null, UC, stl, .2, .2, .2, x + o * .46, 1.2, z, 0, 0, R);
+    part(H, null, UB, b, 1.36, .1, 8.5, x, 1.56, 0); part(H, null, UB, b, 1.36, .1, 1, x, 1.32, -4.6, -.6); part(H, null, UB, b, 1.36, .1, .8, x, 1.36, 4.55, .55); part(H, null, UB, b, .08, .34, 5.4, x + o * .66, 1.38, .3); // fender and skirt
+    part(H, null, UC, stl, .16, .22, .16, x * .92, 1.86, -4.1, R); part(H, null, US, lamp, .13, .13, .06, x * .92, 1.86, -4.22); }
+  part(H, null, UB, a, 2.7, 1.1, 8.1, 0, 1.15, 0); part(H, null, UB, a, 2.7, 1, 1.5, 0, 1.0, -4.0, -.62); part(H, null, UB, a, 3.4, .78, 5.6, 0, 2.22, .5); part(H, null, UB, c2, 3.3, .1, 5.5, 0, 2.64, .5);
+  part(H, null, UB, a, 3.3, .16, 2.9, 0, 2.02, -3.05, .56); part(H, null, UB, b, 3.3, .7, .16, 0, 1.62, -4.16, -.3); for (let i = -2; i <= 2; i++) part(H, null, UB, dk, .46, .1, .5, i * .56, 1.9, -3.5, .56); // spare links on the glacis
+  part(H, null, UB, dk, .7, .26, .1, -.85, 2.28, -2.44, .56); part(H, null, UC, dk, .07, .7, .07, .95, 2.2, -2.75, R + .1); part(H, null, US, b, .22, .22, .22, .95, 2.2, -2.5);
+  part(H, null, UB, b, 3.1, .34, 2.5, 0, 2.5, 2.6, -.06); for (let i = 0; i < 5; i++) part(H, null, UB, dk, 2.5, .06, .22, 0, 2.7, 1.7 + i * .44, -.06); part(H, null, UB, a, 2.9, 1, .16, 0, 1.75, 4.08, .2);
+  for (const x of [-.9, .9]) { part(H, null, UC, dk, .2, 1.3, .2, x, 1.95, 4.4, R); part(H, null, UC, rub, .13, .3, .13, x, 1.95, 5.1, R); }
+  part(H, null, UB, b, 1.5, .62, .7, 0, 2.12, 4.42); part(H, null, UB, wood, .08, .08, 2.4, -1.74, 2.3, .4); part(H, null, UB, stl, .22, .05, .4, -1.74, 2.3, -1); part(H, null, UB, wood, .08, .08, 2, 1.74, 2.3, 1); part(H, null, UB, stl, .14, .14, .5, 1.74, 2.3, -.2);
+  for (const z of [2.2, 2.75]) part(H, null, UB, b.clone().multiplyScalar(.82), .22, .7, .46, 1.84, 2.02, z); for (const x of [-1.72, 1.72]) part(H, null, UB, mk, .05, .5, .5, x, 2.2, -1.2);
+  for (const x of [-.8, .8]) part(H, null, UT, stl, .2, .2, .2, x, 1.25, -4.5, R);
+  part(Tu, null, UC, dk, 1.5, .16, 1.5, 0, .04, 0); part(Tu, null, UB, a, 2.5, 1.1, 3, 0, .62, .1); for (const sx of [-1, 1]) { part(Tu, null, UB, a, .9, 1.1, 1.9, sx * 1.12, .62, -.72, 0, sx * -.42); part(Tu, null, UB, a, .8, 1.1, 1.8, sx * 1.16, .62, .86, 0, sx * .3); }
+  part(Tu, null, UB, c2, 2.4, .08, 2.9, 0, 1.2, .1); part(Tu, null, UB, b, 2.1, .78, 1.3, 0, .56, 2.15); part(Tu, null, UB, stl, 2.2, .05, 1.4, 0, 1.02, 2.2); for (const x of [-.6, 0, .6]) part(Tu, null, UB, wood, .5, .34, .7, x, 1.2, 2.2);
+  part(Tu, null, UC, b, .56, 2.1, .56, 0, .62, -1.75, 0, 0, R); part(Tu, null, UB, b, 1.5, .84, .5, 0, .62, -2.05); part(Tu, null, UC, a, .26, 1.3, .26, 0, .62, -2.9, R);
+  part(Tu, null, UC, dk, .15, 4.6, .15, 0, .62, -4.6, R); part(Tu, null, UC, dk, .25, .62, .25, 0, .62, -6.7, R); part(Tu, null, UC, rub, .29, .12, .29, 0, .62, -6.5, R); part(Tu, null, UC, dk, .05, .8, .05, .5, .62, -2.5, R);
+  part(Tu, null, UC, b, .54, .34, .54, .55, 1.38, .5); part(Tu, null, UC, dk, .5, .06, .5, .55, 1.86, 1, -1.15); for (let i = 0; i < 6; i++) part(Tu, null, UB, lamp.clone().multiplyScalar(.4), .16, .1, .06, .55 + Math.sin(i * 1.047) * .52, 1.44, .5 + Math.cos(i * 1.047) * .52, 0, i * 1.047);
+  part(Tu, null, UB, col(A.inf || A.b), .62, .6, .36, .55, 1.82, .5); part(Tu, null, US, col('#d9a583'), .2, .23, .21, .55, 2.3, .48); part(Tu, null, US, dk, .25, .2, .27, .55, 2.4, .5); for (const sx of [-1, 1]) part(Tu, null, UB, col(A.inf || A.b), .16, .16, .5, .55 + sx * .34, 1.84, .22, .3); // the commander, head out of his hatch
+  part(Tu, null, UC, b, .34, .12, .34, -.65, 1.28, .2); part(Tu, null, UC, dk, .05, 1.5, .05, -.2, 1.5, -.5, R - .12); part(Tu, null, UB, dk, .1, .3, .1, -.2, 1.34, .1); part(Tu, null, UC, dk, .025, 3.4, .025, -1.05, 2.9, 1.3, 0, 0, .06);
+  for (const x of [-1.5, 1.5]) part(Tu, null, UB, mk, .05, .62, .62, x, .64, .5, 0, Math.sign(x) * .3); for (const x of [-1.28, 1.28]) part(Tu, null, UC, stl, .1, .3, .1, x, .9, -1.3, 0, 0, R);
   return { h: H.geo(), t: Tu.geo() };
 }
 let gtanks = [], men = [], menMesh = null, smokers = [], smoke0 = 0, tankKills = 0, frontWarned = false, troopKills = 0, truckKills = 0, campCall = false;
