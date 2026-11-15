@@ -334,8 +334,9 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="ghost" id="b-invite" type="button">Copy invite link</button></div>
         <input id="n-link" class="link" type="text" readonly hidden aria-label="Invite link">
         <p class="note" id="n-lobby" hidden></p>
-        <div class="comp-row"><button class="ghost" id="b-duel" type="button">Team dogfight 4 v 4</button></div>
+        <div class="comp-row"><button class="ghost" id="b-duel" type="button">Team dogfight 4 v 4</button><button class="ghost" id="b-zone" type="button">Zone control 4 v 4</button></div>
         <p class="note">Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking and pay requisition points.</p>
+        <p class="note">Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.</p>
         <p class="note">Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.</p>
       </div>
       <div class="lab2">Language</div>
@@ -418,7 +419,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
   </div>
   <div class="screen" id="s-duel" hidden>
     <div class="sheet">
-      <div class="sheet-head"><span>Team dogfight</span><span id="du-status">Victory</span></div>
+      <div class="sheet-head"><span id="du-mode">Team dogfight</span><span id="du-status">Victory</span></div>
       <h1 id="du-score" data-raw>0 : 0</h1>
       <p class="note"><span>Ranking points earned</span>: <b id="du-pts" data-raw>0</b> · <span>Earned</span>: <b id="du-rp" data-raw>0 RP</b></p>
       <div class="du-cols">
@@ -509,6 +510,10 @@ const DICT = {
   "Daily orders": ["Günlük emirler", "Tagesbefehle"], "Daily pay": ["Günlük maaş", "Tagessold"], "Collect": ["Al", "Abholen"], "Collected": ["Alındı", "Abgeholt"],
   "A new day starts at midnight UTC. Collect your pay every day to build the streak.": ["Yeni gün UTC gece yarısında başlar. Seriyi büyütmek için maaşını her gün al.", "Ein neuer Tag beginnt um Mitternacht UTC. Hol deinen Sold jeden Tag ab, um die Serie auszubauen."],
   "Fly 2 sorties": ["2 sorti uç", "Fliege 2 Einsätze"], "Win a sortie": ["Bir sorti kazan", "Gewinne einen Einsatz"], "Score 3000 points in sorties": ["Sortilerde 3000 puan topla", "Erziele 3000 Punkte in Einsätzen"], "Fly 2 team dogfights": ["2 takım it dalaşı uç", "Fliege 2 Team-Luftkämpfe"], "Shoot down 8 aircraft in team dogfights": ["Takım it dalaşında 8 uçak düşür", "Schieße 8 Flugzeuge im Team-Luftkampf ab"], "Win a team dogfight": ["Bir takım it dalaşı kazan", "Gewinne einen Team-Luftkampf"],
+  "Zone control 4 v 4": ["Bölge hâkimiyeti 4'e 4", "Zonenkontrolle 4 gegen 4"], "Zone control": ["Bölge hâkimiyeti", "Zonenkontrolle"], "Zone control · you are RED": ["Bölge hâkimiyeti · KIRMIZI takımdasın", "Zonenkontrolle · du bist ROT"], "Zone control · you are BLUE": ["Bölge hâkimiyeti · MAVİ takımdasın", "Zonenkontrolle · du bist BLAU"],
+  "Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.": ["Bölge hâkimiyeti: gökyüzünde üç halka. Bir halkayı almak için içinde karşı taraftan daha fazla uçakla uç; elindeki her halka üç saniyede bir puan, her vuruş iki puan kazandırır. 100 puana ilk ulaşan takım kazanır.", "Zonenkontrolle: drei Ringe am Himmel. Fliege mit mehr Flugzeugen als der Gegner in einem Ring, um ihn zu erobern; jeder gehaltene Ring bringt alle drei Sekunden einen Punkt, ein Abschuss zwei. Wer zuerst 100 Punkte hat, gewinnt."],
+  "zone control.": ["bölge hâkimiyeti.", "Zonenkontrolle."], "Hold the rings.": ["Halkaları elinde tut.", "Haltet die Ringe."], "First side to 100 wins.": ["100 puana ilk ulaşan kazanır.", "Wer zuerst 100 hat, gewinnt."],
+  "Zone A taken": ["A bölgesi alındı", "Zone A erobert"], "Zone B taken": ["B bölgesi alındı", "Zone B erobert"], "Zone C taken": ["C bölgesi alındı", "Zone C erobert"], "Zone A lost": ["A bölgesi kaybedildi", "Zone A verloren"], "Zone B lost": ["B bölgesi kaybedildi", "Zone B verloren"], "Zone C lost": ["C bölgesi kaybedildi", "Zone C verloren"],
   "Team dogfight": ["Takım it dalaşı", "Team-Luftkampf"], "Blue": ["Mavi", "Blau"], "Red": ["Kırmızı", "Rot"], "Ranking points earned": ["Kazanılan sıralama puanı", "Erzielte Ranglistenpunkte"], "First side to 25 wins.": ["25 puana ilk ulaşan kazanır.", "Wer zuerst 25 hat, gewinnt."], "Team dogfight 4 v 4": ["Takım it dalaşı 4'e 4", "Team-Luftkampf 4 gegen 4"],
   "Team dogfight · you are BLUE": ["Takım it dalaşı · MAVİ takımdasın", "Team-Luftkampf · du bist BLAU"], "Team dogfight · you are RED": ["Takım it dalaşı · KIRMIZI takımdasın", "Team-Luftkampf · du bist ROT"],
   "You are on BLUE": ["MAVİ takımdasın", "Du bist bei BLAU"], "You are on RED": ["KIRMIZI takımdasın", "Du bist bei ROT"], "Back in the fight in 3": ["3 saniyede geri dönüyorsun", "In 3 Sekunden wieder dabei"], "Back in the fight": ["Yeniden havadasın", "Wieder im Kampf"],
@@ -1862,7 +1867,7 @@ function feed(what, note) {
   setTimeout(() => d.classList.add('out'), 3200); setTimeout(() => d.remove(), 4000);
 }
 function updateObjective() {
-  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2)); return; } $('obj-t').removeAttribute('data-tail');
+  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('')); return; } $('obj-t').removeAttribute('data-tail');
   $('pips').querySelectorAll('i').forEach((p, i) => p.classList.toggle('done', i < cut));
   $('obj-n').textContent = cut + ' / ' + goalN();
   $('obj-t').textContent = phase === 'extract' ? (PAD.carrier ? 'Land on the carrier' : 'Land at the airstrip') : M.mode === 'dogfight' ? 'Shoot down the fighters' : M.mode === 'defend' ? 'Defend the ' + M.homeName.toLowerCase() : M.mode === 'escort' ? 'Protect the bombers' : cut === objs.length - 1 ? 'Destroy the last target' : 'Destroy the targets';
@@ -2335,6 +2340,7 @@ function updateHud(dt) {
   for (const S of SITES) if (S.camp && S.campLeft > 0 && S.near < 1600) { const d = S.campV.distanceTo(P.pos); if (d < 1300) put(S.campV, 'e', 'TROOPS ' + S.campLeft, d); }
   for (const p of pals) if (p.alive && !p.gone) put(p.pos, 'h', 'BOMBER', p.pos.distanceTo(P.pos));
   for (const p of NET.peers.values()) if (p.alive) put(p.pos, DUEL.on && p.team !== DUEL.team ? 'e' : 'h', '\u2708 ' + p.name, p.pos.distanceTo(P.pos));
+  if (DUEL.on) for (const z of DUEL.zones) put(z.pos, z.own < 0 ? 'o' : z.own === DUEL.team ? 'h' : 'e', '\u25ce ' + z.name, Math.hypot(z.pos.x - P.pos.x, z.pos.z - P.pos.z), (z.v * (DUEL.team ? 1 : -1) + 1) / 2);
   for (; mi < marks.length; mi++) marks[mi].d.hidden = true;
   updateTarget(); drawRadar();
   let lso = '';
@@ -2361,7 +2367,7 @@ function updateHud(dt) {
    server (server/src/index.js) owns the sides, the bots in the empty seats, every aircraft's health, the score
    and the clock. This side only reports where it is and what its guns found; the server decides what counts. */
 const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, botT: 0, us: 0, them: 0, goal: 25, left: 300, tb: [], hitQ: new Map(), mates: 1,
-  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map() };
+  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [] };
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
   const side = DUEL.team ? 1 : -1; P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
@@ -2369,23 +2375,37 @@ function duelSpawn() { // air start on the team's side of the field, nose toward
   P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false;
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
-function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} }
+function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); }
+const ZCOL = [0xe8e2c8, 0x7fd08a, 0xff6a50]; // nobody's, ours, theirs
+function zonesSet(zp) { // the rings of zone control, drawn as tall faint columns
+  for (const z of DUEL.zones) { world.remove(z.mesh); z.mesh.geometry.dispose(); z.mesh.material.dispose(); } DUEL.zones = [];
+  if (!Array.isArray(zp)) return;
+  zp.slice(0, 5).forEach((r, i) => { if (!Array.isArray(r) || !r.slice(0, 3).every(v => typeof v === 'number' && isFinite(v))) return;
+    const mesh = new T.Mesh(new T.CylinderGeometry(r[2], r[2], 1300, 48, 1, true), new T.MeshBasicMaterial({ color: ZCOL[0], transparent: true, opacity: .13, side: T.DoubleSide, depthWrite: false }));
+    mesh.position.set(r[0], 650, r[1]); world.add(mesh); DUEL.zones.push({ name: 'ABC'[i] || '?', pos: new V3(r[0], 430, r[1]), r: r[2], own: -1, v: 0, mesh }); });
+}
+function zonesGot(zs) {
+  zs.forEach((r, i) => { const z = DUEL.zones[i]; if (!z || !Array.isArray(r)) return; const own = r[0] === 0 ? 0 : r[0] === 1 ? 1 : -1;
+    if (own !== z.own) { if (own === DUEL.team) feed('Zone ' + z.name + ' taken'); else if (z.own === DUEL.team) feed('Zone ' + z.name + ' lost'); z.own = own; z.mesh.material.color.setHex(ZCOL[own < 0 ? 0 : own === DUEL.team ? 1 : 2]); }
+    z.v = +r[1] || 0; z.mesh.material.opacity = .1 + .1 * Math.abs(z.v); });
+}
 function duelTell(m) { if (DUEL.ws && DUEL.ws.readyState === 1) try { DUEL.ws.send(JSON.stringify(m)); } catch (e) {} }
 async function duelConnect(n) {
   duelClose(); DUEL.n = n; DUEL.full = false; let tok = '';
   try { const r = await NET.sb.auth.getSession(); tok = r.data && r.data.session ? r.data.session.access_token : ''; } catch (e) {}
-  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + roomKey() + '&n=' + n); } catch (e) { DUEL.retry = 3; return; }
+  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + roomKey() + '&n=' + n + (DUEL.mode === 'zone' ? '&mode=zone' : '')); } catch (e) { DUEL.retry = 3; return; }
   DUEL.ws = ws; DUEL.retry = 6;
   ws.onopen = () => { if (DUEL.ws === ws) duelTell({ t: 'hi', tok, dev: DUEL.dev || undefined, k: skyPlane(), c: [PAD.x, PAD.z - 1900] }); };
   ws.onmessage = e => { if (DUEL.ws !== ws || !DUEL.on) return; let m; try { m = JSON.parse(e.data); } catch (x) { return; } if (m && typeof m === 'object') duelMsg(m); };
   ws.onclose = () => { if (DUEL.ws !== ws) return; DUEL.ws = null; if (!DUEL.on || DUEL.over) return; if (DUEL.full) duelConnect(n < 15 ? n + 1 : 0); else { DUEL.retry = 2; if (DUEL.id) warn('Connection lost. Reconnecting'); } };
 }
-function duelStart() {
+function duelStart(mode) {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
+  if (mode === 'df' || mode === 'zone') DUEL.mode = mode; const zone = DUEL.mode === 'zone';
   const i = duelIdx(); if (i < 0) return; DUEL.on = true; if (mIdx !== i) loadMission(i);
-  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = 300; DUEL.goal = 25; DUEL.tb = []; DUEL.id = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
+  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = 300; DUEL.goal = zone ? 100 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
   state = 'play'; show(null); canvas.focus(); duelSpawn(); updateObjective(); warn('Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
-  radio(M.cs + ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.');
+  radio(M.cs + (zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
 }
 function duelDown(why, told) { // the player is out; the server brings him back
   if (!P.alive) return; P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; DUEL.respT = 8;
@@ -2397,7 +2417,7 @@ function duelHit(id, dmg) { DUEL.hitQ.set(id, (DUEL.hitQ.get(id) || 0) + dmg); }
 function duelScore(sc) { if (Array.isArray(sc) && sc.length === 2) { DUEL.us = sc[DUEL.team] | 0; DUEL.them = sc[1 - DUEL.team] | 0; } }
 function duelMsg(m) {
   if (m.t === 's') { // the server's picture of the fight, fifteen times a second
-    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; duelScore(m.sc);
+    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; duelScore(m.sc); if (Array.isArray(m.z)) zonesGot(m.z);
     for (const e of m.e) {
       if (!Array.isArray(e) || e.length < 12) continue;
       if (e[0] === DUEL.id) { kills = e[10] | 0; continue; }
@@ -2413,7 +2433,7 @@ function duelMsg(m) {
   } else if (m.t === 'in') {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
-    duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
+    zonesSet(m.zp); duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
@@ -2442,7 +2462,7 @@ function duelTick(dt) {
 function duelDone() { // the match is over: both sides' sheets, then fly again or go home
   const tb = DUEL.tb, won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them, me = tb.find(r => r[0] === DUEL.id);
   DUEL.on = false; DUEL.over = 0; hush(); skyLeave(); state = 'menu'; reset();
-  $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
+  $('du-mode').textContent = DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
   setTimeout(() => { if (NET.me && NET.sb) rpc('my_pilot').then(adopt).catch(() => {}); }, 2500); // the server's report has landed by now: pick up the pay
   [DUEL.team, 1 - DUEL.team].forEach((t, i) => {
     const ol = $(i ? 'du-b' : 'du-a'); ol.textContent = ''; $(i ? 'du-bl' : 'du-al').textContent = t ? 'Red' : 'Blue';
@@ -2513,7 +2533,7 @@ function finish() {
   show('s-end'); $('b-again').focus();
 }
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
-$('b-duel').onclick = duelStart; $('b-duel2').onclick = duelStart; $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
@@ -2820,7 +2840,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { dailyShow, DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
