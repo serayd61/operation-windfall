@@ -334,9 +334,10 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="comp-row"><label for="n-room">Squadron code</label><input id="n-room" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="ghost" id="b-invite" type="button">Copy invite link</button></div>
         <input id="n-link" class="link" type="text" readonly hidden aria-label="Invite link">
         <p class="note" id="n-lobby" hidden></p>
-        <div class="comp-row"><button class="ghost" id="b-duel" type="button">Team dogfight 4 v 4</button><button class="ghost" id="b-zone" type="button">Zone control 4 v 4</button></div>
+        <div class="comp-row"><button class="ghost" id="b-duel" type="button">Team dogfight 4 v 4</button><button class="ghost" id="b-zone" type="button">Zone control 4 v 4</button><button class="ghost" id="b-ship" type="button">Carrier strike 4 v 4</button></div>
         <p class="note">Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking and pay requisition points.</p>
         <p class="note">Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.</p>
+        <p class="note">Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.</p>
         <p class="note">Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.</p>
       </div>
       <div class="lab2">Language</div>
@@ -514,6 +515,10 @@ const DICT = {
   "Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.": ["Bölge hâkimiyeti: gökyüzünde üç halka. Bir halkayı almak için içinde karşı taraftan daha fazla uçakla uç; elindeki her halka üç saniyede bir puan, her vuruş iki puan kazandırır. 100 puana ilk ulaşan takım kazanır.", "Zonenkontrolle: drei Ringe am Himmel. Fliege mit mehr Flugzeugen als der Gegner in einem Ring, um ihn zu erobern; jeder gehaltene Ring bringt alle drei Sekunden einen Punkt, ein Abschuss zwei. Wer zuerst 100 Punkte hat, gewinnt."],
   "zone control.": ["bölge hâkimiyeti.", "Zonenkontrolle."], "Hold the rings.": ["Halkaları elinde tut.", "Haltet die Ringe."], "First side to 100 wins.": ["100 puana ilk ulaşan kazanır.", "Wer zuerst 100 hat, gewinnt."],
   "Zone A taken": ["A bölgesi alındı", "Zone A erobert"], "Zone B taken": ["B bölgesi alındı", "Zone B erobert"], "Zone C taken": ["C bölgesi alındı", "Zone C erobert"], "Zone A lost": ["A bölgesi kaybedildi", "Zone A verloren"], "Zone B lost": ["B bölgesi kaybedildi", "Zone B verloren"], "Zone C lost": ["C bölgesi kaybedildi", "Zone C verloren"],
+  "Carrier strike 4 v 4": ["Gemi avı 4'e 4", "Trägerjagd 4 gegen 4"], "Carrier strike": ["Gemi avı", "Trägerjagd"], "Carrier strike · you are RED": ["Gemi avı · KIRMIZI takımdasın", "Trägerjagd · du bist ROT"], "Carrier strike · you are BLUE": ["Gemi avı · MAVİ takımdasın", "Trägerjagd · du bist BLAU"],
+  "Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.": ["Gemi avı: her takımın bir uçak gemisi var. Onlar seninkini batırmadan sen onlarınkini bomba ve roketle batır. Gemiler ateş açar; yeniden silahlanmak ve onarılmak için kendi geminin üzerinden alçaktan geç.", "Trägerjagd: Jede Seite hat einen Flugzeugträger. Versenke den gegnerischen mit Bomben und Raketen, bevor sie deinen versenken. Die Träger schießen zurück; fliege tief über deinen eigenen Träger, um aufzumunitionieren und zu reparieren."],
+  "carrier strike.": ["gemi avı.", "Trägerjagd."], "Sink their carrier before they sink ours.": ["Onlar bizimkini batırmadan gemilerini batırın.", "Versenkt ihren Träger, bevor sie unseren versenken."], "Bombs and rockets only.": ["Yalnızca bomba ve roket işe yarar.", "Nur Bomben und Raketen zählen."],
+  "Hit on the enemy carrier": ["Düşman gemisine isabet", "Treffer auf dem feindlichen Träger"], "Our carrier is under attack!": ["Gemimiz saldırı altında!", "Unser Träger wird angegriffen!"], "Their carrier is going down!": ["Gemileri batıyor!", "Ihr Träger sinkt!"], "Our carrier is lost!": ["Gemimizi kaybettik!", "Unser Träger ist verloren!"], "Their carrier is burning. Finish her!": ["Gemileri yanıyor. İşini bitirin!", "Ihr Träger brennt. Gebt ihm den Rest!"],
   "Team dogfight": ["Takım it dalaşı", "Team-Luftkampf"], "Blue": ["Mavi", "Blau"], "Red": ["Kırmızı", "Rot"], "Ranking points earned": ["Kazanılan sıralama puanı", "Erzielte Ranglistenpunkte"], "First side to 25 wins.": ["25 puana ilk ulaşan kazanır.", "Wer zuerst 25 hat, gewinnt."], "Team dogfight 4 v 4": ["Takım it dalaşı 4'e 4", "Team-Luftkampf 4 gegen 4"],
   "Team dogfight · you are BLUE": ["Takım it dalaşı · MAVİ takımdasın", "Team-Luftkampf · du bist BLAU"], "Team dogfight · you are RED": ["Takım it dalaşı · KIRMIZI takımdasın", "Team-Luftkampf · du bist ROT"],
   "You are on BLUE": ["MAVİ takımdasın", "Du bist bei BLAU"], "You are on RED": ["KIRMIZI takımdasın", "Du bist bei ROT"], "Back in the fight in 3": ["3 saniyede geri dönüyorsun", "In 3 Sekunden wieder dabei"], "Back in the fight": ["Yeniden havadasın", "Wieder im Kampf"],
@@ -1867,7 +1872,7 @@ function feed(what, note) {
   setTimeout(() => d.classList.add('out'), 3200); setTimeout(() => d.remove(), 4000);
 }
 function updateObjective() {
-  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('')); return; } $('obj-t').removeAttribute('data-tail');
+  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'ship' ? (DUEL.team ? 'Carrier strike · you are RED' : 'Carrier strike · you are BLUE') : DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('')); return; } $('obj-t').removeAttribute('data-tail');
   $('pips').querySelectorAll('i').forEach((p, i) => p.classList.toggle('done', i < cut));
   $('obj-n').textContent = cut + ' / ' + goalN();
   $('obj-t').textContent = phase === 'extract' ? (PAD.carrier ? 'Land on the carrier' : 'Land at the airstrip') : M.mode === 'dogfight' ? 'Shoot down the fighters' : M.mode === 'defend' ? 'Defend the ' + M.homeName.toLowerCase() : M.mode === 'escort' ? 'Protect the bombers' : cut === objs.length - 1 ? 'Destroy the last target' : 'Destroy the targets';
@@ -2171,6 +2176,7 @@ function updateOrd(dt) {
     if (!hit) for (const t of objs) if (t.alive && inObj(t, p, 2)) { hit = true; break; }
     if (!hit && !o.bomb) for (const e of enemies) if (!e.dead && !e.falling && (e.aim || e.pos).distanceToSquared(p) < (e.r + 5) * (e.r + 5)) { hit = true; break; }
     if (!hit) for (const k of gtanks) if (k.foe && k.alive && k.aim.distanceToSquared(p) < 64) { hit = true; break; }
+    if (!hit && DUEL.on) for (const h of DUEL.ships) if (h.hp > 0 && p.y < 30 && Math.abs(p.x - h.pos.x) < 23 && Math.abs(p.z - h.pos.z) < 126) { hit = true; if (h.team !== DUEL.team) duelTell({ t: 'b', k: o.bomb ? 0 : 1 }); break; }
     if (hit) { o.on = false; o.g.visible = false; p.y = Math.max(p.y, 1); blast(p, (o.bomb ? 52 : 34) * (1 + .05 * CAR.up.ord), (o.bomb ? 330 : 150) * (1 + .15 * CAR.up.ord)); }
   }
 }
@@ -2340,6 +2346,7 @@ function updateHud(dt) {
   for (const S of SITES) if (S.camp && S.campLeft > 0 && S.near < 1600) { const d = S.campV.distanceTo(P.pos); if (d < 1300) put(S.campV, 'e', 'TROOPS ' + S.campLeft, d); }
   for (const p of pals) if (p.alive && !p.gone) put(p.pos, 'h', 'BOMBER', p.pos.distanceTo(P.pos));
   for (const p of NET.peers.values()) if (p.alive) put(p.pos, DUEL.on && p.team !== DUEL.team ? 'e' : 'h', '\u2708 ' + p.name, p.pos.distanceTo(P.pos));
+  if (DUEL.on) for (const h of DUEL.ships) if (h.hp > 0) put(h.aim, h.team === DUEL.team ? 'h' : 'e', '\u2693', h.aim.distanceTo(P.pos), h.hp / h.max);
   if (DUEL.on) for (const z of DUEL.zones) put(z.pos, z.own < 0 ? 'o' : z.own === DUEL.team ? 'h' : 'e', '\u25ce ' + z.name, Math.hypot(z.pos.x - P.pos.x, z.pos.z - P.pos.z), (z.v * (DUEL.team ? 1 : -1) + 1) / 2);
   for (; mi < marks.length; mi++) marks[mi].d.hidden = true;
   updateTarget(); drawRadar();
@@ -2367,15 +2374,44 @@ function updateHud(dt) {
    server (server/src/index.js) owns the sides, the bots in the empty seats, every aircraft's health, the score
    and the clock. This side only reports where it is and what its guns found; the server decides what counts. */
 const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, botT: 0, us: 0, them: 0, goal: 25, left: 300, tb: [], hitQ: new Map(), mates: 1,
-  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [] };
+  url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [], ships: [], cine: null, cineT: 0 };
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
   const side = DUEL.team ? 1 : -1; P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
   P.yaw = side > 0 ? Math.PI / 2 : -Math.PI / 2; P.pitch = 0; P.roll = 0; P.speed = 82; P.gnd = 0; P.gear = false; P.gearK = 0; P.rollT = 0; P.rot = 0; P.airT = 5; P.autoUp = true; P.ap = null; P.stall = false;
-  P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false;
+  P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
-function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); }
+function duelArm() { P.rkt = M.rockets; P.bombs = M.bombs; P.ordCd = 0; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true); }
+function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); }
+function shipsSet(sp, max) { // carrier strike: one carrier a side
+  for (const h of DUEL.ships) world.remove(h.mesh); DUEL.ships = []; DUEL.cine = null;
+  if (!Array.isArray(sp)) return;
+  sp.slice(0, 2).forEach((r, team) => { if (!Array.isArray(r) || !r.slice(0, 2).every(v => typeof v === 'number' && isFinite(v))) return;
+    const mesh = buildShip('carrier', team !== DUEL.team); mesh.position.set(r[0], 0, r[1]); world.add(mesh);
+    DUEL.ships.push({ team, mesh, pos: new V3(r[0], 0, r[1]), aim: new V3(r[0], 22, r[1]), hp: +max || 1600, max: +max || 1600, sunk: 0, fxT: 0, aaT: 0, told: false }); });
+}
+const shipSpot = (h, out) => out.set(h.pos.x + rand(-14, 14), 15, h.pos.z + rand(-105, 105));
+function shipsTick(dt) { // smoke, fire, flak bursts and the long way down
+  for (const h of DUEL.ships) {
+    const f = h.hp / h.max; h.fxT -= dt; h.aaT -= dt;
+    if (h.hp <= 0) { // going down: she lists, settles and tears herself apart
+      if (!h.sunk) { h.sunk = .01; explode(h.aim, 70); spawnFx(h.aim, 90, 'splash'); shake = Math.max(shake, .9); DUEL.cine = h; DUEL.cineT = 0; }
+      h.sunk += dt; h.mesh.rotation.z = Math.min(.62, h.sunk * .075) * (h.team ? 1 : -1); h.mesh.rotation.x = -Math.min(.16, h.sunk * .02); h.mesh.position.y = -h.sunk * h.sunk * .09;
+      if (h.fxT <= 0 && h.sunk < 9) { h.fxT = rand(.18, .5); shipSpot(h, _e); explode(_e, rand(18, 40)); if (Math.random() < .4) spawnFx(_e.setY(1), 40, 'splash'); }
+      continue;
+    }
+    if (f < .7 && h.fxT <= 0) { h.fxT = .16 + f * .5; shipSpot(h, _e); spawnFx(_e, 16 + (1 - f) * 22, 'smoke'); if (f < .35) spawnFx(_e, 9 + (1 - f) * 10, 'fire'); }
+    if (h.aaT <= 0) { h.aaT = .22; // her guns: bursts around whoever of the other side is close
+      let n = 0; const burst = p => { if (n < 2 && p.y < 800 && Math.hypot(p.x - h.pos.x, p.z - h.pos.z) < 800) { n++; _e.set(p.x + rand(-45, 45), p.y + rand(-25, 25), p.z + rand(-45, 45)); spawnFx(_e, 7, 'smoke'); spawnFx(_e, 3, 'flash'); } };
+      if (P.alive && DUEL.team !== h.team) burst(P.pos); for (const q of NET.peers.values()) if (q.alive && q.team !== h.team) burst(q.pos);
+    }
+  }
+}
+function shipCam(dt) { // the last shot of the match: a slow turn around the sinking carrier
+  const h = DUEL.cine; if (!h || !DUEL.on) return; DUEL.cineT += dt; const a = DUEL.cineT * .16 + (h.team ? 2 : .6), r = 330 - Math.min(90, DUEL.cineT * 9);
+  camera.position.set(h.pos.x + Math.sin(a) * r, 46 + DUEL.cineT * 2.5, h.pos.z + Math.cos(a) * r); camera.lookAt(_a.set(h.pos.x, 12, h.pos.z));
+}
 const ZCOL = [0xe8e2c8, 0x7fd08a, 0xff6a50]; // nobody's, ours, theirs
 function zonesSet(zp) { // the rings of zone control, drawn as tall faint columns
   for (const z of DUEL.zones) { world.remove(z.mesh); z.mesh.geometry.dispose(); z.mesh.material.dispose(); } DUEL.zones = [];
@@ -2393,7 +2429,7 @@ function duelTell(m) { if (DUEL.ws && DUEL.ws.readyState === 1) try { DUEL.ws.se
 async function duelConnect(n) {
   duelClose(); DUEL.n = n; DUEL.full = false; let tok = '';
   try { const r = await NET.sb.auth.getSession(); tok = r.data && r.data.session ? r.data.session.access_token : ''; } catch (e) {}
-  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + roomKey() + '&n=' + n + (DUEL.mode === 'zone' ? '&mode=zone' : '')); } catch (e) { DUEL.retry = 3; return; }
+  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + roomKey() + '&n=' + n + (DUEL.mode === 'zone' ? '&mode=zone' : DUEL.mode === 'ship' ? '&mode=ship' : '')); } catch (e) { DUEL.retry = 3; return; }
   DUEL.ws = ws; DUEL.retry = 6;
   ws.onopen = () => { if (DUEL.ws === ws) duelTell({ t: 'hi', tok, dev: DUEL.dev || undefined, k: skyPlane(), c: [PAD.x, PAD.z - 1900] }); };
   ws.onmessage = e => { if (DUEL.ws !== ws || !DUEL.on) return; let m; try { m = JSON.parse(e.data); } catch (x) { return; } if (m && typeof m === 'object') duelMsg(m); };
@@ -2401,11 +2437,11 @@ async function duelConnect(n) {
 }
 function duelStart(mode) {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
-  if (mode === 'df' || mode === 'zone') DUEL.mode = mode; const zone = DUEL.mode === 'zone';
+  if (mode === 'df' || mode === 'zone' || mode === 'ship') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship';
   const i = duelIdx(); if (i < 0) return; DUEL.on = true; if (mIdx !== i) loadMission(i);
-  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = 300; DUEL.goal = zone ? 100 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
+  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship ? 420 : 300; DUEL.goal = zone ? 100 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
   state = 'play'; show(null); canvas.focus(); duelSpawn(); updateObjective(); warn('Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
-  radio(M.cs + (zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
+  radio(M.cs + (ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
 }
 function duelDown(why, told) { // the player is out; the server brings him back
   if (!P.alive) return; P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; DUEL.respT = 8;
@@ -2417,7 +2453,7 @@ function duelHit(id, dmg) { DUEL.hitQ.set(id, (DUEL.hitQ.get(id) || 0) + dmg); }
 function duelScore(sc) { if (Array.isArray(sc) && sc.length === 2) { DUEL.us = sc[DUEL.team] | 0; DUEL.them = sc[1 - DUEL.team] | 0; } }
 function duelMsg(m) {
   if (m.t === 's') { // the server's picture of the fight, fifteen times a second
-    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; duelScore(m.sc); if (Array.isArray(m.z)) zonesGot(m.z);
+    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; if (!DUEL.over) { duelScore(m.sc); if (Array.isArray(m.z)) zonesGot(m.z); if (Array.isArray(m.sh)) m.sh.forEach((v, i) => { const h = DUEL.ships[i]; if (h) h.hp = +v || 0; }); }
     for (const e of m.e) {
       if (!Array.isArray(e) || e.length < 12) continue;
       if (e[0] === DUEL.id) { kills = e[10] | 0; continue; }
@@ -2433,24 +2469,31 @@ function duelMsg(m) {
   } else if (m.t === 'in') {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
-    zonesSet(m.zp); duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
+    zonesSet(m.zp); shipsSet(m.sp, m.shp); duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
-    if (!P.alive) return; const q = NET.peers.get(m.by); DUEL.lastBy = String(m.by || ''); DUEL.lastByT = time; P.hp = clamp(+m.hp || 0, 0, 100); P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5); sfxHit();
+    if (!P.alive) return; const q = NET.peers.get(m.by); if (/^ship/.test(m.by)) { _e.set(P.pos.x + rand(-9, 9), P.pos.y + rand(-6, 6), P.pos.z + rand(-9, 9)); spawnFx(_e, 6, 'smoke'); spawnFx(_e, 3, 'flash'); } DUEL.lastBy = String(m.by || ''); DUEL.lastByT = time; P.hp = clamp(+m.hp || 0, 0, 100); P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5); sfxHit();
     if (q) { const r = sideOf(q.pos); call(r[0] < -.5 ? 'hitback' : 'hitside', r[0] < -.5 ? 'Taking hits from behind! Turn hard!' : (r[1] < 0 ? 'Fire from your left!' : 'Fire from your right!') + ' Break away!', 9); }
   } else if (m.t === 'k') {
-    duelScore(m.sc); updateObjective();
+    if (DUEL.over) return; duelScore(m.sc); updateObjective();
     if (m.i === DUEL.id) return duelDown('', true);
     const q = NET.peers.get(m.i), r = DUEL.ro.get(m.i); if (q) { explode(q.pos, 26); q.alive = false; q.mesh.visible = false; } if (!r) return;
     if (m.by === DUEL.id) { feed('You shot down ' + r.name); callT = 0; call('kill', 'Good kill!', 2); } else feed(r.name + (r.team === DUEL.team ? ' is down' : ' shot down'));
-  } else if (m.t === 'r') { if (!P.alive) { duelSpawn(); warn('Back in the fight', true); }
+  } else if (m.t === 'sh') { // a bomb or rocket on one of the carriers
+    const h = DUEL.ships[m.s ? 1 : 0]; if (!h || DUEL.over) return; h.hp = +m.hp || 0; shipSpot(h, _e); explode(_e, m.k ? 16 : 34); if (_e.distanceTo(P.pos) < 400) shake = Math.max(shake, .5);
+    if (m.by === DUEL.id) { feed('Hit on the enemy carrier'); hitFlash = Math.max(hitFlash, .3); }
+    if (h.team === DUEL.team) call('shiphit', 'Our carrier is under attack!', 25); else if (!h.told && h.hp < h.max * .35 && h.hp > 0) { h.told = true; call('shipburn', 'Their carrier is burning. Finish her!', 60); }
+    if (h.hp <= 0) { hush(); radioQ.length = 0; radio(h.team === DUEL.team ? 'Our carrier is lost!' : 'Their carrier is going down!'); }
+  } else if (m.t === 'arm') { duelArm(); if (P.alive) P.hp = 100; feed('Rearmed and repaired');
+  } else if (m.t === 'r') { if (!P.alive && !DUEL.over) { duelSpawn(); warn('Back in the fight', true); }
   } else if (m.t === 'end') {
-    if (DUEL.over) return; duelScore(m.sc); DUEL.tb = Array.isArray(m.tb) ? m.tb.filter(r => Array.isArray(r) && r.length >= 6) : []; updateObjective(); const won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them; DUEL.over = 7; hush(); radioQ.length = 0;
+    if (DUEL.over) return; duelScore(m.sc); DUEL.tb = Array.isArray(m.tb) ? m.tb.filter(r => Array.isArray(r) && r.length >= 6) : []; updateObjective(); const won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them; DUEL.over = DUEL.ships.some(h => h.hp <= 0) ? 11 : 7; hush(); radioQ.length = 0;
     warn(tie ? 'Draw' : won ? 'Victory' : 'Defeat', won || tie); radio(tie ? 'That is time. Honours even.' : won ? 'That is the match. Your side has it. Well flown.' : 'That is the match. They had the better of us today.');
   }
 }
 function duelTick(dt) {
+  shipsTick(dt);
   if (DUEL.over) { DUEL.over -= dt; if (DUEL.over <= 0) duelDone(); return; }
   if (!DUEL.ws || !DUEL.id) { // not in a room yet, or the line dropped
     DUEL.retry -= dt;
@@ -2462,7 +2505,7 @@ function duelTick(dt) {
 function duelDone() { // the match is over: both sides' sheets, then fly again or go home
   const tb = DUEL.tb, won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them, me = tb.find(r => r[0] === DUEL.id);
   DUEL.on = false; DUEL.over = 0; hush(); skyLeave(); state = 'menu'; reset();
-  $('du-mode').textContent = DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
+  $('du-mode').textContent = DUEL.mode === 'ship' ? 'Carrier strike' : DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
   setTimeout(() => { if (NET.me && NET.sb) rpc('my_pilot').then(adopt).catch(() => {}); }, 2500); // the server's report has landed by now: pick up the pay
   [DUEL.team, 1 - DUEL.team].forEach((t, i) => {
     const ol = $(i ? 'du-b' : 'du-a'); ol.textContent = ''; $(i ? 'du-bl' : 'du-al').textContent = t ? 'Red' : 'Blue';
@@ -2533,7 +2576,7 @@ function finish() {
   show('s-end'); $('b-again').focus();
 }
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
-$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
@@ -2621,7 +2664,7 @@ function tick(dt, now) {
     if (mIdx === 0 && !done.includes(0) && tipI < TIPS.length && time > TIPS[tipI][0]) radio(TIPS[tipI++][1]);
     updatePlayer(dt); updateEnemies(dt); updateObjs(dt); if (!(DUEL.on && DUEL.mates)) updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); scanThreats(dt); tickRadio(dt); skyTick(dt);
     beacon.rotation.y += dt * .4; beacon.material.opacity = .15 + Math.sin(now / 300) * .05;
-    updateCamera(dt); updateHud(dt);
+    updateCamera(dt); shipCam(dt); updateHud(dt);
     if (engGain) { engGain.gain.value = P.alive ? .05 : 0; const f = 44 + P.speed * .6; engOsc.frequency.value = f; engOsc2.frequency.value = f * .502; }
     if (endT > 0) { endT -= dt; if (endT <= 0) { endT = 0; finish(); } }
   } else {

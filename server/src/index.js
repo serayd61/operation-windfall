@@ -5,6 +5,7 @@ import { DurableObject } from 'cloudflare:workers';
 
 const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
 const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill
+const SHIPX = 1900, SHIP_HP = 1600, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
 const BOT_HP = 45, BOT_NAMES = [['Dusty', 'Mac', 'Sparks', 'Lucky', 'Tex'], ['Falke', 'Adler', 'Wolf', 'Habicht', 'Luchs']];
 const PI = Math.PI;
 const rnd = (a, b) => a + Math.random() * (b - a);
@@ -20,7 +21,7 @@ export default {
     if (req.headers.get('Upgrade') !== 'websocket') return new Response('expected websocket', { status: 426 });
     const room = (u.searchParams.get('room') || 'open').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 24) || 'open';
     const n = clamp(parseInt(u.searchParams.get('n')) || 0, 0, 15);
-    const mode = u.searchParams.get('mode') === 'zone' ? 'zone#' : '';
+    const q = u.searchParams.get('mode'), mode = q === 'zone' ? 'zone#' : q === 'ship' ? 'ship#' : '';
     return env.MATCH.get(env.MATCH.idFromName(room + '#' + mode + n)).fetch(req);
   },
 };
@@ -29,11 +30,12 @@ export class Match extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
     this.conns = new Set(); this.ents = new Map(); this.timer = null; this.c = null;
-    this.sc = [0, 0]; this.start = 0; this.over = 0; this.last = 0; this.botN = 0; this.dirty = false; this.open = true; this.mode = 'df'; this.scf = [0, 0]; this.zs = ZONES.map(() => ({ v: 0, own: -1 }));
+    this.sc = [0, 0]; this.start = 0; this.over = 0; this.last = 0; this.botN = 0; this.dirty = false; this.open = true; this.mode = 'df'; this.scf = [0, 0]; this.zs = ZONES.map(() => ({ v: 0, own: -1 })); this.ships = [SHIP_HP, SHIP_HP];
+    this.guns = [{ id: 'ship0', team: 0, kills: 0 }, { id: 'ship1', team: 1, kills: 0 }];
   }
 
   async fetch(req) {
-    try { this.open = (new URL(req.url).searchParams.get('room') || 'open').toLowerCase().replace(/[^a-z0-9]/g, '') in { open: 1, '': 1 }; if (!this.humans()) this.mode = new URL(req.url).searchParams.get('mode') === 'zone' ? 'zone' : 'df'; } catch (e) {}
+    try { this.open = (new URL(req.url).searchParams.get('room') || 'open').toLowerCase().replace(/[^a-z0-9]/g, '') in { open: 1, '': 1 }; if (!this.humans()) { const q = new URL(req.url).searchParams.get('mode'); this.mode = q === 'zone' || q === 'ship' ? q : 'df'; } } catch (e) {}
     const pair = new WebSocketPair(), ws = pair[1]; ws.accept();
     const conn = { ws, ent: null, busy: false, at: Date.now() }; this.conns.add(conn);
     ws.addEventListener('message', ev => { try { this.got(conn, ev.data); } catch (e) {} });
@@ -53,7 +55,15 @@ export class Match extends DurableObject {
   }
   shut() { clearInterval(this.timer); this.timer = null; this.ents.clear(); this.zero(); this.sc = [0, 0]; this.start = 0; this.over = 0; this.c = null; }
 
-  zero() { this.scf = [0, 0]; for (const z of this.zs) { z.v = 0; z.own = -1; } }
+  zero() { this.scf = [0, 0]; for (const z of this.zs) { z.v = 0; z.own = -1; } this.ships = [SHIP_HP, SHIP_HP]; if (this.mode === 'ship') this.sc = [100, 100]; }
+  cap() { return this.mode === 'ship' ? SHIP_CAP : CAP; }
+  spos(team) { const c = this.c || [0, -1900]; return [c[0] + (team ? SHIPX : -SHIPX), c[1]]; }
+  near(e, team) { const p = this.spos(team); return Math.hypot(e.p[0] - p[0], e.p[2] - p[1]); }
+  arm(e) { e.amb = 4; e.amr = 10; e.armed = true; e.armAt = Date.now(); }
+  shipHurt(team, d, by, k) { // a bomb or rocket found the carrier
+    if (this.over || this.ships[team] <= 0) return; this.ships[team] = Math.max(0, this.ships[team] - d);
+    this.sc[team] = Math.ceil(this.ships[team] / SHIP_HP * 100); if (by && by.team !== team) { by.sd = (by.sd || 0) + d; while (by.sd >= 260) { by.sd -= 260; by.kills++; } } // damage to the carrier counts like kills this.all({ t: 'sh', s: team, hp: this.ships[team], k, by: by ? by.id : '' });
+  }
   goal() { return this.mode === 'zone' ? ZGOAL : GOAL; }
   zpos(i) { const c = this.c || [0, -1900]; return [c[0] + ZONES[i][0], c[1] + ZONES[i][1]]; }
 
@@ -83,7 +93,7 @@ export class Match extends DurableObject {
       ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
       if (!this.start) { this.start = Date.now(); this.sc = [0, 0]; this.zero(); this.over = 0; }
       this.fill();
-      this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : undefined, left: this.left(), sc: this.sc, c: this.c });
+      this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : undefined, left: this.left(), sc: this.sc, c: this.c });
       return;
     }
     e.seen = Date.now();
@@ -96,6 +106,9 @@ export class Match extends DurableObject {
       const l = Math.hypot(m.q[0], m.q[1], m.q[2], m.q[3]) || 1; for (let i = 0; i < 4; i++) e.q[i] = m.q[i] / l;
       e.f = m.f ? 1 : 0;
     } else if (m.t === 'h') { this.claim(e, m);
+    } else if (m.t === 'b') { // ordnance on the enemy carrier: only what this aircraft still carries, and only from nearby
+      if (this.mode !== 'ship' || !e.alive || !e.fresh || this.over || this.near(e, 1 - e.team) > 1200) return;
+      if (m.k === 1) { if (e.amr <= 0) return; e.amr--; this.shipHurt(1 - e.team, RKT, e, 1); } else { if (e.amb <= 0) return; e.amb--; this.shipHurt(1 - e.team, BOMB, e, 0); }
     } else if (m.t === 'x') { if (e.alive) this.kill(e, Date.now() - e.hitAt < 6000 ? this.ents.get(e.hitBy) : null); }
   }
 
@@ -117,16 +130,16 @@ export class Match extends DurableObject {
 
   kill(v, by) {
     if (!v.alive || this.over) return; v.alive = false; v.hp = 0; v.f = 0; v.deaths++; v.fresh = false; v.resp = v.bot ? 4 : 3.2;
-    if (this.mode === 'zone') { this.scf[1 - v.team] += 2; this.sc[1 - v.team] = Math.floor(this.scf[1 - v.team]); } else this.sc[1 - v.team]++;
+    if (this.mode === 'zone') { this.scf[1 - v.team] += 2; this.sc[1 - v.team] = Math.floor(this.scf[1 - v.team]); } else if (this.mode !== 'ship') this.sc[1 - v.team]++;
     if (by && by.team !== v.team) by.kills++;
     this.all({ t: 'k', i: v.id, by: by ? by.id : '', sc: this.sc });
   }
 
-  left() { return this.start ? Math.max(0, Math.round(CAP - (Date.now() - this.start) / 1000)) : CAP; }
+  left() { return this.start ? Math.max(0, Math.round(this.cap() - (Date.now() - this.start) / 1000)) : this.cap(); }
 
   make(id, name, team, bot) {
     const e = { id, name, team, bot, k: 0, conn: null, alive: true, hp: bot ? BOT_HP : 100, p: [0, 0, 0], q: [0, 0, 0, 1], vel: [0, 0, 0], f: 0, kills: 0, deaths: 0,
-      resp: 0, zone: -1, hitAt: 0, hitBy: '', seen: Date.now(), pt: 0, budget: 200, fresh: true, yaw: 0, pitch: 0, roll: 0, v: 80, tgt: null, retT: 0, evT: 0, evYaw: 0, evPitch: 0 };
+      resp: 0, zone: -1, hitAt: 0, hitBy: '', seen: Date.now(), pt: 0, budget: 200, fresh: true, yaw: 0, pitch: 0, roll: 0, v: 80, tgt: null, retT: 0, evT: 0, evYaw: 0, evPitch: 0, amb: 4, amr: 10, armed: true, armAt: Date.now(), role: bot && this.botN % 2 === 0 ? 'atk' : '' };
     this.place(e); this.ents.set(id, e); this.dirty = true; return e;
   }
 
@@ -159,7 +172,7 @@ export class Match extends DurableObject {
     if (b.retT <= 0 || !b.tgt || !b.tgt.alive || !this.ents.has(b.tgt.id)) {
       b.retT = 1.5; b.tgt = null; let best = 1e9;
       for (const t of this.ents.values()) { if (t.team === b.team || !t.alive || !t.fresh) continue; const d = Math.hypot(t.p[0] - b.p[0], t.p[1] - b.p[1], t.p[2] - b.p[2]); if (d < best) { best = d; b.tgt = t; } }
-      b.zone = -1;
+      b.zone = -1; if (this.mode === 'ship' && b.role && best > 320) { b.tgt = null; b.zone = -2; }
       if (this.mode === 'zone' && best > 520) { // nobody close: head for the nearest ring that is not ours yet, or guard one that is
         b.tgt = null; let zb = 1e9;
         for (let i = 0; i < ZONES.length; i++) { const z = this.zpos(i), d = Math.hypot(z[0] - b.p[0], z[1] - b.p[2]) + (this.zs[i].own === b.team ? 2500 : 0); if (d < zb) { zb = d; b.zone = i; } }
@@ -176,6 +189,11 @@ export class Match extends DurableObject {
     }
     if (!t && b.zone >= 0) { const z = this.zpos(b.zone), dx = z[0] - b.p[0], dz = z[1] - b.p[2], dy = 430 - b.p[1], l = Math.hypot(dx, dy, dz) || 1;
       wantYaw = Math.atan2(-dx, -dz); wantPitch = Math.asin(clamp(dy / l, -1, 1)); if (b.evT <= 0 && l < 160) { b.evT = rnd(2.5, 4); b.evYaw = b.yaw + (Math.random() < .5 ? -1 : 1) * rnd(1.6, 2.6); b.evPitch = 0; } }
+    if (!t && b.zone === -2) { // a bombing run on their carrier, then home to rearm
+      const tm = b.armed ? 1 - b.team : b.team, sp = this.spos(tm), dx = sp[0] - b.p[0], dz = sp[1] - b.p[2], h = Math.hypot(dx, dz), dy = (b.armed ? 240 : 380) - b.p[1];
+      wantYaw = Math.atan2(-dx, -dz); wantPitch = Math.asin(clamp(dy / (Math.hypot(h, dy) || 1), -1, 1));
+      if (b.evT <= 0 && h < (b.armed ? 170 : 380)) { if (b.armed) { b.armed = false; if (Math.random() < .55) this.shipHurt(tm, BOMB, b, 0); } else b.armed = true; b.evT = rnd(2.5, 4); b.evYaw = b.yaw + rnd(-.5, .5); b.evPitch = .3; }
+    }
     if (b.evT > 0) { b.evT -= dt; wantYaw = b.evYaw; wantPitch = b.evPitch; }
     const hx = b.p[0] - c[0], hz = b.p[2] - c[1]; if (hx * hx + hz * hz > 3800 * 3800) { wantYaw = Math.atan2(hx, hz); b.evT = 0; }
     if (b.p[1] < 230) wantPitch = Math.max(wantPitch, .35); else if (b.p[1] > 1100) wantPitch = Math.min(wantPitch, -.2);
@@ -195,7 +213,7 @@ export class Match extends DurableObject {
     if (!this.humans()) return;
     if (this.over) { this.over -= dt; if (this.over <= 0) this.fresh(); }
     for (const e of this.ents.values()) {
-      if (!e.alive) { e.resp -= dt; if (e.resp <= 0 && !this.over) { e.alive = true; e.hp = e.bot ? BOT_HP : 100; if (e.bot) this.place(e); else if (e.conn) this.send(e.conn, { t: 'r' }); } continue; }
+      if (!e.alive) { e.resp -= dt; if (e.resp <= 0 && !this.over) { e.alive = true; e.hp = e.bot ? BOT_HP : 100; this.arm(e); if (e.bot) this.place(e); else if (e.conn) this.send(e.conn, { t: 'r' }); } continue; }
       if (e.bot) this.bot(e, dt);
       else { e.budget = Math.min(260, e.budget + 170 * dt); if (now - e.hitAt > 6000 && e.hp < 100) e.hp = Math.min(100, e.hp + 7 * dt); }
     }
@@ -208,9 +226,16 @@ export class Match extends DurableObject {
         if (z.own >= 0) { this.scf[z.own] += dt / 3; this.sc[z.own] = Math.floor(this.scf[z.own]); }
       }
     }
+    if (this.mode === 'ship' && !this.over) { // each carrier's guns, and a rearm for whoever comes home
+      for (const e of this.ents.values()) {
+        if (!e.alive || !e.fresh) continue;
+        if (e.p[1] < 800 && this.near(e, 1 - e.team) < 800 && Math.random() < dt * 1.1) this.hurt(e, e.bot ? 5 : 6, this.guns[1 - e.team]);
+        if (!e.bot && e.alive && e.p[1] < 700 && now - e.armAt > 15000 && (e.amb < 4 || e.amr < 10 || e.hp < 100) && this.near(e, e.team) < 420) { this.arm(e); e.hp = 100; if (e.conn) this.send(e.conn, { t: 'arm', hp: 100 }); }
+      }
+    }
     if (this.dirty) { this.dirty = false; this.all({ t: 'ro', e: [...this.ents.values()].map(e => [e.id, e.name, e.team, e.k, e.bot ? 1 : 0]) }); }
-    this.all({ t: 's', l: this.left(), sc: this.sc, z: this.mode === 'zone' ? this.zs.map(z => [z.own, r1(z.v)]) : undefined, e: [...this.ents.values()].map(e => [e.id, e.alive && e.fresh ? 1 : 0, r1(e.p[0]), r1(e.p[1]), r1(e.p[2]), r3(e.q[0]), r3(e.q[1]), r3(e.q[2]), r3(e.q[3]), e.f, e.kills, Math.round(e.hp)]) });
-    if (!this.over && (this.sc[0] >= this.goal() || this.sc[1] >= this.goal() || this.left() <= 0)) { this.over = 9; for (const e of this.ents.values()) e.f = 0; this.all({ t: 'end', sc: this.sc, tb: [...this.ents.values()].map(e => [e.id, e.name, e.team, e.kills, e.deaths, e.bot ? 1 : 0]) }); this.ctx.waitUntil(this.report().catch(() => {})); }
+    this.all({ t: 's', l: this.left(), sc: this.sc, z: this.mode === 'zone' ? this.zs.map(z => [z.own, r1(z.v)]) : undefined, sh: this.mode === 'ship' ? this.ships : undefined, e: [...this.ents.values()].map(e => [e.id, e.alive && e.fresh ? 1 : 0, r1(e.p[0]), r1(e.p[1]), r1(e.p[2]), r3(e.q[0]), r3(e.q[1]), r3(e.q[2]), r3(e.q[3]), e.f, e.kills, Math.round(e.hp)]) });
+    if (!this.over && (this.mode === 'ship' ? this.ships[0] <= 0 || this.ships[1] <= 0 || this.left() <= 0 : this.sc[0] >= this.goal() || this.sc[1] >= this.goal() || this.left() <= 0)) { this.over = this.mode === 'ship' ? 14 : 9; for (const e of this.ents.values()) e.f = 0; this.all({ t: 'end', sc: this.sc, tb: [...this.ents.values()].map(e => [e.id, e.name, e.team, e.kills, e.deaths, e.bot ? 1 : 0]) }); this.ctx.waitUntil(this.report().catch(() => {})); }
   }
 
   /* the result goes to the ranking; only this server knows the key the database asks for */
@@ -225,6 +250,6 @@ export class Match extends DurableObject {
   fresh() { // the next match in the same room
     this.over = 0; this.sc = [0, 0]; this.zero(); this.start = Date.now();
     for (const e of this.ents.values()) { e.kills = 0; e.deaths = 0; e.since = Date.now(); e.alive = true; e.hp = e.bot ? BOT_HP : 100; e.hitAt = 0; if (e.bot) this.place(e); else { e.fresh = false; if (e.conn) this.send(e.conn, { t: 'r' }); } }
-    this.all({ t: 'new', left: CAP, sc: this.sc });
+    this.all({ t: 'new', left: this.cap(), sc: this.sc });
   }
 }
