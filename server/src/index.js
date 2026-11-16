@@ -307,7 +307,7 @@ export class Match extends DurableObject {
     if (now - this.toldT > 60000) this.tell();
     if (this.over) { this.over -= dt; if (this.over <= 0) this.fresh(); }
     for (const e of this.ents.values()) {
-      if (!e.alive) { e.resp -= dt; if (e.resp <= 0 && !this.over) { e.alive = true; e.hp = this.hp0(e); e.safe = Date.now() + 3000; this.arm(e); if (e.bot) this.place(e); else if (e.conn) this.send(e.conn, { t: 'r' }); } continue; }
+      if (!e.alive) { e.resp -= dt; if (e.resp <= 0 && !this.over) { e.alive = true; e.hp = this.hp0(e); e.safe = Date.now() + 3000; this.arm(e); if (e.bot) { this.place(e); e.fresh = true; /* a bot is back the moment it is placed; a pilot once his first position arrives */ } else if (e.conn) this.send(e.conn, { t: 'r' }); } continue; }
       if (e.bot) this.bot(e, dt);
       else { e.budget = Math.min(260, e.budget + 170 * dt); if (now - e.hitAt > 6000 && e.hp < 100) e.hp = Math.min(100, e.hp + 7 * dt); }
     }
@@ -367,7 +367,7 @@ export class Match extends DurableObject {
 
   fresh() { // the next match in the same room
     this.over = 0; this.sc = [0, 0]; this.zero(); this.start = Date.now();
-    for (const e of this.ents.values()) { e.kills = 0; e.deaths = 0; e.since = Date.now(); e.alive = true; e.hp = this.hp0(e); e.hitAt = 0; if (e.bot) this.place(e); else { e.fresh = false; if (e.conn) this.send(e.conn, { t: 'r' }); } }
+    for (const e of this.ents.values()) { e.kills = 0; e.deaths = 0; e.since = Date.now(); e.alive = true; e.hp = this.hp0(e); e.hitAt = 0; if (e.bot) { this.place(e); e.fresh = true; } else { e.fresh = false; if (e.conn) this.send(e.conn, { t: 'r' }); } }
     this.all({ t: 'new', left: this.cap(), sc: this.sc });
   }
 }
