@@ -100,7 +100,7 @@ export class Match extends DurableObject {
     this.gu.push(u);
   }
   gdead(u, by) {
-    if (u.dead) return; u.dead = true; u.hp = 0; this.scf[1 - u.team] += u.kind ? 2 : 1; this.sc[1 - u.team] = Math.floor(this.scf[1 - u.team]);
+    if (u.dead) return; u.dead = true; u.hp = 0; this.scf[1 - u.team] += (u.kind ? 1 : .5) * (by && by.team !== u.team ? (by.bot ? 2 : 4) : 1); /* troops killing troops pay half of what they did; a bot's strafing pays double that, a pilot's four times */ this.sc[1 - u.team] = Math.floor(this.scf[1 - u.team]);
     if (by && by.team !== u.team) { by.gk = (by.gk || 0) + (u.kind ? 1 : .5); while (by.gk >= 1) { by.gk -= 1; by.kills++; } } // a tank counts as a kill, a squad as half of one
     this.all({ t: 'gk', i: u.id, by: by ? by.id : '', sc: this.sc });
   }
