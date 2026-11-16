@@ -6,7 +6,7 @@ import { DurableObject } from 'cloudflare:workers';
 const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
 const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill
 const SHIPX = 1900, SHIP_HP = 1600, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
-const LPTS = [[-420, 220], [0, -100], [420, 220]], LR = 95, LGOAL = 120, LAND_CAP = 420, LBEACH = [[-560, 760], [560, 760]]; // island assault: three strongpoints on the island, a beach a side
+const LPTS = [[-420, 220], [0, -100], [420, 220]], LR = 95, LGOAL = 200, LAND_CAP = 420, LBEACH = [[-560, 760], [560, 760]]; // island assault: three strongpoints on the island, a beach a side
 const GU = [{ hp: 60, sp: 11, rng: 140, dps: [6, 1.5], n: 5 }, { hp: 220, sp: 9, rng: 220, dps: [14, 24], n: 2 }]; // the ground units: rifle squads and tanks
 const SKIES = ['day', 'day', 'dusk', 'night', 'storm']; // each match draws its weather
 const BOT_HP = 45, BOT_NAMES = [['Dusty', 'Mac', 'Sparks', 'Lucky', 'Tex'], ['Falke', 'Adler', 'Wolf', 'Habicht', 'Luchs']];
