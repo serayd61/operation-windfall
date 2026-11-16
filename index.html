@@ -365,6 +365,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Graphics</div><div class="seg" id="o-q" role="radiogroup" aria-label="Graphics quality"></div>
       <div class="lab2">Frame counter</div><div class="seg" id="o-fps" role="radiogroup" aria-label="Frame counter"></div>
       <div class="lab2">Music</div><div class="seg" id="o-mus" role="radiogroup" aria-label="Music"></div>
+      <div class="lab2">Pilot radio</div><div class="seg" id="o-voice" role="radiogroup" aria-label="Pilot radio"></div>
       <div class="lab2">Landing aid</div><div class="seg" id="o-aid" role="radiogroup" aria-label="Landing aid"></div>
       <p class="lede" style="font-size:13px">A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.</p>
       <div class="row"><button class="go" id="b-hback" type="button">Back</button></div>
@@ -529,7 +530,7 @@ const DICT = {
   "Zone A taken": ["A bölgesi alındı", "Zone A erobert"], "Zone B taken": ["B bölgesi alındı", "Zone B erobert"], "Zone C taken": ["C bölgesi alındı", "Zone C erobert"], "Zone A lost": ["A bölgesi kaybedildi", "Zone A verloren"], "Zone B lost": ["B bölgesi kaybedildi", "Zone B verloren"], "Zone C lost": ["C bölgesi kaybedildi", "Zone C verloren"],
   "Island assault": ["Ada çıkarması", "Inselsturm"], "Island assault · you are RED": ["Ada çıkarması · KIRMIZI takımdasın", "Inselsturm · du bist ROT"], "Island assault · you are BLUE": ["Ada çıkarması · MAVİ takımdasın", "Inselsturm · du bist BLAU"],
   "Island assault: both sides have landed troops and tanks on the same island. Strafe their squads, break their tanks with rockets and bombs, and help your men take the three strongpoints. Every strongpoint held pays a point every three seconds. First side to 200 wins; fly low over your own beach to rearm. A tank destroyed earns three bombs, a squad two rockets, an aircraft four rockets and repairs.": ["Ada çıkarması: iki taraf da aynı adaya asker ve tank çıkardı. Düşman mangalarını makineliyle tara, tanklarını roket ve bombayla vur, askerlerinin üç mevziyi almasına yardım et. Elde tutulan her mevzi üç saniyede bir puan verir. 200 puana ilk ulaşan kazanır; yeniden silahlanmak için kendi sahilinin üzerinden alçaktan uç. Vurduğun her tank üç bomba, her manga iki roket, her uçak dört roket ve onarım kazandırır.", "Inselsturm: Beide Seiten haben Truppen und Panzer auf derselben Insel gelandet. Beschieße ihre Trupps, knacke ihre Panzer mit Raketen und Bomben und hilf deinen Männern, die drei Stützpunkte zu nehmen. Jeder gehaltene Stützpunkt bringt alle drei Sekunden einen Punkt. Wer zuerst 200 hat, gewinnt; fliege tief über deinen eigenen Strand, um aufzumunitionieren. Ein zerstörter Panzer bringt drei Bomben, ein Trupp zwei Raketen, ein Flugzeug vier Raketen und Reparatur."],
-  "Enemy tank destroyed": ["Düşman tankı imha edildi", "Feindpanzer zerstört"], "Reward: repairs": ["Ödül: onarım", "Belohnung: Reparatur"], "Enemy squad wiped out": ["Düşman mangası yok edildi", "Feindtrupp ausgeschaltet"], "We lost a tank": ["Bir tankımızı kaybettik", "Wir haben einen Panzer verloren"], "TROOPS": ["ASKER", "TRUPPEN"], "BEACH": ["SAHİL", "STRAND"],
+  "Enemy tank destroyed": ["Düşman tankı imha edildi", "Feindpanzer zerstört"], "Hold on, I'm coming!": ["Dayan, geliyorum!", "Halt durch, ich komme!"], "I'm on him!": ["Peşindeyim!", "Ich bin an ihm dran!"], "I see them. Going in!": ["Gördüm onları. Dalıyorum!", "Ich sehe sie. Greife an!"], "Check your six!": ["Arkana bak!", "Pass auf dein Heck auf!"], "Guns hot. Let's go to work.": ["Silahlar hazır. İşe koyulalım.", "Waffen scharf. An die Arbeit."], "Form up on me.": ["Arkamda toplanın.", "Sammeln bei mir."], "Stay with your wingman.": ["Kanat arkadaşından ayrılma.", "Bleib bei deinem Rottenflieger."], "That's a kill. Good work.": ["Bir tane daha. İyi iş.", "Abschuss bestätigt. Gute Arbeit."], "I've got one on my tail!": ["Peşimde biri var!", "Ich hab einen im Nacken!"], "I'm hit! I'm hit!": ["Vuruldum! Vuruldum!", "Ich bin getroffen! Ich bin getroffen!"], "Got him! Scratch one!": ["Vurdum onu! Bir eksik!", "Hab ihn! Einer weniger!"], "Tally ho! Bandits, two o'clock high!": ["Düşman uçakları! Saat iki yönünde, yüksekte!", "Achtung! Feindjäger, zwei Uhr, hoch!"], "They're all over us!": ["Her yerdeler!", "Die sind überall!"], "Target in sight. Rolling in!": ["Hedef görüşte. Dalışa geçiyorum!", "Ziel in Sicht. Greife an!"], "He's smoking! Finish him!": ["Duman çıkarıyor! Bitir işini!", "Er qualmt! Gib ihm den Rest!"], "Nice shooting!": ["İyi atış!", "Guter Schuss!"], "We lost one!": ["Birini kaybettik!", "Wir haben einen verloren!"], "Break! Break!": ["Kır! Kır!", "Abdrehen! Abdrehen!"], "Pilot radio": ["Pilot telsizi", "Pilotenfunk"], "Wingman": ["Kanat", "Rottenflieger"], "Reward: repairs": ["Ödül: onarım", "Belohnung: Reparatur"], "Enemy squad wiped out": ["Düşman mangası yok edildi", "Feindtrupp ausgeschaltet"], "We lost a tank": ["Bir tankımızı kaybettik", "Wir haben einen Panzer verloren"], "TROOPS": ["ASKER", "TRUPPEN"], "BEACH": ["SAHİL", "STRAND"],
   "Our men are taking a beating down there!": ["Askerlerimiz aşağıda eziliyor!", "Unsere Männer werden da unten aufgerieben!"], "Good hit! Their armour is burning!": ["İyi vuruş! Zırhlıları yanıyor!", "Guter Treffer! Ihre Panzer brennen!"],
   "Carrier strike 4 v 4": ["Gemi avı 4'e 4", "Trägerjagd 4 gegen 4"], "Carrier strike": ["Gemi avı", "Trägerjagd"], "Carrier strike · you are RED": ["Gemi avı · KIRMIZI takımdasın", "Trägerjagd · du bist ROT"], "Carrier strike · you are BLUE": ["Gemi avı · MAVİ takımdasın", "Trägerjagd · du bist BLAU"],
   "Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.": ["Gemi avı: her takımın bir uçak gemisi var. Onlar seninkini batırmadan sen onlarınkini bomba ve roketle batır. Gemiler ateş açar; yeniden silahlanmak ve onarılmak için kendi geminin üzerinden alçaktan geç.", "Trägerjagd: Jede Seite hat einen Flugzeugträger. Versenke den gegnerischen mit Bomben und Raketen, bevor sie deinen versenken. Die Träger schießen zurück; fliege tief über deinen eigenen Träger, um aufzumunitionieren und zu reparieren."],
@@ -683,7 +684,7 @@ function trNode(n, again) {
 function trTree(root, again) { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); const l = []; while (w.nextNode()) l.push(w.currentNode); for (const n of l) trNode(n, again); }
 function setLang(i) {
   LI = clamp(i | 0, 0, LANGS.length - 1); document.documentElement.lang = LANGS[LI][0]; try { localStorage.setItem('windfall-lang', LANGS[LI][0]); } catch (e) {}
-  trTree(app, true);
+  trTree(app, true); try { voxWarm(); } catch (e) {}
 }
 new MutationObserver(recs => {
   for (const r of recs) { if (r.type === 'characterData') trNode(r.target); else for (const n of r.addedNodes) { if (n.nodeType === 3) trNode(n); else if (n.nodeType === 1) trTree(n); } }
@@ -1772,7 +1773,7 @@ function initAudio() {
     engGain = ac.createGain(); engGain.gain.value = 0; lp.connect(engGain); engGain.connect(master);
     engOsc = ac.createOscillator(); engOsc.type = 'sawtooth'; engOsc.connect(lp); engOsc.start();
     engOsc2 = ac.createOscillator(); engOsc2.type = 'square'; engOsc2.connect(lp); engOsc2.start();
-    musGain = ac.createGain(); musGain.gain.value = 0; musGain.connect(master); setInterval(musicTick, 110);
+    musGain = ac.createGain(); musGain.gain.value = 0; musGain.connect(master); setInterval(musicTick, 110); setTimeout(voxWarm, 400);
   } catch (e) { ac = null; }
 }
 /* music: an original march, synthesised */
@@ -1799,10 +1800,32 @@ function musicTick() {
     musT += sd; musStep = (st + 1) % 64;
   }
 }
-/* the radio is read, not heard: a spoken voice sat on top of the sound of the fight */
+/* pilots on the radio: short recorded lines, squeezed through a radio band and kept under the sound of the fight.
+   A line plays when its caption comes up; a language without a recording of it stays a caption only. */
+const VOX = { id: {"Bandit on your six! Break left!": "six_l", "Bandit on your six! Break right!": "six_r", "Bandit closing behind you! Keep turning!": "behind", "Bandit dead ahead! Take the shot!": "ahead", "Bandit on your right!": "side_r", "Bandit on your left!": "side_l", "Taking hits from behind! Turn hard!": "hitback", "Fire from your left! Break away!": "hit_l", "Fire from your right! Break away!": "hit_r", "Pull up! Pull up!": "pull", "Stalling! Nose down!": "stall", "Flak! Change your height!": "flak", "Ground fire from below! Climb!": "below", "You are hit hard! Break off and climb!": "hurt", "Hold on, I'm coming!": "a_coming", "I'm on him!": "a_onhim", "I see them. Going in!": "a_see", "Check your six!": "a_six", "Good kill!": "kill1", "Splash one!": "kill2", "He is going down!": "kill3", "Two of them! Fine shooting!": "dbl", "Three in a row! Keep it up!": "tri", "Five down! You are an ace today!": "ace", "Good hit! Their armour is burning!": "gtank", "Machine guns in the camp below! Stay fast!": "camp", "Our men are taking a beating down there!": "gloss", "Their carrier is burning. Finish her!": "shipburn", "Our carrier is under attack!": "shiphit", "Guns hot. Let's go to work.": "b_go", "Form up on me.": "b_form", "Stay with your wingman.": "b_stay", "That's a kill. Good work.": "b_good", "I've got one on my tail!": "c_tail", "I'm hit! I'm hit!": "c_hit", "Got him! Scratch one!": "c_got", "Tally ho! Bandits, two o'clock high!": "c_tally", "They're all over us!": "c_all", "Target in sight. Rolling in!": "c_roll", "He's smoking! Finish him!": "c_smoke", "Nice shooting!": "c_nice", "We lost one!": "c_down", "Break! Break!": "c_break", "Enemy tanks below": "tank"}, have: {"en": "a_coming a_onhim a_see a_six ahead behind below c_all c_break c_down c_got c_hit c_nice c_roll c_smoke c_tail c_tally flak hit_l hit_r hitback hurt pull side_l side_r six_l six_r stall", "tr": "a_coming a_onhim a_see a_six ahead behind below c_all c_break c_down c_got c_hit c_nice c_roll c_smoke c_tail c_tally flak hit_l hit_r hitback hurt pull side_l side_r six_l six_r stall", "de": "c_all c_break c_down c_got c_hit c_nice c_roll c_smoke c_tail c_tally"}, buf: new Map(), src: null, shape: null };
+function voxId(text) { let best = '', id = ''; for (const k in VOX.id) if (k.length > best.length && text.indexOf(k) === 0) { best = k; id = VOX.id[k]; } return id; }
+function voxHas(id) { return (' ' + VOX.have[LANGS[LI][0]] + ' ').indexOf(' ' + id + ' ') >= 0; }
+function voxLoad(id) { // fetched and decoded once, then kept
+  const key = LANGS[LI][0] + '/' + id; if (VOX.buf.has(key) || !ac) return; VOX.buf.set(key, null);
+  fetch('voice/' + key + '.mp3').then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(b => new Promise((ok, no) => ac.decodeAudioData(b, ok, no))).then(b => VOX.buf.set(key, b)).catch(() => {});
+}
+function voxWarm() { if (!ac || !CAR.voice) return; for (const id of VOX.have[LANGS[LI][0]].split(' ')) if (id) voxLoad(id); }
+function hush() { try { if (VOX.src) VOX.src.stop(); } catch (e) {} VOX.src = null; }
+function say(text) {
+  if (!CAR.voice || muted || !ac) return; const id = voxId(text); if (!id || !voxHas(id)) return;
+  const b = VOX.buf.get(LANGS[LI][0] + '/' + id); if (!b) { voxLoad(id); return; }
+  try {
+    hush(); const t = ac.currentTime, s = ac.createBufferSource(); s.buffer = b;
+    const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 520; const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2700; const pk = ac.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 1500; pk.Q.value = 1.1; pk.gain.value = 7;
+    if (!VOX.shape) { VOX.shape = new Float32Array(257); for (let i = 0; i < 257; i++) { const x = i / 128 - 1; VOX.shape[i] = Math.tanh(x * 3.2) * .8; } }
+    const ws = ac.createWaveShaper(); ws.curve = VOX.shape; const g = ac.createGain(); g.gain.value = .5;
+    s.connect(hp); hp.connect(pk); pk.connect(ws); ws.connect(lp); lp.connect(g); g.connect(master);
+    const n = ac.createBufferSource(); n.buffer = noiseBuf; n.loop = true; const nf = ac.createBiquadFilter(); nf.type = 'bandpass'; nf.frequency.value = 1900; nf.Q.value = .6; const ng = ac.createGain(); ng.gain.value = .028; // the carrier hiss, only while he is speaking
+    n.connect(nf); nf.connect(ng); ng.connect(master); n.start(t); n.stop(t + b.duration + .12); s.start(t + .05); VOX.src = s;
+    s.onended = () => { if (VOX.src === s) VOX.src = null; burst(2400, 'bandpass', .04, .04); };
+  } catch (e) {}
+}
 function pickVoice() { return null; }
-function hush() { try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
-function say() {}
 function burst(freq, type, dur, vol) {
   if (!ac || muted || vol < .01) return;
   const s = ac.createBufferSource(); s.buffer = noiseBuf; const f = ac.createBiquadFilter(); f.type = type; f.frequency.value = freq;
@@ -1976,10 +1999,24 @@ function scanThreats(dt) {
     if (tk) { const [f, r] = sideOf(tk.aim), hf = Math.hypot(f, r) || 1; call('tank', 'Enemy tanks below, ' + (f / hf > .8 ? 'dead ahead!' : r > 0 ? 'on your right!' : 'on your left!') + ' Hit them!', 24); }
   }
 }
+/* pilots talking among themselves: a line now and then while the fight is on, and a word when one of ours scores or goes down */
+let chatT = 10;
+function mate(not) { const a = []; if (DUEL.on) for (const [id, r] of DUEL.ro) if (id !== DUEL.id && r.team === DUEL.team && r.name !== not) a.push(r.name); return a.length ? a[Math.random() * a.length | 0] : 'Wingman'; }
+function chat(text, from, reply) { // only into a quiet radio: orders and warnings come first
+  if (!P.alive || P.gnd || state !== 'play' || radioQ.length || radioT > 0) return false; const a = from || mate(); radioQ.push([a, text, 2]); if (reply) radioQ.push([mate(a), reply, 2]); chatT = rand(13, 24); return true;
+}
+function chatTick(dt) {
+  chatT -= dt; if (chatT > 0 || !P.alive || P.gnd) return; chatT = rand(13, 24); let foe = false;
+  if (DUEL.on) { if (!DUEL.id || DUEL.over) return; foe = true; } else for (const e of enemies) if (e.kind === 'fighter' && !e.dead && !e.falling && e.pos.distanceTo(P.pos) < 1800) { foe = true; break; }
+  if (!foe) return;
+  const pool = [["I've got one on my tail!", "Hold on, I'm coming!"], ["They're all over us!"], ["He's smoking! Finish him!"], ['Check your six!'], ["Tally ho! Bandits, two o'clock high!", 'I see them. Going in!'], ['Break! Break!'], ["I'm on him!"], ["I'm hit! I'm hit!", "Hold on, I'm coming!"]];
+  if (DUEL.on && (DUEL.mode === 'land' || DUEL.mode === 'ship')) pool.push(['Target in sight. Rolling in!'], ['Target in sight. Rolling in!']);
+  const c = pool[Math.random() * pool.length | 0]; chat(c[0], null, c[1]);
+}
 function tickRadio(dt) {
   radioT -= dt;
   if (radioT <= 0) {
-    if (radioQ.length) { const [f, t, urgent] = radioQ.shift(); $('radio-from').textContent = f; $('radio-text').textContent = t; $('radio').classList.add('on'); $('radio').classList.toggle('urgent', !!urgent); radioT = urgent ? Math.max(2.6, 1 + t.length * .05) : Math.max(5.4, 1.4 + t.length * .062); burst(2400, 'bandpass', .05, .05); say(t, urgent); }
+    if (radioQ.length) { const [f, t, urgent] = radioQ.shift(); $('radio-from').textContent = f; $('radio-text').textContent = t; $('radio').classList.add('on'); $('radio').classList.toggle('urgent', urgent === 1); radioT = urgent ? Math.max(2.6, 1 + t.length * .05) : Math.max(5.4, 1.4 + t.length * .062); burst(2400, 'bandpass', .05, .05); say(t, urgent); }
     else $('radio').classList.remove('on');
   }
 }
@@ -2745,7 +2782,7 @@ function duelMsg(m) {
   } else if (m.t === 'in') {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
-    weatherSet(m.wx); if (m.mode === 'land') landSet(m); else { zonesSet(m.zp); shipsSet(m.sp, m.shp); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective();
+    weatherSet(m.wx); if (m.mode === 'land') landSet(m); else { zonesSet(m.zp); shipsSet(m.sp, m.shp); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective(); chatT = 7;
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
@@ -2756,7 +2793,8 @@ function duelMsg(m) {
     if (m.i === DUEL.id) return duelDown('', true);
     const q = NET.peers.get(m.i), r = DUEL.ro.get(m.i); if (q) { explode(q.pos, 26); q.alive = false; q.mesh.visible = false; } if (!r) return;
     if (m.by === DUEL.id) { feed('You shot down ' + r.name); DUEL.streak++; const quick = time - DUEL.killT < 7; DUEL.killT = time; callT = 0;
-      if (DUEL.streak === 5) { warn('Ace', true); call('ace', 'Five down! You are an ace today!', 1); } else if (DUEL.streak === 3) { warn('Three in a row', true); call('tri', 'Three in a row! Keep it up!', 1); } else if (quick && DUEL.streak > 1) { warn('Double kill', true); call('dbl', 'Two of them! Fine shooting!', 1); } else call('kill', 'Good kill!', 2); } else feed(r.name + (r.team === DUEL.team ? ' is down' : ' shot down'));
+      if (DUEL.streak === 5) { warn('Ace', true); call('ace', 'Five down! You are an ace today!', 1); } else if (DUEL.streak === 3) { warn('Three in a row', true); call('tri', 'Three in a row! Keep it up!', 1); } else if (quick && DUEL.streak > 1) { warn('Double kill', true); call('dbl', 'Two of them! Fine shooting!', 1); } else if (Math.random() < .5 || !chat('Nice shooting!')) call('kill', 'Good kill!', 2); }
+    else { feed(r.name + (r.team === DUEL.team ? ' is down' : ' shot down')); const k = DUEL.ro.get(m.by); if (r.team === DUEL.team) { if (Math.random() < .5) chat('We lost one!'); } else if (k && k.team === DUEL.team && Math.random() < .5) chat('Got him! Scratch one!', k.name); }
   } else if (m.t === 'sh') { // a bomb or rocket on one of the carriers
     const h = DUEL.ships[m.s ? 1 : 0]; if (!h || DUEL.over) return; h.hp = +m.hp || 0; shipSpot(h, _e); explode(_e, m.k ? 16 : 34); if (_e.distanceTo(P.pos) < 400) shake = Math.max(shake, .5);
     if (m.by === DUEL.id) { feed('Hit on the enemy carrier'); hitFlash = Math.max(hitFlash, .3); }
@@ -2828,6 +2866,7 @@ function fillHangar() {
   const seg = (id, name, opts, cur, set) => { $(id).innerHTML = opts.map((o, i) => '<label><input type="radio" name="' + name + '" value="' + i + '"' + (i === cur ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $(id).querySelectorAll('input').forEach(el => { el.onchange = () => { set(+el.value); saveCar(); }; }); };
   seg('o-sens', 'sens', ['Gentle', 'Normal', 'Sharp'], CAR.sens, v => { CAR.sens = v; });
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
+  seg('o-voice', 'voice', ['Off', 'On'], CAR.voice, v => { CAR.voice = v; if (!v) hush(); else { voxWarm(); setTimeout(() => say('Check your six!'), 900); } });
   seg('o-aid', 'aid', ['Off', 'On'], CAR.aid, v => { CAR.aid = v; });
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
@@ -2954,7 +2993,7 @@ function tick(dt, now) {
   if (state === 'play') {
     time += P.alive && !endT ? dt : 0; readInput();
     if (mIdx === 0 && !done.includes(0) && tipI < TIPS.length && time > TIPS[tipI][0]) radio(TIPS[tipI++][1]);
-    updatePlayer(dt); updateEnemies(dt); updateObjs(dt); if (!(DUEL.on && DUEL.mates)) updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); scanThreats(dt); tickRadio(dt); skyTick(dt);
+    updatePlayer(dt); updateEnemies(dt); updateObjs(dt); if (!(DUEL.on && DUEL.mates)) updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); scanThreats(dt); tickRadio(dt); chatTick(dt); skyTick(dt);
     beacon.rotation.y += dt * .4; beacon.material.opacity = .15 + Math.sin(now / 300) * .05;
     updateCamera(dt); shipCam(dt); updateHud(dt);
     if (engGain) { engGain.gain.value = P.alive ? .05 : 0; const f = 44 + P.speed * .6; engOsc.frequency.value = f; engOsc2.frequency.value = f * .502; }
@@ -3175,7 +3214,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
