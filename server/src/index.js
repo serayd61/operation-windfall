@@ -20,6 +20,9 @@ const CH = [null,
   { mode: 'ship', wx: 'dusk', load: [0, 1] }, { mode: 'zone', wx: 'day', bacc: 1.5 }, { mode: 'land', wx: 'storm', noRearm: 1 }, { mode: 'df', wx: 'storm', resp: 8 }, { mode: 'ship', wx: 'night', cap: 300, bhp: 1.3 },
   { mode: 'land', wx: 'day', tanks: 2 }, { mode: 'zone', wx: 'night', short: 1 }, { mode: 'df', wx: 'storm', goal: 35, bhp: 1.6, bacc: 1.4 }, { mode: 'ship', wx: 'storm', load: [.5, 1] }, { mode: 'land', wx: 'night', goal: 250, tanks: 1, bhp: 1.5, bacc: 1.3, flak: 1.5 },
 ];
+/* what a pilot flies as: a fighter hits aircraft harder; an attacker carries the rockets, shrugs off some fire and is the one for troops; a bomber carries the bombs and the plate.
+   ld is the bombs and rockets it takes off with, gun what its guns do to aircraft, gg to ground units, bomb and rkt what its ordnance does, arm how much of a hit gets through */
+const ROLE = { f: { ld: [0, 4], gun: 1.15, gg: .8, bomb: 1, rkt: 1, arm: 1 }, a: { ld: [2, 14], gun: 1, gg: 1.3, bomb: 1, rkt: 1.25, arm: .85 }, b: { ld: [8, 4], gun: .9, gg: 1, bomb: 1.3, rkt: 1, arm: .7 } }, ROLE0 = { gun: 1, gg: 1, bomb: 1, rkt: 1, arm: 1 };
 const PI = Math.PI;
 const rnd = (a, b) => a + Math.random() * (b - a);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -89,6 +92,7 @@ export class Match extends DurableObject {
   zero() { this.wx = this.R.wx || SKIES[Math.floor(Math.random() * SKIES.length)]; this.scf = [0, 0]; for (const z of this.zs) { z.v = 0; z.own = -1; } this.ships = [this.smax(0), this.smax(1)]; if (this.mode === 'ship') this.sc = [100, 100]; this.gu = []; this.gwT = 0; this.g0 = true; }
   cap() { return this.R.cap || (this.mode === 'ship' ? SHIP_CAP : this.mode === 'land' ? LAND_CAP : CAP); }
   smax(team) { return Math.round(SHIP_HP * (team === 1 && this.R.ship || 1)); } // a chapter may give their carrier thinner or thicker plate
+  rk(e) { return !e.bot && ROLE[e.rl] || ROLE0; }
   hp0(e) { return e.bot ? Math.round(BOT_HP * (e.team === 1 && this.R.bhp || 1)) : 100; }
   ld(e) { const L = !e.bot && this.R.load || [1, 1]; return [Math.floor((e.b0 == null ? 4 : e.b0) * L[0]), Math.floor((e.r0 == null ? 10 : e.r0) * L[1])]; } // the bombs and rockets this aircraft takes off with
   spos(team) { const c = this.c || [0, -1900]; return [c[0] + (team ? SHIPX : -SHIPX), c[1]]; }
@@ -165,10 +169,10 @@ export class Match extends DurableObject {
       const cnt = [0, 0]; for (const x of this.ents.values()) if (!x.bot) cnt[x.team]++;
       const team = this.ch ? 0 : !this.open ? (cnt[0] < SEATS ? 0 : 1) : cnt[0] < cnt[1] ? 0 : cnt[1] < cnt[0] ? 1 : this.sc[1] < this.sc[0] ? 1 : 0;
       const ent = this.make(p.id, String(p.name || 'Pilot').replace(/[<>&]/g, '').slice(0, 16), team, false);
-      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; if (Array.isArray(m.a) && m.a.length === 2 && m.a.every(Number.isInteger)) { ent.b0 = clamp(m.a[0], 0, 4); ent.r0 = clamp(m.a[1], 0, 10); this.arm(ent); } ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
+      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; if (typeof m.r === 'string' && ROLE[m.r]) { ent.rl = m.r; ent.b0 = ROLE[m.r].ld[0]; ent.r0 = ROLE[m.r].ld[1]; this.arm(ent); } else if (Array.isArray(m.a) && m.a.length === 2 && m.a.every(Number.isInteger)) { ent.b0 = clamp(m.a[0], 0, 4); ent.r0 = clamp(m.a[1], 0, 10); this.arm(ent); } ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
       if (!this.start) { this.start = Date.now(); this.sc = [0, 0]; this.zero(); this.over = 0; }
       this.fill(); this.tell();
-      this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, wx: this.wx, ch: this.ch || undefined, ld: this.R.load, bhp: this.R.bhp, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, shm: this.mode === 'ship' ? [this.smax(0), this.smax(1)] : undefined, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : this.mode === 'land' ? LPTS.map((z, i) => [...this.zpos(i), LR]) : undefined, bz: this.mode === 'land' ? [this.bpos(0), this.bpos(1)] : undefined, left: this.left(), sc: this.sc, c: this.c });
+      this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, wx: this.wx, rl: ent.rl, am: this.ld(ent), ch: this.ch || undefined, ld: this.R.load, bhp: this.R.bhp, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, shm: this.mode === 'ship' ? [this.smax(0), this.smax(1)] : undefined, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : this.mode === 'land' ? LPTS.map((z, i) => [...this.zpos(i), LR]) : undefined, bz: this.mode === 'land' ? [this.bpos(0), this.bpos(1)] : undefined, left: this.left(), sc: this.sc, c: this.c });
       return;
     }
     e.seen = Date.now();
@@ -184,14 +188,14 @@ export class Match extends DurableObject {
     } else if (m.t === 'g') { // guns on a ground unit: squads suffer, armour shrugs most of it off
       if (this.mode !== 'land' || !e.alive || !e.fresh || this.over || !num(m.d) || m.d <= 0) return;
       const u = this.gu.find(x => x.id === m.i); if (!u || u.hp <= 0 || u.team === e.team || Math.hypot(u.x - e.p[0], u.z - e.p[2]) > 800) return;
-      const d = Math.min(m.d, e.budget); if (d <= 0) return; e.budget -= d; this.ghurt(u, u.kind ? d * .2 : d * .6, e);
+      const d = Math.min(m.d, e.budget); if (d <= 0) return; e.budget -= d; this.ghurt(u, (u.kind ? d * .2 : d * .6) * this.rk(e).gg, e);
     } else if (m.t === 'b' && this.mode === 'land') { // a bomb or rocket came down on the island: whoever of the other side stood near it
       if (!e.alive || !e.fresh || this.over || !num(m.x) || !num(m.z) || Math.hypot(m.x - e.p[0], m.z - e.p[2]) > 1500) return;
       const rk = m.k === 1; if (rk ? e.amr <= 0 : e.amb <= 0) return; if (rk) e.amr--; else e.amb--;
-      const R = rk ? 30 : 48, D = rk ? 140 : 280; for (const u of this.gu) { if (u.team === e.team || u.hp <= 0) continue; const d = Math.hypot(u.x - m.x, u.z - m.z); if (d < R) this.ghurt(u, D * (1 - .7 * d / R), e); }
+      const R = rk ? 30 : 48, D = rk ? 140 * this.rk(e).rkt : 280 * this.rk(e).bomb; for (const u of this.gu) { if (u.team === e.team || u.hp <= 0) continue; const d = Math.hypot(u.x - m.x, u.z - m.z); if (d < R) this.ghurt(u, D * (1 - .7 * d / R), e); }
     } else if (m.t === 'b') { // ordnance on the enemy carrier: only what this aircraft still carries, and only from nearby
       if (this.mode !== 'ship' || !e.alive || !e.fresh || this.over || this.near(e, 1 - e.team) > 1200) return;
-      if (m.k === 1) { if (e.amr <= 0) return; e.amr--; this.shipHurt(1 - e.team, RKT, e, 1); } else { if (e.amb <= 0) return; e.amb--; this.shipHurt(1 - e.team, BOMB, e, 0); }
+      if (m.k === 1) { if (e.amr <= 0) return; e.amr--; this.shipHurt(1 - e.team, RKT * this.rk(e).rkt, e, 1); } else { if (e.amb <= 0) return; e.amb--; this.shipHurt(1 - e.team, BOMB * this.rk(e).bomb, e, 0); }
     } else if (m.t === 'x') { if (e.alive) this.kill(e, Date.now() - e.hitAt < 6000 ? this.ents.get(e.hitBy) : null); }
   }
 
@@ -202,12 +206,12 @@ export class Match extends DurableObject {
     const dx = t.p[0] - e.p[0], dy = t.p[1] - e.p[1], dz = t.p[2] - e.p[2], dist = Math.hypot(dx, dy, dz); if (dist > 750) return;
     const q = e.q, fx = -2 * (q[0] * q[2] + q[3] * q[1]), fy = -2 * (q[1] * q[2] - q[3] * q[0]), fz = -(1 - 2 * (q[0] * q[0] + q[1] * q[1]));
     if (dist > 40 && (fx * dx + fy * dy + fz * dz) / dist < .8) return;
-    e.budget -= d; this.hurt(t, t.bot ? d : d * .5, e);
+    e.budget -= d; this.hurt(t, (t.bot ? d : d * .5) * this.rk(e).gun, e);
   }
 
   hurt(t, d, by) {
     if (Date.now() < t.safe) return;
-    t.hp -= d; t.hitAt = Date.now(); t.hitBy = by.id;
+    t.hp -= d * this.rk(t).arm; t.hitAt = Date.now(); t.hitBy = by.id;
     if (t.bot) { if (Math.random() < .3) this.evade(t); } else if (t.conn) this.send(t.conn, { t: 'd', hp: Math.max(0, r1(t.hp)), by: by.id });
     if (t.hp <= 0) this.kill(t, by);
   }
