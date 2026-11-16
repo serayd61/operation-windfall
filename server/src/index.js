@@ -4,7 +4,7 @@
 import { DurableObject } from 'cloudflare:workers';
 
 const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
-const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill
+const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill; the first is the airfield (rearm and repair), the second the radar (half the wait to fly again), the third the harbour (double pay)
 const SHIPX = 1900, SHIP_HP = 1600, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
 const AMB_MAX = 8, AMR_MAX = 16; // the most bombs and rockets rewards can stack up to
 const LPTS = [[-420, 220], [0, -100], [420, 220]], LR = 95, LGOAL = 200, LAND_CAP = 420, LBEACH = [[-560, 760], [560, 760]]; // island assault: three strongpoints on the island, a beach a side
@@ -217,7 +217,7 @@ export class Match extends DurableObject {
   }
 
   kill(v, by) {
-    if (!v.alive || this.over) return; v.alive = false; v.hp = 0; v.f = 0; v.deaths++; v.fresh = false; v.resp = v.bot ? 4 : this.R.resp || 3.2;
+    if (!v.alive || this.over) return; v.alive = false; v.hp = 0; v.f = 0; v.deaths++; v.fresh = false; v.resp = (v.bot ? 4 : this.R.resp || 3.2) * (this.mode === 'zone' && this.zs[1].own === v.team ? .5 : 1); // the side that holds the radar is back in the air in half the time
     if (this.mode === 'zone' || this.mode === 'land') { this.scf[1 - v.team] += this.mode === 'zone' ? 2 : 1; this.sc[1 - v.team] = Math.floor(this.scf[1 - v.team]); } else if (this.mode !== 'ship') this.sc[1 - v.team]++;
     if (by && by.team !== v.team) { by.kills++; if (this.mode === 'land' || this.mode === 'ship') this.reward(by, 'air'); }
     this.all({ t: 'k', i: v.id, by: by ? by.id : '', sc: this.sc });
@@ -331,8 +331,12 @@ export class Match extends DurableObject {
         else for (const e of this.ents.values()) if (e.alive && e.fresh && Math.hypot(e.p[0] - c[0], e.p[2] - c[1]) < ZR) n[e.team]++;
         const push = clamp(n[1] - n[0], -3, 3); if (push) z.v = clamp(z.v + push * dt / (land ? 6 : 7), -1, 1);
         if (z.v <= -1) z.own = 0; else if (z.v >= 1) z.own = 1; else if ((z.own === 0 && z.v >= 0) || (z.own === 1 && z.v <= 0)) z.own = -1;
-        if (z.own >= 0) { this.scf[z.own] += dt / 3 * (this.R.zpay || 1); this.sc[z.own] = Math.floor(this.scf[z.own]); }
+        if (z.own >= 0) { this.scf[z.own] += dt / 3 * (this.R.zpay || 1) * (!land && i === 2 ? 2 : 1); /* the harbour pays double */ this.sc[z.own] = Math.floor(this.scf[z.own]); }
       }
+    }
+    if (this.mode === 'zone' && !this.over && this.zs[0].own >= 0) { // the airfield rearms and repairs whoever of its holders flies through it
+      const c = this.zpos(0), now = Date.now();
+      for (const e of this.ents.values()) if (!e.bot && e.alive && e.fresh && e.team === this.zs[0].own && !this.R.noRearm && now - e.armAt > 15000 && (e.amb < this.ld(e)[0] || e.amr < this.ld(e)[1] || e.hp < 100) && Math.hypot(e.p[0] - c[0], e.p[2] - c[1]) < ZR) { this.arm(e, true); e.hp = 100; if (e.conn) this.send(e.conn, { t: 'arm', hp: 100 }); }
     }
     if (this.mode === 'ship' && !this.over) { // each carrier's guns, and a rearm for whoever comes home
       for (const e of this.ents.values()) {
