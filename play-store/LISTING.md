@@ -9,7 +9,7 @@ Paket adı: `com.operationwindfall.app` · Sürüm: 1.0.1 (kod 2, Capacitor; 1.0
 | `operation-windfall-1.0.1.aab` | Sürüm → uygulama paketi |
 | `graphics/icon-512.png` | Mağaza girişi → uygulama simgesi |
 | `graphics/feature-1024x500.png` | Mağaza girişi → öne çıkan grafik |
-| `graphics/screenshot-1…5.png` (1920×1080) | Mağaza girişi → telefon ekran görüntüleri |
+| `graphics/screenshot-1…5.png` (1920×1080) | Mağaza girişi → telefon ekran görüntüleri (oyunun 3D sahnesinden: alacakaranlık it dalaşı, it dalaşı, kara saldırısı, uçak gemisi, karlı ada) |
 | `operation-windfall-1.0.1-test.apk` | Yalnızca kendi telefonunda denemek için |
 
 ## Mağaza metinleri

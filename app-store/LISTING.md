@@ -7,8 +7,8 @@ Paket kimliği (Bundle ID): `com.operationwindfall.app` · Sürüm: 1.0.1 (derle
 | Dosya | Nereye |
 | --- | --- |
 | `operation-windfall-1.0.1.ipa` | App Store Connect'e yüklenecek imzalı paket (Transporter ya da Xcode ile) |
-| `screenshots/iphone-6.3/1-menu.png`, `2-takeoff.png`, `3-flight.png` (2622×1206) | App Store Connect'e yüklenen ekran görüntüleri (6,9" yuvası 2868×1320 dosyalarını kabul etmedi) |
-| `screenshots/iphone-6.9/` (2868×1320) | Aynı üç görüntünün büyük hali, yedek |
+| `screenshots/iphone-6.3/1-dusk-dogfight.png` … `5-snow.png`, `6-menu.png` (2622×1206) | Oyunun kendi 3D sahnesinden alınan beş savaş karesi ve menü ekranı; App Store Connect'e yüklenecek ekran görüntüleri |
+| `screenshots/iphone-6.9/` (2868×1320) | Aynı görüntülerin büyük hali, yedek |
 
 Uygulama simgesi paketin içindedir; ayrıca yüklenmez.
 
