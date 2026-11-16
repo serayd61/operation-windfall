@@ -236,6 +236,9 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     .daily li em { font-style: normal; color: var(--type-dim); font-variant-numeric: tabular-nums; } .daily li button { padding: 7px 10px 5px; min-width: 96px; } .daily li.got { color: var(--type-dim); } .daily li.got span:first-child { text-decoration: line-through; }
     .modes { display: grid; gap: 12px; margin: 6px 0 16px; } .mode { border: 1.5px solid var(--type); padding: 12px 14px 12px; display: grid; gap: 6px; } .mode h2 { margin: 0; font: 700 20px/1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .mode .note { margin: 0; }
     .mode-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; } .mode-n { font: 700 12px/1.2 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; color: var(--type-dim); } .mode-n b { color: var(--type); font-size: 16px; }
+    .fronts { display: grid; gap: 12px; margin: 4px 0 6px; } .front { border: 1.5px solid var(--type); padding: 10px 12px 12px; display: grid; gap: 8px; } .front.lock { opacity: .55; } .front-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font: 700 18px/1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .front-head span { font: 400 13px/1 var(--f-type); letter-spacing: 0; text-transform: none; color: var(--type-dim); }
+    .chaps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; } .chap { border: 1.5px solid var(--type); background: none; color: var(--type); padding: 7px 2px 6px; display: grid; gap: 3px; justify-items: center; cursor: pointer; font: 700 17px/1 var(--f-hud); } .chap small { font: 400 12px/1 var(--f-type); letter-spacing: .08em; color: var(--stamp); } .chap[aria-pressed=true] { background: var(--type); color: var(--paper); } .chap[aria-pressed=true] small { color: var(--paper); } .chap:disabled { cursor: default; } .chap:focus-visible { outline: 2px solid var(--stamp); outline-offset: 2px; }
+    .chap-info { border-top: 1.5px solid var(--type); padding-top: 10px; display: grid; gap: 6px; } .chap-info h2 { margin: 0; font: 700 20px/1.1 var(--f-hud); letter-spacing: .08em; text-transform: uppercase; }
     .du-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; margin: 10px 0 16px; } .du-cols .rank li.bot b { font-weight: 400; } @media (max-width: 620px) { .du-cols { grid-template-columns: 1fr; } }
     .pilots div.foe { color: #ff8a70; } .pilots span { font-variant-numeric: tabular-nums; }
 .touch .pilots { top: calc(204px + var(--sat)); }
@@ -423,6 +426,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <h1>Four against four</h1>
       <p class="lede" style="font-size:13px">Bots fill the empty seats, so a match always starts at once. Pilots with the same squadron code fly on the same side. Every match draws its own weather.</p>
       <div class="modes">
+        <div class="mode"><h2>Campaign</h2><p class="note">Twenty chapters on four fronts, flown with three wingmen against four of theirs. Each chapter has its own sky and its own orders, and keeps up to three stars. Ten stars on a front open the next.</p><div class="mode-foot"><span class="mode-n"><b id="on-camp" data-raw>0 / 60</b> <span>stars</span></span><button class="go" id="b-camp" type="button">Open</button></div></div>
         <div class="mode"><h2>Team dogfight</h2><p class="note">Four against four, five minutes, air start. Bots fill the empty seats; pilots with the same squadron code fly on the same side. First side to 25 wins. Kills and wins count for the team dogfight ranking and pay requisition points.</p><div class="mode-foot"><span class="mode-n"><b id="on-df" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-duel" type="button">Fly</button></div></div>
         <div class="mode"><h2>Zone control</h2><p class="note">Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; every ring you hold pays a point every three seconds and a kill pays two. First side to 100 wins.</p><div class="mode-foot"><span class="mode-n"><b id="on-zone" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-zone" type="button">Fly</button></div></div>
         <div class="mode"><h2>Carrier strike</h2><p class="note">Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.</p><div class="mode-foot"><span class="mode-n"><b id="on-ship" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-ship" type="button">Fly</button></div></div>
@@ -431,16 +435,31 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="row"><button class="ghost" id="b-oback" type="button">Back</button></div>
     </div>
   </div>
+  <div class="screen" id="s-camp" hidden>
+    <div class="sheet">
+      <div class="sheet-head"><span>Campaign</span><span><b id="ca-total" data-raw>0 / 60</b> <span>stars</span></span></div>
+      <div class="fronts" id="ca-fronts"></div>
+      <div class="chap-info" id="ca-info">
+        <h2 id="ca-name"></h2>
+        <p class="note"><span id="ca-mode"></span> · <span id="ca-sky"></span></p>
+        <p class="note" id="ca-rule"></p>
+        <ul class="medals" id="ca-stars"></ul>
+      </div>
+      <div class="row"><button class="go" id="b-cafly" type="button">Fly</button><button class="ghost" id="b-caback" type="button">Back</button></div>
+    </div>
+  </div>
   <div class="screen" id="s-duel" hidden>
     <div class="sheet">
       <div class="sheet-head"><span id="du-mode">Team dogfight</span><span id="du-status">Victory</span></div>
       <h1 id="du-score" data-raw>0 : 0</h1>
-      <p class="note"><span>Ranking points earned</span>: <b id="du-pts" data-raw>0</b> · <span>Earned</span>: <b id="du-rp" data-raw>0 RP</b></p>
+      <p class="note" id="du-note"><span>Ranking points earned</span>: <b id="du-pts" data-raw>0</b> · <span>Earned</span>: <b id="du-rp" data-raw>0 RP</b></p>
+      <ul class="medals" id="du-stars" hidden></ul>
+      <p class="note" id="du-cnote" hidden><span>Earned</span>: <b id="du-crp" data-raw>0 RP</b></p>
       <div class="du-cols">
         <div><span class="lab" id="du-al">Blue</span><ol class="rank" id="du-a"></ol></div>
         <div><span class="lab" id="du-bl">Red</span><ol class="rank" id="du-b"></ol></div>
       </div>
-      <div class="row"><button class="go" id="b-duel2" type="button">Fly again</button><button class="ghost" id="b-board3" type="button">Sortie board</button></div>
+      <div class="row"><button class="go" id="b-duel2" type="button">Fly again</button><button class="ghost" id="b-camp2" type="button" hidden>Campaign</button><button class="ghost" id="b-board3" type="button">Sortie board</button></div>
     </div>
   </div>
   <div id="fatal" hidden></div>
@@ -624,13 +643,15 @@ const DICT = {
   "Privacy and your data": ["Gizlilik ve verilerin", "Datenschutz und deine Daten"], "verified scores": ["doğrulanmış puanlar", "geprüfte Punkte"],
   "Shared sky": ["Ortak gökyüzü", "Gemeinsamer Himmel"], "Squadron code": ["Filo kodu", "Staffelcode"],
   "Pilots in the same sortie see each other live and race for the score. Share a squadron code to fly only with your friends; leave it empty for the open sky.": ["Aynı sortideki pilotlar birbirini canlı görür ve puan için yarışır. Yalnızca arkadaşlarınla uçmak için bir filo kodu paylaş; herkese açık gökyüzü için boş bırak.", "Piloten im selben Einsatz sehen einander live und kämpfen um die Punkte. Teile einen Staffelcode, um nur mit Freunden zu fliegen; lass ihn leer für den offenen Himmel."],
-  "speed": ["hız", "Tempo"], "agility": ["çeviklik", "Wendigkeit"], "armour": ["zırh", "Panzerung"], "firepower": ["ateş gücü", "Feuerkraft"], "the ridge": ["sırt", "der Kamm"]
+  "speed": ["hız", "Tempo"], "agility": ["çeviklik", "Wendigkeit"], "armour": ["zırh", "Panzerung"], "firepower": ["ateş gücü", "Feuerkraft"], "the ridge": ["sırt", "der Kamm"],
+  "Campaign": ["Sefer", "Feldzug"], "stars": ["yıldız", "Sterne"], "Open": ["Aç", "Öffnen"], "Twenty chapters on four fronts, flown with three wingmen against four of theirs. Each chapter has its own sky and its own orders, and keeps up to three stars. Ten stars on a front open the next.": ["Dört cephede yirmi bölüm; üç kanat arkadaşınla onların dördüne karşı uçarsın. Her bölümün kendi havası ve kendi emirleri vardır, en çok üç yıldız verir. Bir cephede on yıldız sıradaki cepheyi açar.", "Zwanzig Kapitel an vier Fronten, mit drei Rottenfliegern gegen vier von ihnen. Jedes Kapitel hat seinen eigenen Himmel und eigene Befehle und bringt bis zu drei Sterne. Zehn Sterne an einer Front öffnen die nächste."], "Day": ["Gündüz", "Tag"], "Dusk": ["Alacakaranlık", "Dämmerung"], "Night": ["Gece", "Nacht"], "Storm": ["Fırtına", "Sturm"], "Opens at ten stars on the front before": ["Önceki cephede on yıldızla açılır", "Öffnet bei zehn Sternen an der Front davor"], "Win the chapter": ["Bölümü kazan", "Gewinne das Kapitel"], "Be one of the two best pilots on your side": ["Takımının en iyi iki pilotundan biri ol", "Sei einer der zwei besten Piloten deiner Seite"], "Be shot down three times at most": ["En fazla üç kez düşürül", "Werde höchstens dreimal abgeschossen"], "A warm-up: first side to 15 wins.": ["Isınma: 15'e ilk ulaşan kazanır.", "Zum Aufwärmen: Wer zuerst 15 hat, gewinnt."], "No special orders.": ["Özel emir yok.", "Keine besonderen Befehle."], "Their carrier has half its armour.": ["Düşman gemisinin zırhı yarı yarıya.", "Ihr Träger hat nur die halbe Panzerung."], "Front finale: their pilots take more punishment.": ["Cephe sonu: düşman pilotları daha dayanıklı.", "Frontfinale: Ihre Piloten halten mehr aus."], "First side to 30 wins.": ["30'a ilk ulaşan kazanır.", "Wer zuerst 30 hat, gewinnt."], "Every ring pays half as much again.": ["Her halka bir buçuk kat puan verir.", "Jeder Ring zahlt das Anderthalbfache."], "They land one more tank.": ["Düşman bir tank fazla çıkarır.", "Sie landen einen Panzer mehr."], "Guns only: no bombs, no rockets.": ["Yalnızca makineli tüfek: bomba yok, roket yok.", "Nur Bordwaffen: keine Bomben, keine Raketen."], "Front finale: their guns are twice as deadly.": ["Cephe sonu: düşman uçaksavarı iki kat ölümcül.", "Frontfinale: Ihre Flak ist doppelt so tödlich."], "No bombs: rockets only.": ["Bomba yok: yalnızca roket.", "Keine Bomben: nur Raketen."], "Their pilots shoot straighter.": ["Düşman pilotları daha isabetli.", "Ihre Piloten schießen genauer."], "No rearming over the beach.": ["Kumsal üzerinde yeniden silahlanma yok.", "Kein Nachladen über dem Strand."], "Shot down, you wait eight seconds to fly again.": ["Düşürülünce yeniden uçmak için sekiz saniye beklersin.", "Nach einem Abschuss wartest du acht Sekunden."], "Front finale: five minutes, and their pilots take more punishment.": ["Cephe sonu: beş dakika, düşman pilotları daha dayanıklı.", "Frontfinale: fünf Minuten, und ihre Piloten halten mehr aus."], "They land two more tanks.": ["Düşman iki tank fazla çıkarır.", "Sie landen zwei Panzer mehr."], "You fly one wingman short: three against four.": ["Bir kanat arkadaşın eksik: üçe dört.", "Dir fehlt ein Rottenflieger: drei gegen vier."], "First side to 35 wins. Their pilots are tougher and shoot straighter.": ["35'e ilk ulaşan kazanır. Düşman pilotları daha dayanıklı ve daha isabetli.", "Wer zuerst 35 hat, gewinnt. Ihre Piloten sind zäher und schießen genauer."], "Half the bombs.": ["Bombaların yarısı.", "Nur die Hälfte der Bomben."], "The last battle: first side to 250, and they are stronger in every way.": ["Son muharebe: 250'ye ilk ulaşan kazanır, düşman her yönden daha güçlü.", "Die letzte Schlacht: Wer zuerst 250 hat, gewinnt, und sie sind in allem stärker."]
 };
 const CSN = '(Kestrel One|Lantern Red One|Sirocco Lead|Sokol One)', MEN = '(The Marines|The commandos|Eighth Army|The Guards)';
 const RXT = [
   [new RegExp('^' + CSN + ', ([\\s\\S]+)$'), ['$1, $2', '$1, $2']],
   [new RegExp('^([\\s\\S]+), ' + CSN + '\\.$'), ['$1, $2.', '$1, $2.']],
   [new RegExp('^' + CSN + ' ([\\s\\S]+)$'), ['$1 $2', '$1 $2']],
+  [/^Chapter (\d+)$/, ['Bölüm $1', 'Kapitel $1']],
   [/^Reward: (\d+) bombs$/, ['Ödül: $1 bomba', 'Belohnung: $1 Bomben']], [/^Reward: (\d+) rockets$/, ['Ödül: $1 roket', 'Belohnung: $1 Raketen']], [/^Reward: (\d+) rockets and repairs$/, ['Ödül: $1 roket ve onarım', 'Belohnung: $1 Raketen und Reparatur']],
   [/^\+(\d+) bombs$/, ['+$1 bomba', '+$1 Bomben']], [/^\+(\d+) rockets$/, ['+$1 roket', '+$1 Raketen']],
   [/^The camp behind (\w+) is finished\.$/, ['$1 arkasındaki kamp bitti.', 'Das Lager hinter $1 ist erledigt.']],
@@ -2547,6 +2568,32 @@ function updateHud(dt) {
    and the clock. This side only reports where it is and what its guns found; the server decides what counts. */
 const DUEL = { on: false, team: 0, respT: 0, over: 0, lastBy: '', lastByT: -99, botT: 0, us: 0, them: 0, goal: 25, left: 300, tb: [], hitQ: new Map(), mates: 1,
   url: 'wss://windfall-match.operation-windfall-server.workers.dev', dev: '', ws: null, id: '', n: 0, full: false, retry: 0, tries: 0, ro: new Map(), mode: 'df', zones: [], ships: [], cine: null, cineT: 0, dcam: '', dcamT: 0, streak: 0, killT: -99, wx: '', rain: null, boltT: 0, flash: 0, lamps: [] };
+/* the campaign: the match server flies each chapter and owns its rules; this is only what the pilot is told about it */
+const FRONTS = ['Pacific', 'Channel', 'Mediterranean', 'Baltic'], MODE_N = { df: 'Team dogfight', zone: 'Zone control', ship: 'Carrier strike', land: 'Island assault' }, SKY_N = { day: 'Day', dusk: 'Dusk', night: 'Night', storm: 'Storm' };
+const CHAPS = [['df', 'day', 'A warm-up: first side to 15 wins.', 15], ['zone', 'day', 'No special orders.'], ['ship', 'day', 'Their carrier has half its armour.'], ['land', 'dusk', 'No special orders.'], ['ship', 'storm', 'Front finale: their pilots take more punishment.'],
+  ['df', 'dusk', 'First side to 30 wins.', 30], ['zone', 'storm', 'Every ring pays half as much again.'], ['land', 'day', 'They land one more tank.'], ['df', 'night', 'Guns only: no bombs, no rockets.'], ['land', 'night', 'Front finale: their guns are twice as deadly.'],
+  ['ship', 'dusk', 'No bombs: rockets only.'], ['zone', 'day', 'Their pilots shoot straighter.'], ['land', 'storm', 'No rearming over the beach.'], ['df', 'storm', 'Shot down, you wait eight seconds to fly again.'], ['ship', 'night', 'Front finale: five minutes, and their pilots take more punishment.'],
+  ['land', 'day', 'They land two more tanks.'], ['zone', 'night', 'You fly one wingman short: three against four.'], ['df', 'storm', 'First side to 35 wins. Their pilots are tougher and shoot straighter.', 35], ['ship', 'storm', 'Half the bombs.'], ['land', 'night', 'The last battle: first side to 250, and they are stronger in every way.', 250]];
+const CAMP = { st: new Array(20).fill(0), sel: 1 }; try { const a = JSON.parse(localStorage.getItem('windfall-camp') || 'null'); if (Array.isArray(a) && a.length === 20) CAMP.st = a.map(v => v & 7); } catch (e) {}
+const starN = b => (b & 1) + (b >> 1 & 1) + (b >> 2 & 1), campSum = f => CAMP.st.slice(f * 5, f * 5 + 5).reduce((a, b) => a + starN(b), 0), campAll = () => CAMP.st.reduce((a, b) => a + starN(b), 0), campOpenF = f => f === 0 || campSum(f - 1) >= 10;
+const campLines = b => ['Win the chapter', 'Be one of the two best pilots on your side', 'Be shot down three times at most'].map((t, i) => '<li' + (b >> i & 1 ? ' class="on"' : '') + '>' + t + '</li>').join('');
+function campFill() {
+  const el = $('ca-fronts'); el.textContent = ''; $('ca-total').textContent = campAll() + ' / 60'; $('on-camp').textContent = campAll() + ' / 60';
+  FRONTS.forEach((name, f) => {
+    const open = campOpenF(f), box = document.createElement('div'), head = document.createElement('div'), b = document.createElement('b'), sp = document.createElement('span'), row = document.createElement('div');
+    box.className = 'front' + (open ? '' : ' lock'); head.className = 'front-head'; b.textContent = name; if (open) { sp.setAttribute('data-raw', ''); sp.textContent = campSum(f) + ' / 15 \u2605'; } else sp.textContent = 'Opens at ten stars on the front before'; head.appendChild(b); head.appendChild(sp); row.className = 'chaps';
+    for (let i = f * 5 + 1; i <= f * 5 + 5; i++) { const c = document.createElement('button'), n = document.createElement('span'), st = document.createElement('small'), v = CAMP.st[i - 1]; c.type = 'button'; c.className = 'chap'; c.disabled = !open; c.setAttribute('aria-pressed', i === CAMP.sel ? 'true' : 'false'); n.setAttribute('data-raw', ''); n.textContent = i; st.setAttribute('data-raw', ''); st.textContent = [0, 1, 2].map(k => v >> k & 1 ? '\u2605' : '\u2606').join(''); c.appendChild(n); c.appendChild(st); c.onclick = () => { CAMP.sel = i; campFill(); }; row.appendChild(c); }
+    box.appendChild(head); box.appendChild(row); el.appendChild(box);
+  });
+  const C = CHAPS[CAMP.sel - 1]; $('ca-name').textContent = 'Chapter ' + CAMP.sel; $('ca-mode').textContent = MODE_N[C[0]]; $('ca-sky').textContent = SKY_N[C[1]]; $('ca-rule').textContent = C[2]; $('ca-stars').innerHTML = campLines(CAMP.st[CAMP.sel - 1]); $('b-cafly').disabled = !campOpenF((CAMP.sel - 1) / 5 | 0);
+}
+async function campLoad() { // the stars the match server has written for this pilot
+  if (!NET.me || !NET.sb) return; try { const a = await rpc('my_chapters'); if (Array.isArray(a) && a.length === 20) { CAMP.st = a.map(v => v & 7); try { localStorage.setItem('windfall-camp', JSON.stringify(CAMP.st)); } catch (e) {} if (!$('s-camp').hidden || !$('s-online').hidden) campFill(); } } catch (e) {}
+}
+function campOpen() {
+  if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
+  if (!campOpenF((CAMP.sel - 1) / 5 | 0)) CAMP.sel = 1; campFill(); show('s-camp'); $('b-cafly').focus(); campLoad();
+}
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
   const side = DUEL.team ? 1 : -1, lc = DUEL.mode === 'land' ? landC() : null; if (lc) P.pos.set(lc[0] + side * (1300 + rand(0, 300)), 480 + rand(-60, 60), lc[1] + 700 + rand(-250, 250)); else P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
@@ -2554,7 +2601,7 @@ function duelSpawn() { // air start on the team's side of the field, nose toward
   P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
-function duelArm() { P.rkt = M.rockets; P.bombs = M.bombs; P.ordCd = 0; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true); }
+function duelArm() { const L = DUEL.load || [1, 1]; P.rkt = Math.floor(M.rockets * L[1]); P.bombs = Math.floor(M.bombs * L[0]); P.ordCd = 0; plane.userData.rkt.forEach((r, i) => r.visible = i < P.rkt); plane.userData.bombs.forEach((r, i) => r.visible = i < P.bombs); } // a chapter may send its pilots up with less
 function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); landClear(); weatherSet(null); }
 /* weather for a match: the server picks it, so both sides fly through the same sky */
 const WX = {
@@ -2583,12 +2630,12 @@ function weatherTick(dt) {
   if (DUEL.wx === 'night') for (const l of DUEL.lamps) { l.t += dt; l.m.rotation.set(.55 + Math.sin(l.t * .31 + l.p) * .35, l.t * .22 + l.p, 0, 'YXZ'); }
 }
 const _wc = new T.Color();
-function shipsSet(sp, max) { // carrier strike: one carrier a side
+function shipsSet(sp, max, maxes) { // carrier strike: one carrier a side
   for (const h of DUEL.ships) world.remove(h.mesh); DUEL.ships = []; DUEL.cine = null; DUEL.lamps = [];
   if (!Array.isArray(sp)) return;
   sp.slice(0, 2).forEach((r, team) => { if (!Array.isArray(r) || !r.slice(0, 2).every(v => typeof v === 'number' && isFinite(v))) return;
     const mesh = buildShip('carrier', team !== DUEL.team); mesh.position.set(r[0], 0, r[1]); world.add(mesh);
-    DUEL.ships.push({ team, mesh, pos: new V3(r[0], 0, r[1]), aim: new V3(r[0], 22, r[1]), hp: +max || 1600, max: +max || 1600, sunk: 0, fxT: 0, aaT: 0, told: false });
+    DUEL.ships.push({ team, mesh, pos: new V3(r[0], 0, r[1]), aim: new V3(r[0], 22, r[1]), hp: +(maxes && maxes[team]) || +max || 1600, max: +(maxes && maxes[team]) || +max || 1600, sunk: 0, fxT: 0, aaT: 0, told: false });
     if (DUEL.wx === 'night') for (const z of [-70, 60]) { // searchlights sweeping from the deck
       const geo = new T.ConeGeometry(70, 1100, 14, 1, true); geo.translate(0, 550, 0);
       const m = new T.Mesh(geo, new T.MeshBasicMaterial({ color: 0xcfe0ff, transparent: true, opacity: .075, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, fog: false }));
@@ -2742,18 +2789,19 @@ function duelTell(m) { if (DUEL.ws && DUEL.ws.readyState === 1) try { DUEL.ws.se
 async function duelConnect(n) {
   duelClose(); DUEL.n = n; DUEL.full = false; let tok = '';
   try { const r = await NET.sb.auth.getSession(); tok = r.data && r.data.session ? r.data.session.access_token : ''; } catch (e) {}
-  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + roomKey() + '&n=' + n + (DUEL.mode === 'df' ? '' : '&mode=' + DUEL.mode)); } catch (e) { DUEL.retry = 3; return; }
+  if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + (DUEL.ch && roomKey() === 'open' ? 'p' + String(NET.uid || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) : roomKey()) + '&n=' + n + (DUEL.ch ? '&ch=' + DUEL.ch : DUEL.mode === 'df' ? '' : '&mode=' + DUEL.mode)); /* a chapter is flown in the pilot's own room, or his squadron's */ } catch (e) { DUEL.retry = 3; return; }
   DUEL.ws = ws; DUEL.retry = 6;
   ws.onopen = () => { if (DUEL.ws === ws) duelTell({ t: 'hi', tok, dev: DUEL.dev || undefined, k: skyPlane(), a: [M.bombs, M.rockets], c: DUEL.mode === 'land' ? landC() : [PAD.x, PAD.z - 1900], g: DUEL.mode === 'land' ? landBeach() : undefined }); };
   ws.onmessage = e => { if (DUEL.ws !== ws || !DUEL.on) return; let m; try { m = JSON.parse(e.data); } catch (x) { return; } if (m && typeof m === 'object') duelMsg(m); };
   ws.onclose = () => { if (DUEL.ws !== ws) return; DUEL.ws = null; if (!DUEL.on || DUEL.over) return; if (DUEL.full) duelConnect(n < 15 ? n + 1 : 0); else { DUEL.retry = 2; if (DUEL.id) warn('Connection lost. Reconnecting'); } };
 }
-function duelStart(mode) {
+function duelStart(mode, ch) {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
+  if (mode) DUEL.ch = ch >= 1 && ch <= CHAPS.length ? ch | 0 : 0; if (DUEL.ch) mode = CHAPS[DUEL.ch - 1][0]; DUEL.load = null; DUEL.bhp = 1; DUEL.stars = null;
   if (mode === 'df' || mode === 'zone' || mode === 'ship' || mode === 'land') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship', land = DUEL.mode === 'land';
   const i = duelIdx(); if (i < 0) return; DUEL.on = true; if (mIdx !== i) loadMission(i);
-  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship || land ? 420 : 300; DUEL.goal = zone ? 100 : land ? 200 : 25; DUEL.tb = []; DUEL.id = ''; DUEL.streak = 0; DUEL.dcam = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
-  state = 'play'; show(null); canvas.focus(); if (land) landQuiet(); duelSpawn(); updateObjective(); warn('Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
+  initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship || land ? 420 : 300; DUEL.goal = DUEL.ch && CHAPS[DUEL.ch - 1][3] || (zone ? 100 : land ? 200 : 25); DUEL.tb = []; DUEL.id = ''; DUEL.streak = 0; DUEL.dcam = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
+  state = 'play'; show(null); canvas.focus(); if (land) landQuiet(); duelSpawn(); updateObjective(); warn(DUEL.ch ? 'Chapter ' + DUEL.ch : 'Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
   radio(M.cs + (land ? ', island assault. Our troops are ashore. Hit their tanks and squads and help our men take the strongpoints.' : ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
 }
 function duelDown(why, told) { // the player is out; the server brings him back
@@ -2772,7 +2820,7 @@ function duelMsg(m) {
       if (e[0] === DUEL.id) { kills = e[10] | 0; continue; }
       const r = DUEL.ro.get(e[0]); if (!r) continue;
       skyGot({ i: e[0], n: r.name, k: r.k, p: [e[2], e[3], e[4]], q: [e[5], e[6], e[7], e[8]], s: e[10], a: e[1], f: e[9] }, r.team !== DUEL.team ? M.foe.skin : r.bot ? PLANES[0].skin : null);
-      const p = NET.peers.get(e[0]); if (p) { p.team = r.team; p.bot = r.bot; p.kind = 'fighter'; p.hp = e[11] | 0; p.max = r.bot ? 45 : 100; }
+      const p = NET.peers.get(e[0]); if (p) { p.team = r.team; p.bot = r.bot; p.kind = 'fighter'; p.hp = e[11] | 0; p.max = r.bot ? Math.round(45 * (r.team !== DUEL.team ? DUEL.bhp || 1 : 1)) : 100; }
     }
   } else if (m.t === 'ro') {
     if (!Array.isArray(m.e)) return; DUEL.ro.clear();
@@ -2782,7 +2830,8 @@ function duelMsg(m) {
   } else if (m.t === 'in') {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
-    weatherSet(m.wx); if (m.mode === 'land') landSet(m); else { zonesSet(m.zp); shipsSet(m.sp, m.shp); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective(); chatT = 7;
+    DUEL.load = Array.isArray(m.ld) && m.ld.length === 2 ? [clamp(+m.ld[0] || 0, 0, 1), clamp(+m.ld[1] || 0, 0, 1)] : null; DUEL.bhp = clamp(+m.bhp || 1, 1, 3);
+    weatherSet(m.wx); if (m.mode === 'land') landSet(m); else { zonesSet(m.zp); shipsSet(m.sp, m.shp, m.shm); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective(); chatT = 7;
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
@@ -2804,11 +2853,11 @@ function duelMsg(m) {
   } else if (m.t === 'rw') { // the match server pays for a tank, a squad or an aircraft in ordnance
     if (!P.alive || DUEL.over) return; const b = clamp(m.b | 0, 0, 3), r = clamp(m.r | 0, 0, 4); P.bombs = Math.min(8, P.bombs + b); P.rkt = Math.min(16, P.rkt + r); if (typeof m.hp === 'number' && m.hp > P.hp) P.hp = Math.min(100, m.hp);
     plane.userData.bombs.forEach((x, i) => x.visible = i < P.bombs); plane.userData.rkt.forEach((x, i) => x.visible = i < P.rkt);
-    if (b || r) { feed(m.k === 'tank' ? 'Reward: ' + b + ' bombs' : m.k === 'air' ? 'Reward: ' + r + ' rockets and repairs' : 'Reward: ' + r + ' rockets'); warn('+' + (b ? b + ' bombs' : r + ' rockets'), true); } else if (m.k === 'air' && m.hp) feed('Reward: repairs');
+    if (b || r) { feed(b ? 'Reward: ' + b + ' bombs' : m.k === 'air' ? 'Reward: ' + r + ' rockets and repairs' : 'Reward: ' + r + ' rockets'); warn('+' + (b ? b + ' bombs' : r + ' rockets'), true); } else if (m.k === 'air' && m.hp) feed('Reward: repairs');
   } else if (m.t === 'arm') { const kb = P.bombs, kr = P.rkt; duelArm(); P.bombs = Math.max(P.bombs, kb); P.rkt = Math.max(P.rkt, kr); if (P.alive) P.hp = 100; feed('Rearmed and repaired');
   } else if (m.t === 'r') { if (!P.alive && !DUEL.over) { duelSpawn(); warn('Back in the fight', true); }
   } else if (m.t === 'end') {
-    if (DUEL.over) return; duelScore(m.sc); DUEL.tb = Array.isArray(m.tb) ? m.tb.filter(r => Array.isArray(r) && r.length >= 6) : []; updateObjective(); const won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them; DUEL.over = DUEL.ships.some(h => h.hp <= 0) ? 11 : 7; hush(); radioQ.length = 0;
+    if (DUEL.over) return; duelScore(m.sc); { const s = DUEL.ch && m.st && m.st[DUEL.id]; DUEL.stars = Array.isArray(s) ? (s[0] ? 1 : 0) | (s[1] ? 2 : 0) | (s[2] ? 4 : 0) : null; } DUEL.tb = Array.isArray(m.tb) ? m.tb.filter(r => Array.isArray(r) && r.length >= 6) : []; updateObjective(); const won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them; DUEL.over = DUEL.ships.some(h => h.hp <= 0) ? 11 : 7; hush(); radioQ.length = 0;
     warn(tie ? 'Draw' : won ? 'Victory' : 'Defeat', won || tie); radio(tie ? 'That is time. Honours even.' : won ? 'That is the match. Your side has it. Well flown.' : 'That is the match. They had the better of us today.');
   }
 }
@@ -2825,7 +2874,10 @@ function duelTick(dt) {
 function duelDone() { // the match is over: both sides' sheets, then fly again or go home
   const tb = DUEL.tb, won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them, me = tb.find(r => r[0] === DUEL.id);
   DUEL.on = false; DUEL.over = 0; hush(); skyLeave(); state = 'menu'; reset();
-  $('du-mode').textContent = DUEL.mode === 'land' ? 'Island assault' : DUEL.mode === 'ship' ? 'Carrier strike' : DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
+  { const ch = DUEL.ch, got = ch && DUEL.stars != null ? DUEL.stars : 0, old = ch ? CAMP.st[ch - 1] : 0, gain = ch && campOpenF((ch - 1) / 5 | 0) ? starN(old | got) - starN(old) : 0; // a chapter pays in stars, not in the ranking
+    $('du-note').hidden = !!ch; $('du-stars').hidden = !ch; $('du-cnote').hidden = !ch; $('b-camp2').hidden = !ch;
+    if (ch) { $('du-stars').innerHTML = campLines(got); $('du-crp').textContent = gain * 30 + ' RP'; if (gain) { CAMP.st[ch - 1] = old | got; try { localStorage.setItem('windfall-camp', JSON.stringify(CAMP.st)); } catch (e) {} } setTimeout(campLoad, 2500); } }
+  $('du-mode').textContent = DUEL.ch ? 'Chapter ' + DUEL.ch : DUEL.mode === 'land' ? 'Island assault' : DUEL.mode === 'ship' ? 'Carrier strike' : DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
   setTimeout(() => { if (NET.me && NET.sb) rpc('my_pilot').then(adopt).catch(() => {}); }, 2500); // the server's report has landed by now: pick up the pay
   [DUEL.team, 1 - DUEL.team].forEach((t, i) => {
     const ol = $(i ? 'du-b' : 'du-a'); ol.textContent = ''; $(i ? 'du-bl' : 'du-al').textContent = t ? 'Red' : 'Blue';
@@ -2842,7 +2894,7 @@ function duelSend() { // hits ride along with the position beat
 }
 
 /* ------------------------------------------------------------------ flow */
-function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
+function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
@@ -2904,9 +2956,10 @@ async function onlineFill() { // live head counts from the match server
 }
 function onlineOpen() {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
-  $('on-me').textContent = NET.me.name; show('s-online'); $('b-duel').focus(); onlineFill(); clearInterval(onlineT); onlineT = setInterval(() => { if ($('s-online').hidden) clearInterval(onlineT); else onlineFill(); }, 8000);
+  $('on-me').textContent = NET.me.name; $('on-camp').textContent = campAll() + ' / 60'; campLoad(); show('s-online'); $('b-duel').focus(); onlineFill(); clearInterval(onlineT); onlineT = setInterval(() => { if ($('s-online').hidden) clearInterval(onlineT); else onlineFill(); }, 8000);
 }
 $('b-online').onclick = onlineOpen; $('b-oback').onclick = () => { fillBoard(); show('s-menu'); };
+$('b-camp').onclick = campOpen; $('b-caback').onclick = onlineOpen; $('b-camp2').onclick = campOpen; $('b-cafly').onclick = () => { if (campOpenF((CAMP.sel - 1) / 5 | 0)) duelStart(CHAPS[CAMP.sel - 1][0], CAMP.sel); };
 $('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
