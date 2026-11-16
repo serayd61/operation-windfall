@@ -365,7 +365,6 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Graphics</div><div class="seg" id="o-q" role="radiogroup" aria-label="Graphics quality"></div>
       <div class="lab2">Frame counter</div><div class="seg" id="o-fps" role="radiogroup" aria-label="Frame counter"></div>
       <div class="lab2">Music</div><div class="seg" id="o-mus" role="radiogroup" aria-label="Music"></div>
-      <div class="lab2">Spoken radio</div><div class="seg" id="o-voice" role="radiogroup" aria-label="Spoken radio"></div>
       <div class="lab2">Landing aid</div><div class="seg" id="o-aid" role="radiogroup" aria-label="Landing aid"></div>
       <p class="lede" style="font-size:13px">A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.</p>
       <div class="row"><button class="go" id="b-hback" type="button">Back</button></div>
@@ -1776,7 +1775,7 @@ function initAudio() {
     musGain = ac.createGain(); musGain.gain.value = 0; musGain.connect(master); setInterval(musicTick, 110);
   } catch (e) { ac = null; }
 }
-/* music: an original march, synthesised; spoken radio: the device's own speech voice */
+/* music: an original march, synthesised */
 const MEL = [62,0,62,65,69,0,65,0, 70,0,69,65,62,0,0,0, 67,0,67,64,60,0,64,0, 65,0,64,0,62,0,0,0, 69,0,69,72,74,0,72,0, 70,0,67,0,74,0,70,0, 73,0,69,0,76,0,73,0, 74,0,0,69,74,0,0,0], ROOT = [38, 34, 36, 38, 38, 31, 33, 38];
 let musGain = null, musT = 0, musStep = 0;
 function tone(midi, t, dur, vol, type, cut) {
@@ -1800,20 +1799,10 @@ function musicTick() {
     musT += sd; musStep = (st + 1) % 64;
   }
 }
-let voiceSel = null;
-const V_MALE = /(^|[^a-z])(male|daniel|arthur|oliver|alex|fred|aaron|gordon|rishi|thomas|tom|reed|eddy|rocko|ralph|albert|bruce|george|david|mark|ryan|guy|james|cem|tolga|ahmet|markus|viktor|yannick|martin|stefan|conrad|killian|klaus)([^a-z]|$)/i,
-  V_FEMALE = /(female|samantha|victoria|karen|moira|tessa|fiona|kate|serena|susan|allison|ava|zoe|nicky|martha|catherine|hazel|zira|sonia|libby|jenny|aria|yelda|emel|anna|petra|helena|katja|hedda|flo|sandy|shelley|grandma)/i;
-function voiceRank(v, want) { const n = v.name || ''; return (V_FEMALE.test(n) ? -4 : V_MALE.test(n) ? 4 : 0) + (v.lang === want ? 1 : 0) + (v.localService ? .5 : 0); }
-function pickVoice(vs, want, lc) { let best = null, bs = -99; for (const v of vs) { if (!v.lang || v.lang.toLowerCase().indexOf(lc) !== 0) continue; const k = voiceRank(v, want); if (k > bs) { bs = k; best = v; } } return best; }
+/* the radio is read, not heard: a spoken voice sat on top of the sound of the fight */
+function pickVoice() { return null; }
 function hush() { try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} }
-function say(text, urgent) {
-  if (!CAR.voice || muted || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-  try {
-    text = tr(text); const vs = speechSynthesis.getVoices(), lc = LANGS[LI][0], want = LI === 1 ? 'tr-TR' : LI === 2 ? 'de-DE' : skinNow().mark === 'us' ? 'en-US' : 'en-GB'; voiceSel = pickVoice(vs, want, lc); if (LI && !voiceSel) return;
-    const man = voiceSel && V_MALE.test(voiceSel.name || '') && !V_FEMALE.test(voiceSel.name || '');
-    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text.replace(/·/g, ',')); if (voiceSel) u.voice = voiceSel; u.lang = voiceSel ? voiceSel.lang : want; u.rate = urgent ? 1.3 : 1.16; u.pitch = man ? .78 : .5; u.volume = 1; u.onend = () => burst(2400, 'bandpass', .04, .04); speechSynthesis.speak(u);
-  } catch (e) {}
-}
+function say() {}
 function burst(freq, type, dur, vol) {
   if (!ac || muted || vol < .01) return;
   const s = ac.createBufferSource(); s.buffer = noiseBuf; const f = ac.createBiquadFilter(); f.type = type; f.frequency.value = freq;
@@ -2840,7 +2829,6 @@ function fillHangar() {
   seg('o-sens', 'sens', ['Gentle', 'Normal', 'Sharp'], CAR.sens, v => { CAR.sens = v; });
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
   seg('o-aid', 'aid', ['Off', 'On'], CAR.aid, v => { CAR.aid = v; });
-  seg('o-voice', 'voice', ['Off', 'On'], CAR.voice, v => { CAR.voice = v; if (!v) hush(); else say('Radio check. Reading you five by five.'); });
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
 }
