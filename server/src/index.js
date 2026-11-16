@@ -6,6 +6,7 @@ import { DurableObject } from 'cloudflare:workers';
 const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
 const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill
 const SHIPX = 1900, SHIP_HP = 1600, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
+const AMB_MAX = 8, AMR_MAX = 16; // the most bombs and rockets rewards can stack up to
 const LPTS = [[-420, 220], [0, -100], [420, 220]], LR = 95, LGOAL = 200, LAND_CAP = 420, LBEACH = [[-560, 760], [560, 760]]; // island assault: three strongpoints on the island, a beach a side
 const GU = [{ hp: 60, sp: 11, rng: 140, dps: [6, 1.5], n: 5 }, { hp: 220, sp: 9, rng: 220, dps: [14, 24], n: 2 }]; // the ground units: rifle squads and tanks
 const SKIES = ['day', 'day', 'dusk', 'night', 'storm']; // each match draws its weather
@@ -80,7 +81,12 @@ export class Match extends DurableObject {
   cap() { return this.mode === 'ship' ? SHIP_CAP : this.mode === 'land' ? LAND_CAP : CAP; }
   spos(team) { const c = this.c || [0, -1900]; return [c[0] + (team ? SHIPX : -SHIPX), c[1]]; }
   near(e, team) { const p = this.spos(team); return Math.hypot(e.p[0] - p[0], e.p[2] - p[1]); }
-  arm(e) { e.amb = 4; e.amr = 10; e.armed = true; e.armAt = Date.now(); }
+  arm(e, keep) { const b = e.b0 == null ? 4 : e.b0, r = e.r0 == null ? 10 : e.r0; e.amb = keep ? Math.max(e.amb || 0, b) : b; e.amr = keep ? Math.max(e.amr || 0, r) : r; e.armed = true; e.armAt = Date.now(); } // a rearm over the beach or the carrier keeps what was earned; a new aircraft starts with the plain load
+  reward(e, k) { // a pilot earns ordnance: three bombs for a tank, two rockets for a squad, four rockets and a patch-up for an aircraft
+    if (!e || e.bot || !e.alive || !e.conn || this.over) return; const b0 = e.amb, r0 = e.amr, h0 = e.hp;
+    if (k === 'tank') e.amb = Math.min(AMB_MAX, e.amb + 3); else if (k === 'squad') e.amr = Math.min(AMR_MAX, e.amr + 2); else { e.amr = Math.min(AMR_MAX, e.amr + 4); e.hp = Math.min(100, e.hp + 25); }
+    this.send(e.conn, { t: 'rw', k, b: e.amb - b0, r: e.amr - r0, hp: e.hp > h0 ? r1(e.hp) : undefined });
+  }
   shipHurt(team, d, by, k) { // a bomb or rocket found the carrier
     if (this.over || this.ships[team] <= 0) return; this.ships[team] = Math.max(0, this.ships[team] - d);
     this.sc[team] = Math.ceil(this.ships[team] / SHIP_HP * 100); if (by && by.team !== team) { by.sd = (by.sd || 0) + d; while (by.sd >= 260) { by.sd -= 260; by.kills++; } } /* damage to the carrier counts like kills */
@@ -101,7 +107,7 @@ export class Match extends DurableObject {
   }
   gdead(u, by) {
     if (u.dead) return; u.dead = true; u.hp = 0; this.scf[1 - u.team] += (u.kind ? 1 : .5) * (by && by.team !== u.team ? (by.bot ? 2 : 4) : 1); /* troops killing troops pay half of what they did; a bot's strafing pays double that, a pilot's four times */ this.sc[1 - u.team] = Math.floor(this.scf[1 - u.team]);
-    if (by && by.team !== u.team) { by.gk = (by.gk || 0) + (u.kind ? 1 : .5); while (by.gk >= 1) { by.gk -= 1; by.kills++; } } // a tank counts as a kill, a squad as half of one
+    if (by && by.team !== u.team) { by.gk = (by.gk || 0) + (u.kind ? 1 : .5); while (by.gk >= 1) { by.gk -= 1; by.kills++; } this.reward(by, u.kind ? 'tank' : 'squad'); } // a tank counts as a kill, a squad as half of one
     this.all({ t: 'gk', i: u.id, by: by ? by.id : '', sc: this.sc });
   }
   ghurt(u, d, by) { if (u.hp <= 0 || this.over) return; u.hp -= d; if (u.hp <= 0) this.gdead(u, by); }
@@ -146,7 +152,7 @@ export class Match extends DurableObject {
       const cnt = [0, 0]; for (const x of this.ents.values()) if (!x.bot) cnt[x.team]++;
       const team = !this.open ? (cnt[0] < SEATS ? 0 : 1) : cnt[0] < cnt[1] ? 0 : cnt[1] < cnt[0] ? 1 : this.sc[1] < this.sc[0] ? 1 : 0;
       const ent = this.make(p.id, String(p.name || 'Pilot').replace(/[<>&]/g, '').slice(0, 16), team, false);
-      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
+      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 31) : 0; if (Array.isArray(m.a) && m.a.length === 2 && m.a.every(Number.isInteger)) { ent.b0 = clamp(m.a[0], 0, 4); ent.r0 = clamp(m.a[1], 0, 10); this.arm(ent); } ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
       if (!this.start) { this.start = Date.now(); this.sc = [0, 0]; this.zero(); this.over = 0; }
       this.fill(); this.tell();
       this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, wx: this.wx, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : this.mode === 'land' ? LPTS.map((z, i) => [...this.zpos(i), LR]) : undefined, bz: this.mode === 'land' ? [this.bpos(0), this.bpos(1)] : undefined, left: this.left(), sc: this.sc, c: this.c });
@@ -196,7 +202,7 @@ export class Match extends DurableObject {
   kill(v, by) {
     if (!v.alive || this.over) return; v.alive = false; v.hp = 0; v.f = 0; v.deaths++; v.fresh = false; v.resp = v.bot ? 4 : 3.2;
     if (this.mode === 'zone' || this.mode === 'land') { this.scf[1 - v.team] += this.mode === 'zone' ? 2 : 1; this.sc[1 - v.team] = Math.floor(this.scf[1 - v.team]); } else if (this.mode !== 'ship') this.sc[1 - v.team]++;
-    if (by && by.team !== v.team) by.kills++;
+    if (by && by.team !== v.team) { by.kills++; if (this.mode === 'land' || this.mode === 'ship') this.reward(by, 'air'); }
     this.all({ t: 'k', i: v.id, by: by ? by.id : '', sc: this.sc });
   }
 
@@ -298,7 +304,7 @@ export class Match extends DurableObject {
       for (const e of this.ents.values()) {
         if (!e.alive || !e.fresh) continue;
         if (e.p[1] < 520) for (let i = 0; i < LPTS.length; i++) { if (this.zs[i].own !== 1 - e.team) continue; const p = this.zpos(i); if (Math.hypot(e.p[0] - p[0], e.p[2] - p[1]) < 520 && Math.random() < dt * .6) this.hurt(e, e.bot ? 4 : 5, this.guns[1 - e.team]); }
-        if (!e.bot && e.alive && e.p[1] < 700 && now - e.armAt > 15000 && (e.amb < 4 || e.amr < 10 || e.hp < 100)) { const b = this.bpos(e.team); if (Math.hypot(e.p[0] - b[0], e.p[2] - b[1]) < 450) { this.arm(e); e.hp = 100; if (e.conn) this.send(e.conn, { t: 'arm', hp: 100 }); } }
+        if (!e.bot && e.alive && e.p[1] < 700 && now - e.armAt > 15000 && (e.amb < (e.b0 == null ? 4 : e.b0) || e.amr < (e.r0 == null ? 10 : e.r0) || e.hp < 100)) { const b = this.bpos(e.team); if (Math.hypot(e.p[0] - b[0], e.p[2] - b[1]) < 450) { this.arm(e, true); e.hp = 100; if (e.conn) this.send(e.conn, { t: 'arm', hp: 100 }); } }
       }
     }
     if ((this.mode === 'zone' || land) && !this.over) { // who holds each ring or strongpoint, and what it pays
@@ -315,7 +321,7 @@ export class Match extends DurableObject {
       for (const e of this.ents.values()) {
         if (!e.alive || !e.fresh) continue;
         if (e.p[1] < 800 && this.near(e, 1 - e.team) < 800 && Math.random() < dt * 1.1) this.hurt(e, e.bot ? 5 : 6, this.guns[1 - e.team]);
-        if (!e.bot && e.alive && e.p[1] < 700 && now - e.armAt > 15000 && (e.amb < 4 || e.amr < 10 || e.hp < 100) && this.near(e, e.team) < 420) { this.arm(e); e.hp = 100; if (e.conn) this.send(e.conn, { t: 'arm', hp: 100 }); }
+        if (!e.bot && e.alive && e.p[1] < 700 && now - e.armAt > 15000 && (e.amb < (e.b0 == null ? 4 : e.b0) || e.amr < (e.r0 == null ? 10 : e.r0) || e.hp < 100) && this.near(e, e.team) < 420) { this.arm(e, true); e.hp = 100; if (e.conn) this.send(e.conn, { t: 'arm', hp: 100 }); }
       }
     }
     if (this.dirty) { this.dirty = false; this.all({ t: 'ro', e: [...this.ents.values()].map(e => [e.id, e.name, e.team, e.k, e.bot ? 1 : 0]) }); }
