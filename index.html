@@ -1387,6 +1387,7 @@ const FX = { flash: { c: '#ffd890', e: '#ff8a30', d: .3, o: .9, a: 1, g: 1.1, gl
   flak: { c: '#141312', e: '#2a2826', d: 2.4, r: 3, o: .85, g: 1.3, dr: 2 }, trail: { c: '#2c2826', e: '#4a4541', d: 1.5, r: 5, o: .55, g: 1.8 }, rtrail: { c: '#e2ded6', e: '#b8b4ac', d: 1.1, r: 2, o: .5, g: 2.2 },
   splash: { c: '#f4f8f8', e: '#cfe0e2', d: 1.9, r: 0, o: .92, g: 1.3, dr: 1.1, gv: 17 }, mist: { c: '#eef4f4', d: 1.6, r: 1, o: .4, g: 2.4, dr: 2.2 },
   dirt: { c: '#6a5843', e: '#8b7b66', d: 1.3, r: 6, o: .8, g: 1.6, dr: 1.5, gv: 9 }, dust: { c: '#7f6e5a', e: '#9a8b78', d: 1.6, r: 2, o: .38, g: 2.3, dr: 2.4 },
+  sdirt: { c: '#d5dde2', e: '#f0f4f6', d: 1.3, r: 6, o: .8, g: 1.6, dr: 1.5, gv: 9 }, sdust: { c: '#e2e9ed', e: '#f4f7f9', d: 1.6, r: 2, o: .42, g: 2.3, dr: 2.4 }, // the same two thrown up from snow
   column: { c: '#1d1b1a', e: '#4c4744', d: 6, r: 15, o: .62, g: 2.7, w: 6 }, spark: { c: '#fff2c4', e: '#ff5a12', d: 1.1, o: 1, a: 1, g: 0, dr: .7, gv: 55, glow: 1 }, chunk: { c: '#171412', d: 1.6, o: 1, g: 0, dr: .35, gv: 70, hard: 1 } };
 for (const k in FX) { const K = FX[k]; K.c = col(K.c); K.e = K.e ? col(K.e) : K.c; for (const q of ['r', 'a', 'w', 'dr', 'gv']) K[q] = K[q] || 0; }
 const FXN = 1500, fxP = new Float32Array(FXN * 3), fxV = new Float32Array(FXN * 3), fxT = new Float32Array(FXN), fxD = new Float32Array(FXN), fxS = new Float32Array(FXN), fxR = new Float32Array(FXN * 3), fxK = new Array(FXN), fxO = new Uint16Array(FXN), fxZ = new Float32Array(FXN);
@@ -1403,6 +1404,7 @@ const FXM = new T.ShaderMaterial({ transparent: true, depthWrite: false, blendin
 const fxMesh = new T.Mesh(fxGeo, FXM); fxMesh.frustumCulled = false; fxMesh.renderOrder = 5; scene.add(fxMesh);
 fxMesh.onBeforeRender = () => { FXM.uniforms.lit.value = clamp(.25 + hemi.intensity * .5 + sunLight.intensity * .35, .3, 1.1); };
 function puff(x, y, z, size, kind, vx, vy, vz) {
+  if ((kind === 'dirt' || kind === 'dust') && M.land && M.land.snow && heightAt(x, z) > 104) kind = 's' + kind; // above the snow line it is snow that flies, not earth
   const K = FX[kind]; let i = fxH, n = FXN; while (n-- && fxT[i] < fxD[i]) i = (i + 1) % FXN; if (n < 0) return; fxH = (i + 1) % FXN;
   fxT[i] = 0; fxD[i] = K.d * rand(.85, 1.15); fxS[i] = size; fxK[i] = K; fxP[i * 3] = x; fxP[i * 3 + 1] = y; fxP[i * 3 + 2] = z; fxV[i * 3] = vx || 0; fxV[i * 3 + 1] = vy || 0; fxV[i * 3 + 2] = vz || 0;
   fxR[i * 3] = rand(0, 6.28); fxR[i * 3 + 1] = K.glow ? 0 : rand(-.5, .5); fxR[i * 3 + 2] = rand(0, 1);
