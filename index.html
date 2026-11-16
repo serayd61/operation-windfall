@@ -1807,7 +1807,7 @@ function voxId(text) { let best = '', id = ''; for (const k in VOX.id) if (k.len
 function voxHas(id) { return (' ' + VOX.have[LANGS[LI][0]] + ' ').indexOf(' ' + id + ' ') >= 0; }
 function voxLoad(id) { // fetched and decoded once, then kept
   const key = LANGS[LI][0] + '/' + id; if (VOX.buf.has(key) || !ac) return; VOX.buf.set(key, null);
-  fetch('voice/' + key + '.mp3').then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(b => new Promise((ok, no) => ac.decodeAudioData(b, ok, no))).then(b => VOX.buf.set(key, b)).catch(() => {});
+  fetch('voice/' + key + '.mp3').then(r => r.ok || r.status === 0 ? r.arrayBuffer() : Promise.reject()) /* inside the app a bundled file answers with status 0 */.then(b => new Promise((ok, no) => ac.decodeAudioData(b, ok, no))).then(b => VOX.buf.set(key, b)).catch(() => {});
 }
 function voxWarm() { if (!ac || !CAR.voice) return; for (const id of VOX.have[LANGS[LI][0]].split(' ')) if (id) voxLoad(id); }
 function hush() { try { if (VOX.src) VOX.src.stop(); } catch (e) {} VOX.src = null; }
