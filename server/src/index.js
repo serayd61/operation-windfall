@@ -5,7 +5,7 @@ import { DurableObject } from 'cloudflare:workers';
 
 const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
 const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill; the first is the airfield (rearm and repair), the second the radar (half the wait to fly again), the third the harbour (double pay)
-const SHIPX = 1900, SHIP_HP = 1600, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
+const SHIPX = 1900, SHIP_HP = 2000, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
 const AMB_MAX = 8, AMR_MAX = 16; // the most bombs and rockets rewards can stack up to
 const LPTS = [[-420, 220], [0, -100], [420, 220]], LR = 95, LGOAL = 200, LAND_CAP = 420, LBEACH = [[-560, 760], [560, 760]]; // island assault: three strongpoints on the island, a beach a side
 const GU = [{ hp: 60, sp: 11, rng: 140, dps: [6, 1.5], n: 5 }, { hp: 220, sp: 9, rng: 220, dps: [14, 24], n: 2 }]; // the ground units: rifle squads and tanks
@@ -21,8 +21,9 @@ const CH = [null,
   { mode: 'land', wx: 'day', tanks: 2 }, { mode: 'zone', wx: 'night', short: 1 }, { mode: 'df', wx: 'storm', goal: 35, bhp: 1.6, bacc: 1.4 }, { mode: 'ship', wx: 'storm', load: [.5, 1] }, { mode: 'land', wx: 'night', goal: 250, tanks: 1, bhp: 1.5, bacc: 1.3, flak: 1.5 },
 ];
 /* what a pilot flies as: a fighter hits aircraft harder; an attacker carries the rockets, shrugs off some fire and is the one for troops; a bomber carries the bombs and the plate.
+   In the air a role is worth its guns over what gets through its plate: fighter 1.15, attacker 1.06, bomber 1.0, so the one built for aircraft wins that fight.
    ld is the bombs and rockets it takes off with, gun what its guns do to aircraft, gg to ground units, bomb and rkt what its ordnance does, arm how much of a hit gets through */
-const ROLE = { f: { ld: [0, 4], gun: 1.15, gg: .8, bomb: 1, rkt: 1, arm: 1 }, a: { ld: [2, 14], gun: 1, gg: 1.3, bomb: 1, rkt: 1.25, arm: .85 }, b: { ld: [8, 4], gun: .9, gg: 1, bomb: 1.3, rkt: 1, arm: .7 } }, ROLE0 = { gun: 1, gg: 1, bomb: 1, rkt: 1, arm: 1 };
+const ROLE = { f: { ld: [0, 4], gun: 1.15, gg: .8, bomb: 1, rkt: 1, arm: 1 }, a: { ld: [2, 14], gun: .95, gg: 1.3, bomb: 1, rkt: 1.25, arm: .9 }, b: { ld: [6, 4], gun: .8, gg: 1, bomb: 1.2, rkt: 1, arm: .8 } }, ROLE0 = { gun: 1, gg: 1, bomb: 1, rkt: 1, arm: 1 };
 /* each role keeps its own experience; level n starts at 100 * (n - 1)^2, ten levels. A level adds 1.5% to a fighter's guns on aircraft, 1% to an attacker's guns and rockets on the ground
    and to a bomber's bombs; levels 4, 7 and 10 each add two rockets to the attacker and a bomb to the bomber */
 const lvl = xp => clamp(1 + Math.floor(Math.sqrt(Math.max(0, +xp || 0) / 100)), 1, 10);
