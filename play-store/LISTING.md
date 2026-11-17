@@ -1,16 +1,16 @@
 # Google Play başvuru dosyası — Operation Windfall
 
-Paket adı: `com.operationwindfall.app` · Sürüm: 1.0.1 (kod 2, Capacitor; 1.0.0 / kod 1 Bubblewrap TWA idi) · Hedef Android API 36, en düşük Android 7.0 (API 24)
+Paket adı: `com.operationwindfall.app` · Sürüm: 1.0.2 (kod 27, iOS build 27 ile aynı oyun; Capacitor; 1.0.0 / kod 1 Bubblewrap TWA idi) · Hedef Android API 36, en düşük Android 7.0 (API 24)
 
 ## Yüklenecek dosyalar (bu klasörde)
 
 | Dosya | Nereye |
 | --- | --- |
-| `operation-windfall-1.0.1.aab` | Sürüm → uygulama paketi |
+| `operation-windfall-1.0.2.aab` | Sürüm → uygulama paketi |
 | `graphics/icon-512.png` | Mağaza girişi → uygulama simgesi |
 | `graphics/feature-1024x500.png` | Mağaza girişi → öne çıkan grafik |
 | `graphics/screenshot-1…5.png` (1920×1080) | Mağaza girişi → telefon ekran görüntüleri (oyunun 3D sahnesinden: alacakaranlık it dalaşı, it dalaşı, kara saldırısı, uçak gemisi, karlı ada) |
-| `operation-windfall-1.0.1-test.apk` | Yalnızca kendi telefonunda denemek için |
+| `operation-windfall-1.0.2-test.apk` | Yalnızca kendi telefonunda denemek için |
 
 ## Mağaza metinleri
 
