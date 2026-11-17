@@ -4,7 +4,8 @@
 import { DurableObject } from 'cloudflare:workers';
 
 const HZ = 15, GOAL = 25, CAP = 300, SEATS = 4, MAXH = SEATS * 2;
-const ZONES = [[-1000, 500], [0, -700], [1000, 500]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill; the first is the airfield (rearm and repair), the second the radar (half the wait to fly again), the third the harbour (double pay)
+const ZONES = [[-1000, 500], [1000, 500], [0, -700]], ZR = 380, ZGOAL = 100; // zone control: three rings in the air, a point every 3 s each, 2 a kill; the first is the airfield (rearm and repair), the second the radar (half the wait to fly again), the third the harbour (double pay).
+// The harbour is the ring in the middle, the same way from both sides: when it sat on one side, that side's bots won every match.
 const SHIPX = 1900, SHIP_HP = 2000, SHIP_CAP = 420, BOMB = 130, RKT = 35; // carrier strike: sink the other side's carrier with bombs and rockets
 const AMB_MAX = 8, AMR_MAX = 16; // the most bombs and rockets rewards can stack up to
 const LPTS = [[-420, 220], [0, -100], [420, 220]], LR = 95, LGOAL = 200, LAND_CAP = 420, LBEACH = [[-560, 760], [560, 760]]; // island assault: three strongpoints on the island, a beach a side
@@ -278,9 +279,16 @@ export class Match extends DurableObject {
         let gb = 1e9; b.gt = null; for (const u of this.gu) if (u.team !== b.team && u.hp > 0) { const d = Math.hypot(u.x - b.p[0], u.z - b.p[2]); if (d < gb) { gb = d; b.gt = u; } }
         if (b.gt) { b.tgt = null; b.zone = -3; }
       }
-      if (this.mode === 'zone' && best > 520) { // nobody close: head for the nearest ring that is not ours yet, or guard one that is
+      if (this.mode === 'zone' && best > 520) { // nobody close: pick a ring for what it is worth, not only for how near it is
         b.tgt = null; let zb = 1e9;
-        for (let i = 0; i < ZONES.length; i++) { const z = this.zpos(i), d = Math.hypot(z[0] - b.p[0], z[1] - b.p[2]) + (this.zs[i].own === b.team ? 2500 : 0); if (d < zb) { zb = d; b.zone = i; } }
+        if (b.hp < this.hp0(b) * .5 && this.zs[0].own === b.team && Date.now() - b.armAt > 15000) b.zone = 0; // shot up, and the airfield is ours: go and get patched
+        else for (let i = 0; i < ZONES.length; i++) {
+          const z = this.zpos(i), zs = this.zs[i], ours = zs.own === b.team, under = ours && (b.team ? zs.v < .95 : zs.v > -.95); // a ring of ours that is being pushed back is worth a visit
+          let mates = 0; for (const m of this.ents.values()) if (m !== b && m.bot && m.alive && m.team === b.team && m.zone === i && !m.tgt) mates++;
+          const d = Math.hypot(z[0] - b.p[0], z[1] - b.p[2]) + (ours && !under ? 2500 : 0) + mates * 350 // spread out rather than all circle the same ring
+            - [0, 150, 600][i] * (zs.own === 1 - b.team ? 1.5 : 1); // the harbour pays double and the radar halves the wait, more so when it is theirs to lose
+          if (d < zb) { zb = d; b.zone = i; }
+        }
       }
     }
     let wantYaw = b.yaw, wantPitch = 0, dist = 1e9, fire = 0; const t = b.tgt;
@@ -350,6 +358,7 @@ export class Match extends DurableObject {
     if (this.mode === 'zone' && !this.over && this.zs[0].own >= 0) { // the airfield rearms and repairs whoever of its holders flies through it
       const c = this.zpos(0), now = Date.now();
       for (const e of this.ents.values()) if (!e.bot && e.alive && e.fresh && e.team === this.zs[0].own && !this.R.noRearm && now - e.armAt > 15000 && (e.amb < this.ld(e)[0] || e.amr < this.ld(e)[1] || e.hp < 100) && Math.hypot(e.p[0] - c[0], e.p[2] - c[1]) < ZR) { this.arm(e, true); e.hp = 100; if (e.conn) this.send(e.conn, { t: 'arm', hp: 100 }); }
+      for (const e of this.ents.values()) if (e.bot && e.alive && e.team === this.zs[0].own && now - e.armAt > 15000 && e.hp < this.hp0(e) && Math.hypot(e.p[0] - c[0], e.p[2] - c[1]) < ZR) { e.hp = this.hp0(e); e.armAt = now; } // the bots get patched there too
     }
     if (this.mode === 'ship' && !this.over) { // each carrier's guns, and a rearm for whoever comes home
       for (const e of this.ents.values()) {
