@@ -414,6 +414,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <h1 id="end-title">Welcome aboard</h1>
       <p class="lede" id="end-lede"></p>
       <ul class="medals" id="end-stars"></ul>
+      <p class="note" id="end-next"></p>
       <p class="note" id="end-net" hidden></p>
       <div class="stats">
         <div><span class="lab">Score</span><b id="st-score">0</b></div>
@@ -465,6 +466,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <p class="note" id="du-note"><span>Ranking points earned</span>: <b id="du-pts" data-raw>0</b> · <span>Earned</span>: <b id="du-rp" data-raw>0 RP</b></p>
       <ul class="medals" id="du-stars" hidden></ul>
       <p class="note" id="du-rnote" hidden><span id="du-rname">Fighter</span> · <span>experience</span>: <b id="du-rxp" data-raw>+0</b></p>
+      <p class="note" id="du-next"></p>
       <p class="note" id="du-cnote" hidden><span>Earned</span>: <b id="du-crp" data-raw>0 RP</b></p>
       <div class="du-cols">
         <div><span class="lab" id="du-al">Blue</span><ol class="rank" id="du-a"></ol></div>
@@ -621,7 +623,7 @@ const DICT = {
   // hangar
   "Hangar and settings": ["Hangar ve ayarlar", "Hangar und Einstellungen"], "Aircraft park": ["Uçak parkı", "Flugzeugpark"],
   "Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.": ["Her sorti tahsis puanı kazandırır. Bunları yeni uçaklara ve donanıma harca; ikisi de bütün sortilerde geçerlidir. Silah yükü her sortinin verdiği gibi kalır.", "Jeder Einsatz bringt Zuteilungspunkte. Gib sie für neue Flugzeuge und Ausrüstung aus; beides gilt für alle Einsätze. Die Waffenlast bleibt, wie der Einsatz sie vorgibt."],
-  "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Preview": ["Önizleme", "Vorschau"], "Tap a line to see that type or paint on the apron before you choose it.": ["Seçmeden önce bir tipi ya da boyayı pistte görmek için satırına dokun.", "Tippe auf eine Zeile, um Typ oder Anstrich vor der Wahl auf dem Vorfeld zu sehen."], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
+  "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Opened": ["Açıldı", "Freigeschaltet"], "Next to open": ["Sıradaki açılış", "Nächste Freischaltung"], "1 star to go": ["1 yıldız kaldı", "noch 1 Stern"], "Every type and paint is open": ["Bütün tipler ve boyalar açık", "Alle Typen und Anstriche sind frei"], "Preview": ["Önizleme", "Vorschau"], "Tap a line to see that type or paint on the apron before you choose it.": ["Seçmeden önce bir tipi ya da boyayı pistte görmek için satırına dokun.", "Tippe auf eine Zeile, um Typ oder Anstrich vor der Wahl auf dem Vorfeld zu sehen."], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
   "A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.": ["Oyun kolu da çalışır: sol çubuk uçurur, A ya da sağ tetik ateş, B roket, X bomba, sağ omuz acil güç, sol tetik hava freni, sol omuz iniş takımı, Y bakış, Start duraklat.", "Ein Gamepad geht auch: linker Stick fliegt, A oder rechter Trigger feuert, B Raketen, X Bomben, rechte Schultertaste Notleistung, linker Trigger Luftbremse, linke Schultertaste Fahrwerk, Y Sicht, Start Pause."],
   "Back": ["Geri", "Zurück"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
@@ -665,7 +667,7 @@ const RXT = [
   [new RegExp('^' + CSN + ', ([\\s\\S]+)$'), ['$1, $2', '$1, $2']],
   [new RegExp('^([\\s\\S]+), ' + CSN + '\\.$'), ['$1, $2.', '$1, $2.']],
   [new RegExp('^' + CSN + ' ([\\s\\S]+)$'), ['$1 $2', '$1 $2']],
-  [/^Chapter (\d+)$/, ['Bölüm $1', 'Kapitel $1']], [/^Level (\d+)$/, ['Seviye $1', 'Stufe $1']], [/^Opens at (\d+) stars$/, ['$1 yıldızla açılır', 'Öffnet bei $1 Sternen']], [/^Stars held: (\d+)$/, ['Eldeki yıldız: $1', 'Sterne: $1']],
+  [/^Chapter (\d+)$/, ['Bölüm $1', 'Kapitel $1']], [/^Level (\d+)$/, ['Seviye $1', 'Stufe $1']], [/^Opens at (\d+) stars$/, ['$1 yıldızla açılır', 'Öffnet bei $1 Sternen']], [/^(\d+) stars to go$/, ['$1 yıldız kaldı', 'noch $1 Sterne']], [/^Stars held: (\d+)$/, ['Eldeki yıldız: $1', 'Sterne: $1']],
   [/^Reward: (\d+) bombs$/, ['Ödül: $1 bomba', 'Belohnung: $1 Bomben']], [/^Reward: (\d+) rockets$/, ['Ödül: $1 roket', 'Belohnung: $1 Raketen']], [/^Reward: (\d+) rockets and repairs$/, ['Ödül: $1 roket ve onarım', 'Belohnung: $1 Raketen und Reparatur']],
   [/^\+(\d+) bombs$/, ['+$1 bomba', '+$1 Bomben']], [/^\+(\d+) rockets$/, ['+$1 roket', '+$1 Raketen']],
   [/^The camp behind (\w+) is finished\.$/, ['$1 arkasındaki kamp bitti.', 'Das Lager hinter $1 ist erledigt.']],
@@ -2915,7 +2917,9 @@ function duelTick(dt) {
 function duelDone() { // the match is over: both sides' sheets, then fly again or go home
   const tb = DUEL.tb, won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them, me = tb.find(r => r[0] === DUEL.id);
   DUEL.on = false; DUEL.over = 0; hush(); skyLeave(); state = 'menu'; reset();
+  const st0 = starsAll();
   { const ch = DUEL.ch, got = ch && DUEL.stars != null ? DUEL.stars : 0, old = ch ? CAMP.st[ch - 1] : 0, gain = ch && campOpenF((ch - 1) / 5 | 0) ? starN(old | got) - starN(old) : 0; // a chapter pays in stars, not in the ranking
+    $('du-next').textContent = starLine(st0);
     $('du-rnote').hidden = !(DUEL.rx > 0); if (DUEL.rx > 0) { $('du-rname').textContent = ROLES[ROLE].n; $('du-rxp').textContent = '+' + DUEL.rx; RXP[ROLE] += DUEL.rx; try { localStorage.setItem('windfall-rxp', JSON.stringify(RXP)); } catch (e) {} roleFill(); setTimeout(roleLoad, 3000); }
     $('du-note').hidden = !!ch; $('du-stars').hidden = !ch; $('du-cnote').hidden = !ch; $('b-camp2').hidden = !ch;
     if (ch) { $('du-stars').innerHTML = campLines(got); $('du-crp').textContent = gain * 30 + ' RP'; if (gain) { CAMP.st[ch - 1] = old | got; try { localStorage.setItem('windfall-camp', JSON.stringify(CAMP.st)); } catch (e) {} } setTimeout(campLoad, 2500); } }
@@ -2950,6 +2954,11 @@ function fillBoard() {
 }
 function starLines(b) { return ['Complete the sortie', 'Break the enemy line at a beach by knocking out its tanks', 'Be home inside ' + fmtTime(PAR[mIdx])].map((t, i) => '<li' + (b >> i & 1 ? ' class="on"' : '') + '>' + t + '</li>').join(''); }
 let planeDirty = false;
+/* after a sortie or a match: what the stars just opened, and how far the next thing is */
+function starLine(before) {
+  const n = starsAll(), all = PLANES.filter(p => p.star).concat(PAINTS.filter(p => p.star)).map(p => [p.star, p.n]).sort((a, b) => a[0] - b[0]), got = all.filter(a => a[0] > before && a[0] <= n).map(a => a[1]), nx = all.find(a => a[0] > n);
+  return (got.length ? 'Opened · ' + got.join(' · ') + ' · ' : '') + (nx ? 'Next to open · ' + nx[1] + ' · ' + (nx[0] - n === 1 ? '1 star to go' : (nx[0] - n) + ' stars to go') : 'Every type and paint is open');
+}
 function lookShow() { // put what is being looked at on the apron in place of the aircraft that stands there
   const same = LOOK.pi === BUILT.pi && LOOK.pa === BUILT.pa; if (LOOK.mesh) { world.remove(LOOK.mesh); LOOK.mesh = null; } plane.visible = same;
   if (!same) { const key = LOOK.pi + '|' + LOOK.pa; let m = LOOK.cache.get(key); if (!m) { m = buildWarbird(painted(LOOK.pi >= 0 ? PLANES[LOOK.pi].skin : M.player, LOOK.pa), true); armPlane(m, M.rockets, M.bombs); LOOK.cache.set(key, m); } m.position.copy(plane.position); m.quaternion.copy(plane.quaternion); world.add(m); LOOK.mesh = m; }
@@ -2993,10 +3002,11 @@ function finish() {
     $('b-again').textContent = 'Fly again'; $('b-retry').hidden = true; $('b-board2').hidden = false;
   }
   let got = 0;
+  const st0 = starsAll();
   if (endWon) { addScore(1000); score += Math.round(Math.max(0, PAR[mIdx] + 120 - time) * 4 * D.sc); got = 1 | (siteBreaks > 0 ? 2 : 0) | (time <= PAR[mIdx] ? 4 : 0); CAR.stars[mIdx] |= got; }
   score = Math.max(0, score - fleetHits * 300);
   const rk0 = rankOf(CAR.xp), earned = Math.round(score / (endWon ? 10 : 25)); CAR.xp += score; CAR.rp += earned; saveCar(); netScore(got);
-  $('end-stars').innerHTML = starLines(got); $('st-score').textContent = score; $('st-bomb').textContent = bomberKills; $('st-rp').textContent = earned + ' RP';
+  $('end-stars').innerHTML = starLines(got); $('end-next').textContent = starLine(st0); $('st-score').textContent = score; $('st-bomb').textContent = bomberKills; $('st-rp').textContent = earned + ' RP';
   if (rankOf(CAR.xp) > rk0) $('end-lede').textContent += ' Promoted to ' + RANKS[rankOf(CAR.xp)][1] + '.';
   if (fleetHits && !failed) $('end-lede').textContent += ' The fleet took ' + fleetHits + (fleetHits > 1 ? ' bomb hits.' : ' bomb hit.');
   $('st-time').textContent = fmtTime(time); $('st-kills').textContent = kills; $('st-boats').textContent = boatKills; $('st-tanks').textContent = (tankKills + truckKills) + ' / ' + troopKills; $('st-acc').textContent = (shots ? Math.round(hits / shots * 100) : 0) + '%'; $('st-best').textContent = best ? fmtTime(best) : '–';
