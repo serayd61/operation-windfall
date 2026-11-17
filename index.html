@@ -3027,7 +3027,7 @@ $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="la
 $('o-inv').onchange = e => { invertY = e.target.checked; try { localStorage.setItem('windfall-inv', invertY ? '1' : '0'); } catch (er) {} };
 let startAt = 0;
 try {
-  if (localStorage.getItem('windfall-inv') === '1') { invertY = true; $('o-inv').checked = true; }
+  { const v = localStorage.getItem('windfall-inv'); if (v === '1' || (v == null && MOBILE)) { invertY = true; $('o-inv').checked = true; } } // on a touch screen the stick starts pilot-style (pull back to climb) unless the pilot chose otherwise; keys and mouse keep up = climb
   if (localStorage.getItem('windfall-mute') === '1') setMuted(true);
   camMode = clamp(parseInt(localStorage.getItem('windfall-cam')) || 0, 0, 2); startAt = clamp(parseInt(localStorage.getItem('windfall-at')) || 0, 0, MISSIONS.length - 1);
 } catch (e) {}
