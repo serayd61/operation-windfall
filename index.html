@@ -210,7 +210,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .medals li::before { content: '☆ '; color: var(--type-dim); } .medals li.on { color: var(--type); } .medals li.on::before { content: '★ '; color: var(--stamp); }
 .lab2 { font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type-dim); margin-bottom: -6px; }
 .upg { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(41, 40, 31, .3); }
-.upg b { font: 700 16px/1.1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .upg b i { font-style: normal; letter-spacing: .2em; color: var(--stamp); margin-left: 8px; }
+.upg b { font: 700 16px/1.1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .upg b i { font-style: normal; letter-spacing: .2em; color: var(--stamp); margin-left: 8px; } .upg b i.sw { display: inline-block; width: 46px; height: 11px; vertical-align: 1px; border: 1px solid rgba(41, 40, 31, .55); }
 .upg span { grid-column: 1; font: 400 13px/1.3 var(--f-type); color: var(--type-dim); } .upg button { grid-row: 1 / span 2; grid-column: 2; white-space: nowrap; }
 .ghost:disabled { opacity: .45; cursor: default; } .ghost:disabled:hover { background: transparent; color: var(--type); }
 .radar { position: absolute; left: var(--gl); top: calc(100px + var(--sat)); width: 124px; height: 124px; }
@@ -362,6 +362,10 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <p class="note" id="h-msg" hidden></p>
       <div class="lab2">Aircraft</div>
       <div id="h-planes"></div>
+      <div class="lab2">Paint</div>
+      <p class="note">Stars from the sorties and the campaign open the last three types and every paint. They are never spent.</p>
+      <p class="note" id="h-stars">Stars held: 0</p>
+      <div id="h-paints"></div>
       <div class="lab2">Fittings</div>
       <div id="h-list"></div>
       <div class="lab2">Stick sensitivity</div><div class="seg" id="o-sens" role="radiogroup" aria-label="Stick sensitivity"></div>
@@ -612,7 +616,7 @@ const DICT = {
   // hangar
   "Hangar and settings": ["Hangar ve ayarlar", "Hangar und Einstellungen"], "Aircraft park": ["Uçak parkı", "Flugzeugpark"],
   "Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.": ["Her sorti tahsis puanı kazandırır. Bunları yeni uçaklara ve donanıma harca; ikisi de bütün sortilerde geçerlidir. Silah yükü her sortinin verdiği gibi kalır.", "Jeder Einsatz bringt Zuteilungspunkte. Gib sie für neue Flugzeuge und Ausrüstung aus; beides gilt für alle Einsätze. Die Waffenlast bleibt, wie der Einsatz sie vorgibt."],
-  "Fittings": ["Donanım", "Ausrüstung"], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
+  "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
   "A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.": ["Oyun kolu da çalışır: sol çubuk uçurur, A ya da sağ tetik ateş, B roket, X bomba, sağ omuz acil güç, sol tetik hava freni, sol omuz iniş takımı, Y bakış, Start duraklat.", "Ein Gamepad geht auch: linker Stick fliegt, A oder rechter Trigger feuert, B Raketen, X Bomben, rechte Schultertaste Notleistung, linker Trigger Luftbremse, linke Schultertaste Fahrwerk, Y Sicht, Start Pause."],
   "Back": ["Geri", "Zurück"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
@@ -656,7 +660,7 @@ const RXT = [
   [new RegExp('^' + CSN + ', ([\\s\\S]+)$'), ['$1, $2', '$1, $2']],
   [new RegExp('^([\\s\\S]+), ' + CSN + '\\.$'), ['$1, $2.', '$1, $2.']],
   [new RegExp('^' + CSN + ' ([\\s\\S]+)$'), ['$1 $2', '$1 $2']],
-  [/^Chapter (\d+)$/, ['Bölüm $1', 'Kapitel $1']], [/^Level (\d+)$/, ['Seviye $1', 'Stufe $1']],
+  [/^Chapter (\d+)$/, ['Bölüm $1', 'Kapitel $1']], [/^Level (\d+)$/, ['Seviye $1', 'Stufe $1']], [/^Opens at (\d+) stars$/, ['$1 yıldızla açılır', 'Öffnet bei $1 Sternen']], [/^Stars held: (\d+)$/, ['Eldeki yıldız: $1', 'Sterne: $1']],
   [/^Reward: (\d+) bombs$/, ['Ödül: $1 bomba', 'Belohnung: $1 Bomben']], [/^Reward: (\d+) rockets$/, ['Ödül: $1 roket', 'Belohnung: $1 Raketen']], [/^Reward: (\d+) rockets and repairs$/, ['Ödül: $1 roket ve onarım', 'Belohnung: $1 Raketen und Reparatur']],
   [/^\+(\d+) bombs$/, ['+$1 bomba', '+$1 Bomben']], [/^\+(\d+) rockets$/, ['+$1 roket', '+$1 Raketen']],
   [/^The camp behind (\w+) is finished\.$/, ['$1 arkasındaki kamp bitti.', 'Das Lager hinter $1 ist erledigt.']],
@@ -775,9 +779,9 @@ const RANKS = [[0, 'Pilot Officer'], [2500, 'Flying Officer'], [7000, 'Flight Li
 const DIFFS = [{ n: 'Rookie', note: 'forgiving', dmg: .6, hp: .8, turn: .85, sc: .75 }, { n: 'Veteran', note: 'standard', dmg: 1, hp: 1, turn: 1, sc: 1 }, { n: 'Ace', note: 'score ×1.5', dmg: 1.45, hp: 1.3, turn: 1.15, sc: 1.5 }];
 const UPG = { eng: ['Engine', 'More speed on emergency power, 4% a step'], arm: ['Airframe', 'Armour plate and sealed tanks, 12% less damage a step'], gun: ['Guns', 'Harder-hitting, cooler-running guns, 12% a step'], ord: ['Ordnance', 'Heavier rocket and bomb warheads, 15% a step'] };
 const COST = [300, 700, 1200], PAR = [365, 410, 455, 500, 320, 365, 335], SENS = [.72, 1, 1.3];
-const CAR = { xp: 0, rp: 0, up: { eng: 0, arm: 0, gun: 0, ord: 0 }, stars: [0, 0, 0, 0, 0, 0, 0], diff: 1, sens: 1, q: 1, plane: -1, own: [], mus: 1, voice: 1, aid: 1, fps: 0 };
-try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (Array.isArray(j.own)) CAR.own = j.own.filter(n => Number.isInteger(n) && n >= 4 && n < 9); for (const k of ['xp', 'rp', 'diff', 'sens', 'q', 'plane', 'mus', 'voice', 'aid', 'fps']) if (typeof j[k] === 'number' && isFinite(j[k])) CAR[k] = j[k]; if (j.up) for (const k in CAR.up) CAR.up[k] = clamp(j.up[k] | 0, 0, 3); if (Array.isArray(j.stars)) for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = (j.stars[i] | 0) & 7; } } catch (e) {}
-CAR.diff = clamp(CAR.diff | 0, 0, 2); CAR.sens = clamp(CAR.sens | 0, 0, 2); CAR.q = CAR.q ? 1 : 0; CAR.mus = CAR.mus ? 1 : 0; CAR.voice = CAR.voice ? 1 : 0; CAR.aid = CAR.aid ? 1 : 0; CAR.fps = CAR.fps ? 1 : 0; CAR.plane = Number.isInteger(CAR.plane) && (CAR.plane < 4 || CAR.own.includes(CAR.plane)) ? clamp(CAR.plane, -1, 8) : -1;
+const CAR = { xp: 0, rp: 0, up: { eng: 0, arm: 0, gun: 0, ord: 0 }, stars: [0, 0, 0, 0, 0, 0, 0], diff: 1, sens: 1, q: 1, plane: -1, paint: 0, own: [], mus: 1, voice: 1, aid: 1, fps: 0 };
+try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (Array.isArray(j.own)) CAR.own = j.own.filter(n => Number.isInteger(n) && n >= 4 && n < 9); for (const k of ['xp', 'rp', 'diff', 'sens', 'q', 'plane', 'paint', 'mus', 'voice', 'aid', 'fps']) if (typeof j[k] === 'number' && isFinite(j[k])) CAR[k] = j[k]; if (j.up) for (const k in CAR.up) CAR.up[k] = clamp(j.up[k] | 0, 0, 3); if (Array.isArray(j.stars)) for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = (j.stars[i] | 0) & 7; } } catch (e) {}
+CAR.diff = clamp(CAR.diff | 0, 0, 2); CAR.sens = clamp(CAR.sens | 0, 0, 2); CAR.q = CAR.q ? 1 : 0; CAR.mus = CAR.mus ? 1 : 0; CAR.voice = CAR.voice ? 1 : 0; CAR.aid = CAR.aid ? 1 : 0; CAR.fps = CAR.fps ? 1 : 0; CAR.paint = clamp(CAR.paint | 0, 0, 6); CAR.plane = Number.isInteger(CAR.plane) && (CAR.plane < 4 || CAR.plane > 8 || CAR.own.includes(CAR.plane)) ? clamp(CAR.plane, -1, 11) : -1;
 const saveCar = () => { try { localStorage.setItem('windfall-career', JSON.stringify(CAR)); } catch (e) {} };
 let D = DIFFS[CAR.diff], score = 0, bomberKills = 0, fleetHits = 0, siteBreaks = 0, tipI = 0;
 const addScore = n => { score += Math.round(n * D.sc); };
@@ -873,7 +877,20 @@ const PLANES = [
   { n: 'Supermarine Spitfire', by: 'Royal Air Force', cost: 600, spd: 1.04, turn: 1.2, arm: .9, gun: 1, skin: { top: '#5c6a52', top2: '#7b7f83', under: '#b9c4c9', nose: '#d9d48a', spin: '#b9c4c9', radial: false, mark: 'raf', jacket: '#5a4632' } },
   { n: 'La-5FN', by: 'Red Air Force', cost: 700, spd: 1.05, turn: 1.1, arm: 1, gun: 1.1, skin: { top: '#5e6f66', top2: '#3d4a52', under: '#8fb4cc', nose: '#b62f29', spin: '#b62f29', radial: true, mark: 'su', jacket: '#4a3a2a' } },
   { n: 'F4U Corsair', by: 'US Navy', cost: 900, spd: 1.08, turn: .95, arm: 1.16, gun: 1.1, skin: { top: '#27384f', top2: '#27384f', under: '#c9d0d2', nose: '#27384f', spin: '#1c2330', radial: true, mark: 'us', jacket: '#b39c66' } },
-  { n: 'P-51D Mustang', by: 'US Army Air Forces', cost: 1100, spd: 1.12, turn: 1.04, arm: 1, gun: 1.06, skin: { top: '#b9bfc4', top2: '#b9bfc4', under: '#c9ced2', nose: '#c9a227', spin: '#b3261e', radial: false, mark: 'us', jacket: '#7a5433', metal: true } }
+  { n: 'P-51D Mustang', by: 'US Army Air Forces', cost: 1100, spd: 1.12, turn: 1.04, arm: 1, gun: 1.06, skin: { top: '#b9bfc4', top2: '#b9bfc4', under: '#c9ced2', nose: '#c9a227', spin: '#b3261e', radial: false, mark: 'us', jacket: '#7a5433', metal: true } },
+  { n: 'Hawker Tempest', by: 'Royal Air Force', cost: 0, star: 15, spd: 1.1, turn: .98, arm: 1.06, gun: 1.1, skin: { top: '#5a6452', top2: '#6f777c', under: '#b4bfc4', nose: '#5a6452', spin: '#c9c7b4', radial: false, mark: 'raf', jacket: '#5a4632' } },
+  { n: 'P-47D Thunderbolt', by: 'US Army Air Forces', cost: 0, star: 30, spd: 1.05, turn: .9, arm: 1.22, gun: 1.12, skin: { top: '#4f5438', top2: '#4f5438', under: '#9aa3a6', nose: '#e6e2d2', spin: '#4f5438', radial: true, mark: 'us', jacket: '#7a5433' } },
+  { n: 'Yak-3', by: 'Red Air Force', cost: 0, star: 45, spd: 1.07, turn: 1.24, arm: .88, gun: 1.04, skin: { top: '#6c7a78', top2: '#434f55', under: '#93b6cc', nose: '#6c7a78', spin: '#e2dfd0', radial: false, mark: 'su', jacket: '#4a3a2a' } }
+];
+/* paint goes over whatever type is flown; like the last three types it is opened by stars (sorties and campaign together), never bought */
+const PAINTS = [
+  { n: 'Factory finish', star: 0, s: null },
+  { n: 'Desert sand', star: 6, s: { top: '#c2a878', top2: '#8a6a44', under: '#9fc0d6', metal: false } },
+  { n: 'Winter whitewash', star: 12, s: { top: '#e2e4e0', top2: '#c4c9c6', under: '#a9c3d0', metal: false } },
+  { n: 'Sea blue', star: 20, s: { top: '#2c4660', top2: '#3f6079', under: '#d5dadb', metal: false } },
+  { n: 'Night black', star: 30, s: { top: '#1d1f22', top2: '#1d1f22', under: '#151618', nose: '#1d1f22', metal: false } },
+  { n: 'Bare metal', star: 42, s: { top: '#b9bfc4', top2: '#b9bfc4', under: '#c9ced2', metal: true } },
+  { n: 'Red nose', star: 55, s: { nose: '#b3261e', spin: '#e8c33a' } }
 ];
 let PM = { spd: 1, turn: 1, arm: 1, gun: 1 };
 /* online, a pilot flies as a fighter, an attacker or a bomber; the match server owns what that does to loads, guns and armour, here it is only how the aircraft handles */
@@ -883,7 +900,7 @@ const roleLv = xp => clamp(1 + Math.floor(Math.sqrt(Math.max(0, xp) / 100)), 1, 
 const ROLE_UP = { f: 'Each level: its guns hit aircraft 1.5% harder.', a: 'Each level: 1% more against ground units. Two more rockets at levels 4, 7 and 10.', b: 'Each level: its bombs hit 1% harder. One more bomb at levels 4, 7 and 10.' };
 let ROLE = 'f'; try { const r = localStorage.getItem('windfall-role'); if (ROLES[r]) ROLE = r; } catch (e) {}
 const RK1 = { spd: 1, turn: 1 }, rk = () => (DUEL.on ? ROLES[ROLE] : RK1);
-const skinNow = () => CAR.plane >= 0 ? PLANES[CAR.plane].skin : M.player, craftName = () => CAR.plane >= 0 ? PLANES[CAR.plane].n + ' · ' + PLANES[CAR.plane].by : M.craft;
+const painted = (sk, i) => PAINTS[i] && PAINTS[i].s ? Object.assign({}, sk, PAINTS[i].s) : sk, skinNow = () => painted(CAR.plane >= 0 ? PLANES[CAR.plane].skin : M.player, CAR.paint), skinNow0 = () => CAR.plane >= 0 ? PLANES[CAR.plane].skin : M.player, craftName = () => CAR.plane >= 0 ? PLANES[CAR.plane].n + ' · ' + PLANES[CAR.plane].by : M.craft;
 const pct = (v, good) => (v > 1 ? '+' : '−') + Math.round(Math.abs(v - 1) * 100) + '% ' + good;
 const planeNote = p => [p.spd !== 1 && pct(p.spd, 'speed'), p.turn !== 1 && pct(p.turn, 'agility'), p.arm !== 1 && pct(p.arm, 'armour'), p.gun !== 1 && pct(p.gun, 'firepower')].filter(Boolean).join(' · ') || 'Balanced';
 let M = MISSIONS[0], mIdx = 0, ISL = M.islands;
@@ -2587,7 +2604,7 @@ const CHAPS = [['df', 'day', 'A warm-up: first side to 15 wins.', 15], ['zone', 
   ['ship', 'dusk', 'No bombs: rockets only.'], ['zone', 'day', 'Their pilots shoot straighter.'], ['land', 'storm', 'No rearming over the beach.'], ['df', 'storm', 'Shot down, you wait eight seconds to fly again.'], ['ship', 'night', 'Front finale: five minutes, and their pilots take more punishment.'],
   ['land', 'day', 'They land two more tanks.'], ['zone', 'night', 'You fly one wingman short: three against four.'], ['df', 'storm', 'First side to 35 wins. Their pilots are tougher and shoot straighter.', 35], ['ship', 'storm', 'Half the bombs.'], ['land', 'night', 'The last battle: first side to 250, and they are stronger in every way.', 250]];
 const CAMP = { st: new Array(20).fill(0), sel: 1 }; try { const a = JSON.parse(localStorage.getItem('windfall-camp') || 'null'); if (Array.isArray(a) && a.length === 20) CAMP.st = a.map(v => v & 7); } catch (e) {}
-const starN = b => (b & 1) + (b >> 1 & 1) + (b >> 2 & 1), campSum = f => CAMP.st.slice(f * 5, f * 5 + 5).reduce((a, b) => a + starN(b), 0), campAll = () => CAMP.st.reduce((a, b) => a + starN(b), 0), campOpenF = f => f === 0 || campSum(f - 1) >= 10;
+const starN = b => (b & 1) + (b >> 1 & 1) + (b >> 2 & 1), campSum = f => CAMP.st.slice(f * 5, f * 5 + 5).reduce((a, b) => a + starN(b), 0), campAll = () => CAMP.st.reduce((a, b) => a + starN(b), 0), campOpenF = f => f === 0 || campSum(f - 1) >= 10, starsAll = () => campAll() + CAR.stars.reduce((a, b) => a + starN(b), 0), planeOk = i => i < 4 || (PLANES[i].star ? starsAll() >= PLANES[i].star : CAR.own.includes(i));
 const campLines = b => ['Win the chapter', 'Be one of the two best pilots on your side', 'Be shot down three times at most'].map((t, i) => '<li' + (b >> i & 1 ? ' class="on"' : '') + '>' + t + '</li>').join('');
 function campFill() {
   const el = $('ca-fronts'); el.textContent = ''; $('ca-total').textContent = campAll() + ' / 60'; $('on-camp').textContent = campAll() + ' / 60';
@@ -2600,7 +2617,7 @@ function campFill() {
   const C = CHAPS[CAMP.sel - 1]; $('ca-name').textContent = 'Chapter ' + CAMP.sel; $('ca-mode').textContent = MODE_N[C[0]]; $('ca-sky').textContent = SKY_N[C[1]]; $('ca-rule').textContent = C[2]; $('ca-stars').innerHTML = campLines(CAMP.st[CAMP.sel - 1]); $('b-cafly').disabled = !campOpenF((CAMP.sel - 1) / 5 | 0);
 }
 async function campLoad() { // the stars the match server has written for this pilot
-  if (!NET.me || !NET.sb) return; try { const a = await rpc('my_chapters'); if (Array.isArray(a) && a.length === 20) { CAMP.st = a.map(v => v & 7); try { localStorage.setItem('windfall-camp', JSON.stringify(CAMP.st)); } catch (e) {} if (!$('s-camp').hidden || !$('s-online').hidden) campFill(); } } catch (e) {}
+  if (!NET.me || !NET.sb) return; try { const a = await rpc('my_chapters'); if (Array.isArray(a) && a.length === 20) { CAMP.st = a.map(v => v & 7); try { localStorage.setItem('windfall-camp', JSON.stringify(CAMP.st)); } catch (e) {} if (!$('s-camp').hidden || !$('s-online').hidden) campFill(); if (!$('s-hangar').hidden) fillHangar(); } } catch (e) {}
 }
 function campOpen() {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
@@ -2926,8 +2943,11 @@ function fillHangar() {
   $('h-list').innerHTML = Object.keys(UPG).map(k => { const l = CAR.up[k], max = l >= 3; return '<div class="upg"><b>' + UPG[k][0] + '<i>' + '■■■'.slice(0, l) + '□□□'.slice(0, 3 - l) + '</i></b><span>' + UPG[k][1] + '</span><button class="ghost" type="button" data-k="' + k + '"' + (max || CAR.rp < COST[l] ? ' disabled' : '') + '>' + (max ? 'Fitted' : 'Fit · ' + COST[l] + ' RP') + '</button></div>'; }).join('');
   $('h-list').querySelectorAll('button').forEach(b => { b.onclick = () => { const k = b.dataset.k, l = CAR.up[k]; if (l >= 3 || CAR.rp < COST[l]) return; if (NET.me) { netBuy('buy_upgrade', { p_key: k }); return; } CAR.rp -= COST[l]; CAR.up[k]++; saveCar(); fillHangar(); }; });
   const rows = [['-1', 'Mission standard', 'The type each front was flown with', 0]].concat(PLANES.map((p, i) => ['' + i, p.n, p.by + ' · ' + planeNote(p), p.cost]));
-  $('h-planes').innerHTML = rows.map(r => { const i = +r[0], own = i < 4 || CAR.own.includes(i), cur = CAR.plane === i; return '<div class="upg"><b>' + r[1] + '</b><span>' + r[2] + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || (!own && CAR.rp < r[3]) ? ' disabled' : '') + '>' + (cur ? 'Flying' : own ? 'Fly' : 'Buy · ' + r[3] + ' RP') + '</button></div>'; }).join('');
-  $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i; if (NET.me) { if (i >= 4 && !CAR.own.includes(i) && CAR.rp < PLANES[i].cost) return; netBuy('buy_plane', { p_i: i }); return; } if (i >= 4 && !CAR.own.includes(i)) { if (CAR.rp < PLANES[i].cost) return; CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
+  $('h-stars').textContent = 'Stars held: ' + starsAll();
+  $('h-planes').innerHTML = rows.map(r => { const i = +r[0], st = i >= 0 && PLANES[i].star, own = planeOk(i), cur = CAR.plane === i; return '<div class="upg"><b>' + r[1] + '</b><span>' + r[2] + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || (!own && (st || CAR.rp < r[3])) ? ' disabled' : '') + '>' + (cur ? 'Flying' : own ? 'Fly' : st ? 'Opens at ' + st + ' stars' : 'Buy · ' + r[3] + ' RP') + '</button></div>'; }).join('');
+  $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i, st = i >= 0 && PLANES[i].star; if (!planeOk(i) && (st || CAR.rp < PLANES[i].cost)) return; if (NET.me) { netBuy('buy_plane', { p_i: i }); return; } if (!planeOk(i)) { CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
+  $('h-paints').innerHTML = PAINTS.map((p, i) => { const own = starsAll() >= p.star, cur = CAR.paint === i, c = painted(skinNow0(), i); return '<div class="upg"><b>' + p.n + '<i class="sw" style="background:linear-gradient(90deg,' + c.top + ' 0 40%,' + c.top2 + ' 40% 70%,' + c.under + ' 70% 88%,' + c.nose + ' 88%)"></i></b><span>' + (i ? 'Goes over whatever type you fly' : 'The colours each type left the works in') + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || !own ? ' disabled' : '') + '>' + (cur ? 'Worn' : own ? 'Wear' : 'Opens at ' + p.star + ' stars') + '</button></div>'; }).join('');
+  $('h-paints').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i; if (starsAll() < PAINTS[i].star) return; if (NET.me) { netBuy('set_paint', { p_i: i }); return; } CAR.paint = i; planeDirty = true; saveCar(); fillHangar(); }; });
   const seg = (id, name, opts, cur, set) => { $(id).innerHTML = opts.map((o, i) => '<label><input type="radio" name="' + name + '" value="' + i + '"' + (i === cur ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $(id).querySelectorAll('input').forEach(el => { el.onchange = () => { set(+el.value); saveCar(); }; }); };
   seg('o-sens', 'sens', ['Gentle', 'Normal', 'Sharp'], CAR.sens, v => { CAR.sens = v; });
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
@@ -2962,7 +2982,7 @@ function finish() {
   $('st-time').textContent = fmtTime(time); $('st-kills').textContent = kills; $('st-boats').textContent = boatKills; $('st-tanks').textContent = (tankKills + truckKills) + ' / ' + troopKills; $('st-acc').textContent = (shots ? Math.round(hits / shots * 100) : 0) + '%'; $('st-best').textContent = best ? fmtTime(best) : '–';
   show('s-end'); $('b-again').focus();
 }
-$('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
+$('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
   try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = '–'; }
@@ -3091,13 +3111,13 @@ try { // an invite link carries the squadron code and the sortie: ?sq=CODE&m=3
     try { localStorage.setItem('windfall-room', sq); localStorage.setItem('windfall-sky', '1'); } catch (e) {}
     history.replaceState(null, '', location.pathname); }
 } catch (e) {}
-const netErr = e => { const m = (e && e.message) || ''; return /name_taken/.test(m) ? 'That name is taken. Try another.' : /bad_name/.test(m) ? 'Use 3 to 16 letters or numbers.' : /not_enough/.test(m) ? 'Not enough points.' : /banned/.test(m) ? 'This pilot is suspended.' : /too_many/.test(m) ? 'Too many tries. Try again in an hour.' : /has_pilot/.test(m) ? 'This device already has a pilot with sorties flown.' : 'No connection to the competition server.'; };
+const netErr = e => { const m = (e && e.message) || ''; return /name_taken/.test(m) ? 'That name is taken. Try another.' : /bad_name/.test(m) ? 'Use 3 to 16 letters or numbers.' : /not_enough_stars/.test(m) ? 'Not enough stars yet.' : /not_enough/.test(m) ? 'Not enough points.' : /banned/.test(m) ? 'This pilot is suspended.' : /too_many/.test(m) ? 'Too many tries. Try again in an hour.' : /has_pilot/.test(m) ? 'This device already has a pilot with sorties flown.' : 'No connection to the competition server.'; };
 function netMsg(t) { const el = $('n-msg'); el.hidden = !t; el.textContent = t || ''; }
 async function rpc(fn, args) { const { data, error } = await NET.sb.rpc(fn, args || {}); if (error) throw error; return data; }
 function netUi() { $('comp').hidden = !NET.sb; $('comp-out').hidden = !!NET.me; $('comp-in').hidden = !NET.me; $('sky-box').hidden = !NET.me; if (NET.me) $('n-me').textContent = NET.me.name; }
 function adopt(p) { // the server's copy of the pilot replaces the device's
   if (!p || !p.id) return false; NET.me = p; CAR.xp = p.xp | 0; CAR.rp = p.rp | 0; for (const k in CAR.up) CAR.up[k] = clamp((p.up || {})[k] | 0, 0, 3);
-  CAR.own = (p.own || []).filter(n => n >= 4 && n < PLANES.length); CAR.plane = Number.isInteger(p.plane) ? clamp(p.plane, -1, PLANES.length - 1) : -1; for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = ((p.stars || [])[i] | 0) & 7;
+  CAR.own = (p.own || []).filter(n => n >= 4 && n < PLANES.length); CAR.plane = Number.isInteger(p.plane) ? clamp(p.plane, -1, PLANES.length - 1) : -1; if (Number.isInteger(p.paint)) CAR.paint = clamp(p.paint, 0, PAINTS.length - 1); for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = ((p.stars || [])[i] | 0) & 7;
   saveCar(); netUi(); lobbySync(); dailyLoad(); return true;
 }
 async function netInit() {
@@ -3193,7 +3213,7 @@ async function fillRank() {
   } catch (e) { ol.innerHTML = '<li class="k-wait">No connection to the competition server.</li>'; }
 }
 // shared sky: everyone in the same sortie and squadron sees each other; each pilot still fights their own enemies
-const skyPlane = () => CAR.plane >= 0 ? CAR.plane : [0, 1, 2, 3, 1, 0, 2][mIdx] || 0;
+const skyPlane = () => (CAR.plane >= 0 ? CAR.plane : [0, 1, 2, 3, 1, 0, 2][mIdx] || 0) | CAR.paint << 4, skySkin = k => Number.isInteger(k) && k >= 0 ? painted(PLANES[(k & 15) < PLANES.length ? k & 15 : 0].skin, k >> 4) : PLANES[0].skin;
 const roomKey = () => (NET.room || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'open';
 // squadron lobby: who else has this squadron code open right now, and which sortie they are flying
 function lobbyLeave() { if (NET.lob) { try { NET.sb.removeChannel(NET.lob); } catch (e) {} NET.lob = null; } NET.lobKey = ''; $('n-lobby').hidden = true; }
@@ -3225,7 +3245,7 @@ function skyGot(d, skin) {
   let p = NET.peers.get(d.i);
   if (!p) {
     if (NET.peers.size >= 11) return;
-    const mesh = buildWarbird(skin || PLANES[Number.isInteger(d.k) && d.k >= 0 && d.k < PLANES.length ? d.k : 0].skin, false); world.add(mesh);
+    const mesh = buildWarbird(skin || skySkin(d.k), false); world.add(mesh);
     p = { mesh, pos: new V3(d.p[0], d.p[1], d.p[2]), to: new V3(d.p[0], d.p[1], d.p[2]), vel: new V3(), q: new T.Quaternion(), name: 'Pilot', score: 0, seen: 0, alive: true, team: 0, j: 0, kb: 0, dd: 0, fire: 0, fireT: 0 }; mesh.position.copy(p.pos); NET.peers.set(d.i, p); if (!DUEL.on) feed('Pilot joined'); NET.listT = 0;
   }
   const gap = clock - p.seen, ox = p.to.x, oy = p.to.y, oz = p.to.z;
