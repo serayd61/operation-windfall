@@ -210,7 +210,10 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .medals li::before { content: '☆ '; color: var(--type-dim); } .medals li.on { color: var(--type); } .medals li.on::before { content: '★ '; color: var(--stamp); }
 .lab2 { font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type-dim); margin-bottom: -6px; }
 .upg { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(41, 40, 31, .3); }
-.upg b { font: 700 16px/1.1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .upg b i { font-style: normal; letter-spacing: .2em; color: var(--stamp); margin-left: 8px; } .upg b i.sw { display: inline-block; width: 46px; height: 11px; vertical-align: 1px; border: 1px solid rgba(41, 40, 31, .55); }
+.upg b { font: 700 16px/1.1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .upg b i { font-style: normal; letter-spacing: .2em; color: var(--stamp); margin-left: 8px; } .upg.pick { cursor: pointer; } .upg.look { box-shadow: inset 4px 0 0 var(--stamp); padding-left: 10px; } .upg.pick:focus-visible { outline: 2px solid var(--stamp); outline-offset: 2px; }
+#h-look { position: fixed; z-index: 5; right: calc(18px + var(--gr)); bottom: calc(18px + var(--sab)); padding: 7px 12px; background: rgba(20, 22, 20, .72); color: #efe9d6; font: 700 13px/1.2 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; pointer-events: none; }
+@media (max-width: 760px) { .wide-only { display: none; } }
+.upg b i.sw { display: inline-block; width: 46px; height: 11px; vertical-align: 1px; border: 1px solid rgba(41, 40, 31, .55); }
 .upg span { grid-column: 1; font: 400 13px/1.3 var(--f-type); color: var(--type-dim); } .upg button { grid-row: 1 / span 2; grid-column: 2; white-space: nowrap; }
 .ghost:disabled { opacity: .45; cursor: default; } .ghost:disabled:hover { background: transparent; color: var(--type); }
 .radar { position: absolute; left: var(--gl); top: calc(100px + var(--sat)); width: 124px; height: 124px; }
@@ -355,12 +358,14 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
   </div>
 
   <div class="screen" id="s-hangar" hidden>
+    <div id="h-look" class="wide-only" aria-live="polite"></div>
     <div class="sheet">
       <div class="sheet-head"><span>Hangar and settings</span><span id="h-rp">0 RP</span></div>
       <h1>Aircraft park</h1>
       <p class="lede">Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.</p>
       <p class="note" id="h-msg" hidden></p>
       <div class="lab2">Aircraft</div>
+      <p class="note wide-only">Tap a line to see that type or paint on the apron before you choose it.</p>
       <div id="h-planes"></div>
       <div class="lab2">Paint</div>
       <p class="note">Stars from the sorties and the campaign open the last three types and every paint. They are never spent.</p>
@@ -616,7 +621,7 @@ const DICT = {
   // hangar
   "Hangar and settings": ["Hangar ve ayarlar", "Hangar und Einstellungen"], "Aircraft park": ["Uçak parkı", "Flugzeugpark"],
   "Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.": ["Her sorti tahsis puanı kazandırır. Bunları yeni uçaklara ve donanıma harca; ikisi de bütün sortilerde geçerlidir. Silah yükü her sortinin verdiği gibi kalır.", "Jeder Einsatz bringt Zuteilungspunkte. Gib sie für neue Flugzeuge und Ausrüstung aus; beides gilt für alle Einsätze. Die Waffenlast bleibt, wie der Einsatz sie vorgibt."],
-  "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
+  "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Preview": ["Önizleme", "Vorschau"], "Tap a line to see that type or paint on the apron before you choose it.": ["Seçmeden önce bir tipi ya da boyayı pistte görmek için satırına dokun.", "Tippe auf eine Zeile, um Typ oder Anstrich vor der Wahl auf dem Vorfeld zu sehen."], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
   "A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.": ["Oyun kolu da çalışır: sol çubuk uçurur, A ya da sağ tetik ateş, B roket, X bomba, sağ omuz acil güç, sol tetik hava freni, sol omuz iniş takımı, Y bakış, Start duraklat.", "Ein Gamepad geht auch: linker Stick fliegt, A oder rechter Trigger feuert, B Raketen, X Bomben, rechte Schultertaste Notleistung, linker Trigger Luftbremse, linke Schultertaste Fahrwerk, Y Sicht, Start Pause."],
   "Back": ["Geri", "Zurück"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
@@ -893,6 +898,8 @@ const PAINTS = [
   { n: 'Red nose', star: 55, s: { nose: '#b3261e', spin: '#e8c33a' } }
 ];
 let PM = { spd: 1, turn: 1, arm: 1, gun: 1 };
+/* the hangar can show any type in any paint on the apron before it is chosen: LOOK is what is being looked at, BUILT what the aircraft outside was built as */
+const LOOK = { pi: -1, pa: 0, mesh: null, cache: new Map() }, BUILT = { pi: -1, pa: 0 };
 /* online, a pilot flies as a fighter, an attacker or a bomber; the match server owns what that does to loads, guns and armour, here it is only how the aircraft handles */
 const ROLES = { f: { n: 'Fighter', note: 'Fast and quick in the turn; its guns hit aircraft hardest. Four rockets, no bombs.', spd: 1.06, turn: 1.1 }, a: { n: 'Attacker', note: 'Fourteen rockets and two bombs; its guns and rockets are the ones for troops and tanks. Takes a little less damage.', spd: 1, turn: 1 }, b: { n: 'Bomber', note: 'Six bombs that hit harder, four rockets, and the thickest armour. Slow, heavy in the turn, and its guns are the weakest.', spd: .93, turn: .86 } };
 const RXP = { f: 0, a: 0, b: 0 }; try { const o = JSON.parse(localStorage.getItem('windfall-rxp') || '{}'); for (const k in RXP) RXP[k] = Math.max(0, o[k] | 0); } catch (e) {}
@@ -1998,7 +2005,7 @@ function loadMission(i) {
   PADV.set(PAD.x, PAD.y, PAD.z); setGate(1); homeMark = { name: PAD.name, aim: new V3(PAD.x, PAD.y + 30, PAD.z), home: true };
   objs = M.targets.map(buildObjective); buildFront();
   PM = CAR.plane >= 0 ? PLANES[CAR.plane] : { spd: 1, turn: 1, arm: 1, gun: 1 };
-  plane = buildWarbird(skinNow(), true); armPlane(plane, M.rockets, M.bombs); plane.userData.pit = buildPit(skinNow()); plane.add(plane.userData.pit); world.add(plane); buildWing();
+  plane = buildWarbird(skinNow(), true); armPlane(plane, M.rockets, M.bombs); plane.userData.pit = buildPit(skinNow()); plane.add(plane.userData.pit); world.add(plane); buildWing(); BUILT.pi = CAR.plane; BUILT.pa = CAR.paint; LOOK.mesh = null; LOOK.cache.clear();
   setDetail(detail);
   $('pips').innerHTML = '<i></i>'.repeat(goalN()) + '<span id="obj-n"></span>';
   $('a-rkt').hidden = !M.rockets; $('a-bomb').hidden = !M.bombs; $('t-rkt').hidden = !M.rockets; $('t-bomb').hidden = !M.bombs; $('gun-k').textContent = M.gun.name;
@@ -2938,6 +2945,12 @@ function fillBoard() {
 }
 function starLines(b) { return ['Complete the sortie', 'Break the enemy line at a beach by knocking out its tanks', 'Be home inside ' + fmtTime(PAR[mIdx])].map((t, i) => '<li' + (b >> i & 1 ? ' class="on"' : '') + '>' + t + '</li>').join(''); }
 let planeDirty = false;
+function lookShow() { // put what is being looked at on the apron in place of the aircraft that stands there
+  const same = LOOK.pi === BUILT.pi && LOOK.pa === BUILT.pa; if (LOOK.mesh) { world.remove(LOOK.mesh); LOOK.mesh = null; } plane.visible = same;
+  if (!same) { const key = LOOK.pi + '|' + LOOK.pa; let m = LOOK.cache.get(key); if (!m) { m = buildWarbird(painted(LOOK.pi >= 0 ? PLANES[LOOK.pi].skin : M.player, LOOK.pa), true); armPlane(m, M.rockets, M.bombs); LOOK.cache.set(key, m); } m.position.copy(plane.position); m.quaternion.copy(plane.quaternion); world.add(m); LOOK.mesh = m; }
+  $('h-look').textContent = (LOOK.pi === CAR.plane && LOOK.pa === CAR.paint ? 'Flying' : 'Preview') + ' · ' + (LOOK.pi >= 0 ? PLANES[LOOK.pi].n : 'Mission standard') + ' · ' + PAINTS[LOOK.pa].n;
+}
+function lookEnd() { if (LOOK.mesh) { world.remove(LOOK.mesh); LOOK.mesh = null; } LOOK.cache.clear(); plane.visible = true; }
 function fillHangar() {
   $('h-rp').textContent = CAR.rp + ' RP';
   $('h-list').innerHTML = Object.keys(UPG).map(k => { const l = CAR.up[k], max = l >= 3; return '<div class="upg"><b>' + UPG[k][0] + '<i>' + '■■■'.slice(0, l) + '□□□'.slice(0, 3 - l) + '</i></b><span>' + UPG[k][1] + '</span><button class="ghost" type="button" data-k="' + k + '"' + (max || CAR.rp < COST[l] ? ' disabled' : '') + '>' + (max ? 'Fitted' : 'Fit · ' + COST[l] + ' RP') + '</button></div>'; }).join('');
@@ -2945,9 +2958,11 @@ function fillHangar() {
   const rows = [['-1', 'Mission standard', 'The type each front was flown with', 0]].concat(PLANES.map((p, i) => ['' + i, p.n, p.by + ' · ' + planeNote(p), p.cost]));
   $('h-stars').textContent = 'Stars held: ' + starsAll();
   $('h-planes').innerHTML = rows.map(r => { const i = +r[0], st = i >= 0 && PLANES[i].star, own = planeOk(i), cur = CAR.plane === i; return '<div class="upg"><b>' + r[1] + '</b><span>' + r[2] + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || (!own && (st || CAR.rp < r[3])) ? ' disabled' : '') + '>' + (cur ? 'Flying' : own ? 'Fly' : st ? 'Opens at ' + st + ' stars' : 'Buy · ' + r[3] + ' RP') + '</button></div>'; }).join('');
-  $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i, st = i >= 0 && PLANES[i].star; if (!planeOk(i) && (st || CAR.rp < PLANES[i].cost)) return; if (NET.me) { netBuy('buy_plane', { p_i: i }); return; } if (!planeOk(i)) { CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
-  $('h-paints').innerHTML = PAINTS.map((p, i) => { const own = starsAll() >= p.star, cur = CAR.paint === i, c = painted(skinNow0(), i); return '<div class="upg"><b>' + p.n + '<i class="sw" style="background:linear-gradient(90deg,' + c.top + ' 0 40%,' + c.top2 + ' 40% 70%,' + c.under + ' 70% 88%,' + c.nose + ' 88%)"></i></b><span>' + (i ? 'Goes over whatever type you fly' : 'The colours each type left the works in') + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || !own ? ' disabled' : '') + '>' + (cur ? 'Worn' : own ? 'Wear' : 'Opens at ' + p.star + ' stars') + '</button></div>'; }).join('');
-  $('h-paints').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i; if (starsAll() < PAINTS[i].star) return; if (NET.me) { netBuy('set_paint', { p_i: i }); return; } CAR.paint = i; planeDirty = true; saveCar(); fillHangar(); }; });
+  $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i, st = i >= 0 && PLANES[i].star; if (!planeOk(i) && (st || CAR.rp < PLANES[i].cost)) return; LOOK.pi = i; if (NET.me) { netBuy('buy_plane', { p_i: i }); return; } if (!planeOk(i)) { CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
+  $('h-paints').innerHTML = PAINTS.map((p, i) => { const own = starsAll() >= p.star, cur = CAR.paint === i, c = painted(LOOK.pi >= 0 ? PLANES[LOOK.pi].skin : M.player, i); return '<div class="upg"><b>' + p.n + '<i class="sw" style="background:linear-gradient(90deg,' + c.top + ' 0 40%,' + c.top2 + ' 40% 70%,' + c.under + ' 70% 88%,' + c.nose + ' 88%)"></i></b><span>' + (i ? 'Goes over whatever type you fly' : 'The colours each type left the works in') + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || !own ? ' disabled' : '') + '>' + (cur ? 'Worn' : own ? 'Wear' : 'Opens at ' + p.star + ' stars') + '</button></div>'; }).join('');
+  $('h-paints').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i; if (starsAll() < PAINTS[i].star) return; LOOK.pa = i; if (NET.me) { netBuy('set_paint', { p_i: i }); return; } CAR.paint = i; planeDirty = true; saveCar(); fillHangar(); }; });
+  for (const [id, k] of [['h-planes', 'pi'], ['h-paints', 'pa']]) $(id).querySelectorAll('.upg').forEach(d => { const i = +d.querySelector('button').dataset.i; d.classList.add('pick'); d.classList.toggle('look', LOOK[k] === i); d.tabIndex = 0; d.setAttribute('role', 'button'); d.onclick = e => { if (e.target.closest('button')) return; LOOK[k] = i; fillHangar(); const n = $(id).querySelectorAll('.upg')[k === 'pi' ? i + 1 : i]; if (n && e.type === 'keydown') n.focus(); }; d.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === d) { e.preventDefault(); d.onclick(e); } }; });
+  lookShow();
   const seg = (id, name, opts, cur, set) => { $(id).innerHTML = opts.map((o, i) => '<label><input type="radio" name="' + name + '" value="' + i + '"' + (i === cur ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $(id).querySelectorAll('input').forEach(el => { el.onchange = () => { set(+el.value); saveCar(); }; }); };
   seg('o-sens', 'sens', ['Gentle', 'Normal', 'Sharp'], CAR.sens, v => { CAR.sens = v; });
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
@@ -2982,7 +2997,7 @@ function finish() {
   $('st-time').textContent = fmtTime(time); $('st-kills').textContent = kills; $('st-boats').textContent = boatKills; $('st-tanks').textContent = (tankKills + truckKills) + ' / ' + troopKills; $('st-acc').textContent = (shots ? Math.round(hits / shots * 100) : 0) + '%'; $('st-best').textContent = best ? fmtTime(best) : '–';
   show('s-end'); $('b-again').focus();
 }
-$('b-hangar').onclick = () => { $('h-msg').hidden = true; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
+$('b-hangar').onclick = () => { $('h-msg').hidden = true; LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus(); }; $('b-hback').onclick = () => { hush(); lookEnd(); if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
   try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = '–'; }
@@ -3093,7 +3108,7 @@ function tick(dt, now) {
     if (endT > 0) { endT -= dt; if (endT <= 0) { endT = 0; finish(); } }
   } else {
     if (engGain) engGain.gain.value = 0;
-    if (state === 'menu') { plane.userData.prop.rotation.z += dt * 40; plane.userData.head.rotation.y = Math.sin(clock * .6) * .5; updateCamera(dt); }
+    if (state === 'menu') { plane.userData.prop.rotation.z += dt * 40; if (LOOK.mesh) LOOK.mesh.userData.prop.rotation.z += dt * 40; plane.userData.head.rotation.y = Math.sin(clock * .6) * .5; updateCamera(dt); }
     else if (state === 'end') { updateGround(dt); updateFx(dt); updateObjs(dt); }
   }
   sea.position.set(camera.position.x, 0, camera.position.z); sky.position.copy(camera.position);
