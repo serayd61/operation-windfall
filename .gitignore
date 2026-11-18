@@ -8,3 +8,5 @@ play-store/*.apk
 app-store/*.ipa
 .dev.vars
 .wrangler
+
+app-store/*.mp4
