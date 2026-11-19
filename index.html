@@ -204,7 +204,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .ghost:hover { background: var(--type); color: var(--paper); }
 .sheet .go:focus-visible, .sheet .ghost:focus-visible { outline-color: var(--stamp); }
 .opt { display: flex; align-items: center; gap: 8px; font: 400 14px/1.2 var(--f-type); color: var(--type-dim); cursor: pointer; }
-.build a { color: inherit; } .build { margin: 0; font: 400 11px/1.2 var(--f-type); letter-spacing: .08em; text-transform: uppercase; color: var(--type-dim); opacity: .8; }
+.build a { color: inherit; }
+#fb-text { display: block; width: 100%; box-sizing: border-box; margin: 10px 0; padding: 10px 12px; font: 400 16px/1.4 var(--f-type); color: inherit; background: rgba(255, 255, 255, .35); border: 1.5px solid var(--type-dim); border-radius: 0; resize: vertical; -webkit-user-select: text; user-select: text; } .build { margin: 0; font: 400 11px/1.2 var(--f-type); letter-spacing: .08em; text-transform: uppercase; color: var(--type-dim); opacity: .8; }
 .rec { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font: 700 13px/1.2 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; }
 .rec b { font: 700 17px/1 var(--f-stencil); letter-spacing: .08em; } .rec span { color: var(--type-dim); } .rec .bar { flex: 1 1 80px; height: 6px; box-shadow: inset 0 0 0 1px var(--type-dim); align-self: center; } .rec .bar i { display: block; height: 100%; background: var(--olive); }
 .medals { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font: 400 14px/1.35 var(--f-type); color: var(--type-dim); }
@@ -357,7 +358,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="row"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button></div>
       <div class="stamp" id="m-stamp">Restricted</div>
       <p class="build">Build 17 · verified scores</p>
-      <p class="build"><a href="privacy.html" target="_blank" rel="noopener">Privacy and your data</a></p>
+      <p class="build"><a href="privacy.html" target="_blank" rel="noopener">Privacy and your data</a> · <a href="#" id="b-fb">Send feedback</a></p>
     </div>
   </div>
 
@@ -408,7 +409,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="sheet">
       <div class="sheet-head"><span>Paused</span><span id="p-cs">Kestrel One</span></div>
       <h1>Holding pattern</h1>
-      <div class="row"><button class="go" id="b-resume" type="button">Resume</button><button class="ghost" id="b-restart1" type="button">Restart sortie</button><button class="ghost" id="b-board1" type="button">Sortie board</button></div>
+      <div class="row"><button class="go" id="b-resume" type="button">Resume</button><button class="ghost" id="b-restart1" type="button">Restart sortie</button><button class="ghost" id="b-board1" type="button">Sortie board</button><button class="ghost" id="b-fb2" type="button">Send feedback</button></div>
     </div>
   </div>
 
@@ -465,6 +466,17 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="row"><button class="go" id="b-cafly" type="button">Fly</button><button class="ghost" id="b-calog" type="button">Flight log</button><button class="ghost" id="b-caback" type="button">Back</button></div>
     </div>
   </div>
+  <div class="screen" id="s-fb" hidden>
+    <div class="sheet">
+      <div class="sheet-head"><span>Feedback</span><span>Operation Windfall</span></div>
+      <h1>Tell us</h1>
+      <p class="note">What went wrong, what was too hard, what would you like to see? Your message goes straight to the people who make the game.</p>
+      <textarea id="fb-text" maxlength="1000" rows="5" aria-label="Feedback"></textarea>
+      <p class="note" id="fb-msg" hidden></p>
+      <div class="row"><button class="go" id="b-fbsend" type="button">Send</button><button class="ghost" id="b-fbback" type="button">Back</button></div>
+    </div>
+  </div>
+
   <div class="screen" id="s-log" hidden>
     <div class="sheet">
       <div class="sheet-head"><span>Flight log</span><span><b id="lg-n" data-raw>0 / 20</b> <span>pages</span></span></div>
@@ -517,6 +529,10 @@ const DICT = {
   "Target": ["Hedef", "Ziel"], "Integrity": ["Sağlamlık", "Zustand"], "Range": ["Mesafe", "Entfernung"], "Bearing": ["Kerteriz", "Peilung"], "Altitude": ["İrtifa", "Höhe"], "Armour": ["Zırh", "Panzerung"], "Use": ["Silah", "Waffe"],
   "Airframe": ["Gövde", "Zelle"], "Airspeed": ["Hız", "Fahrt"], "Bombs": ["Bomba", "Bomben"], "Rockets": ["Roket", "Raketen"], "Guns cooling": ["Namlular soğuyor", "Rohre kühlen ab"],
   "GEAR": ["TEKER", "FAHRW."],
+  "Send feedback": ["Geri bildirim gönder", "Feedback senden"], "Feedback": ["Geri bildirim", "Feedback"], "Tell us": ["Bize yaz", "Schreib uns"], "Send": ["Gönder", "Senden"],
+  "What went wrong, what was too hard, what would you like to see? Your message goes straight to the people who make the game.": ["Ne ters gitti, ne fazla zordu, ne görmek isterdin? Mesajın doğrudan oyunu yapanlara gider.", "Was lief schief, was war zu schwer, was wünschst du dir? Deine Nachricht geht direkt an die Macher des Spiels."],
+  "Write a few words first.": ["Önce birkaç kelime yaz.", "Schreib zuerst ein paar Worte."], "Sending…": ["Gönderiliyor…", "Wird gesendet…"], "Thank you. Your message has arrived.": ["Teşekkürler. Mesajın ulaştı.", "Danke. Deine Nachricht ist angekommen."],
+  "That is enough for today. Thank you.": ["Bugünlük bu kadar yeter. Teşekkürler.", "Das reicht für heute. Danke."], "It could not be sent. Try again later.": ["Gönderilemedi. Daha sonra yeniden dene.", "Senden fehlgeschlagen. Versuch es später noch einmal."],
   "Left thumb": ["Sol başparmak", "Linker Daumen"], "Close the throttle: slower for the approach, tighter in the turn": ["Gazı keser: yaklaşmada yavaşlar, dönüşte daralır", "Gas wegnehmen: langsamer im Anflug, enger in der Kurve"],
   "Tap VIEW to change view.": ["Bakışı değiştirmek için BAKIŞ'a dokun.", "Tippe auf SICHT, um die Sicht zu wechseln."],
   "Your left thumb flies her, anywhere on the left half of the screen.": ["Uçağı sol başparmağınla, ekranın sol yarısının her yerinden yönetirsin.", "Du fliegst mit dem linken Daumen, überall auf der linken Bildschirmhälfte."], "FIRE is under your right thumb.": ["ATEŞ sağ başparmağının altında.", "FEUER liegt unter dem rechten Daumen."],
@@ -3114,7 +3130,7 @@ function duelSend() { // hits ride along with the position beat
 }
 
 /* ------------------------------------------------------------------ flow */
-function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp', 's-log']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
+function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp', 's-log', 's-fb']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
@@ -3220,7 +3236,7 @@ try {
 /* ------------------------------------------------------------------ input */
 const GAME_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'];
 addEventListener('keydown', e => {
-  if (state !== 'play' && e.target && e.target.tagName === 'INPUT') return;
+  if (state !== 'play' && e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
   keys[e.code] = true;
   if (state === 'play' && GAME_KEYS.includes(e.code)) e.preventDefault();
   if (e.code === 'KeyP' || e.code === 'Escape') { if (state === 'play') pause(); else if (state === 'pause') resume(); }
@@ -3492,6 +3508,18 @@ $('b-rec').onclick = async () => {
   NET.busy = false;
 };
 let delArm = 0;
+let fbFrom = 's-menu'; // feedback: a few lines to the makers, from the menu or from the pause sheet
+const fbMsg = t => { const el = $('fb-msg'); el.hidden = !t; el.textContent = t || ''; };
+function fbOpen(from) { fbFrom = from; fbMsg(''); show('s-fb'); try { $('fb-text').focus(); } catch (e) {} }
+$('b-fb').onclick = e => { e.preventDefault(); fbOpen('s-menu'); }; $('b-fb2').onclick = () => fbOpen('s-pause'); $('b-fbback').onclick = () => show(fbFrom);
+$('b-fbsend').onclick = async () => {
+  const t = $('fb-text').value.trim(), b = $('b-fbsend'); if (t.length < 3) { fbMsg('Write a few words first.'); return; }
+  if (!NET.sb) { fbMsg('It could not be sent. Try again later.'); return; }
+  b.disabled = true; fbMsg('Sending…');
+  try { await netSession(); await rpc('send_feedback', { p_text: t, p_lang: LANGS[LI][0], p_build: BUILD, p_device: (touchMode ? 'touch ' : '') + screen.width + 'x' + screen.height + ' ' + String(navigator.userAgent).slice(0, 150) }); $('fb-text').value = ''; fbMsg('Thank you. Your message has arrived.'); }
+  catch (e) { fbMsg(/too_many/.test(String(e && e.message)) ? 'That is enough for today. Thank you.' : 'It could not be sent. Try again later.'); }
+  b.disabled = false;
+};
 $('b-del').onclick = async () => { // two presses: the first only arms it
   const b = $('b-del');
   if (Date.now() > delArm) { delArm = Date.now() + 5000; b.textContent = 'Press again to delete for good'; setTimeout(() => { if (delArm && Date.now() >= delArm) { delArm = 0; b.textContent = 'Delete my pilot'; } }, 5100); return; }
