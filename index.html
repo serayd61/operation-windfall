@@ -763,7 +763,7 @@ if (!window.THREE) { fatal('the 3D library did not load. Check your connection a
 const T = THREE, V3 = T.Vector3;
 let renderer;
 const MOBILE = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || Math.min(screen.width || 9999, screen.height || 9999) < 600;
-try { renderer = new T.WebGLRenderer({ canvas, antialias: !MOBILE, powerPreference: 'high-performance' }); }
+try { renderer = new T.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); }
 catch (e) { fatal('WebGL is not available in this browser.'); return; }
 let quality = 1; try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && j.q === 0) quality = 0; } catch (e) {}
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality ? 2 : 1));
@@ -793,7 +793,7 @@ function paint(geo, fn) { // per-vertex paint scheme, linear colours
 }
 function canvasTex(size, draw, repeat) {
   const c = document.createElement('canvas'); c.width = c.height = size; draw(c.getContext('2d'), size);
-  const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; if (repeat) { t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(repeat, repeat); } return t;
+  const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; t.anisotropy = 4; if (repeat) { t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(repeat, repeat); } return t;
 }
 
 /* ------------------------------------------------------------------ career, difficulty, fittings */
@@ -976,15 +976,19 @@ const sky = new T.Mesh(new T.SphereGeometry(18000, 32, 20), new T.ShaderMaterial
 }));
 scene.add(sky);
 const sea = new T.Mesh(new T.PlaneGeometry(60000, 60000), new T.ShaderMaterial({
-  uniforms: U, fog: false,
+  uniforms: U, fog: false, extensions: { derivatives: true },
   vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
   fragmentShader: `uniform vec3 hz; uniform vec3 zn; uniform vec3 sd; uniform vec3 sc; uniform vec3 deep; uniform vec3 shal; uniform vec3 fogC; uniform float fogN; uniform float fogF; uniform float tm; uniform sampler2D hmap; uniform sampler2D nz; varying vec3 vW;
     vec2 wv(vec2 p, vec2 dir, float f, float a, float sp){ return dir * a * cos(dot(dir, p) * f + tm * sp); }
     void main(){
       vec2 p = vW.xz; vec3 toC = cameraPosition - vW; float dist = length(toC); vec3 v = toC / dist; float att = 1.0 / (1.0 + dist * 0.004);
       vec2 q = p + 9.0 * sin(p.yx * 0.021 + tm * 0.21) + 4.0 * sin(p.yx * 0.057 - tm * 0.3); q += 1.6 * sin(q.yx * 0.19 + tm * 0.5);
-      vec2 g = wv(q, vec2(.8, .6), .034, .02, .7) + wv(q, vec2(-.5, .86), .071, .024, 1.1) + (wv(q, vec2(.2, -.98), .15, .04, 1.6) + wv(q, vec2(-.9, -.3), .29, .055, 2.1)) * (.35 + .65 * att)
-        + (wv(q, vec2(.6, -.8), .53, .07, 2.7) + wv(q, vec2(-.3, .95), .97, .07, 3.4) + wv(q, vec2(.95, .2), 1.6, .06, 4.2)) * att + (wv(q, vec2(-.7, -.7), 2.9, .06, 5.3) + wv(q, vec2(.1, 1.), 4.7, .05, 6.4)) * att * att;
+      vec2 fw = fwidth(p); float fp = max(fw.x, fw.y); // metres of sea under one pixel: a wave finer than that would only shimmer, so it fades out
+      #define WF(k) (1.0 - smoothstep(0.45, 1.5, (k) * fp))
+      float k3 = WF(.15), k4 = WF(.29), k5 = WF(.53), k6 = WF(.97), k7 = WF(1.6), k8 = WF(2.9), k9 = WF(4.7);
+      vec2 g = wv(q, vec2(.8, .6), .034, .02, .7) * WF(.034) + wv(q, vec2(-.5, .86), .071, .024, 1.1) * WF(.071) + (wv(q, vec2(.2, -.98), .15, .04, 1.6) * k3 + wv(q, vec2(-.9, -.3), .29, .055, 2.1) * k4) * (.35 + .65 * att)
+        + (wv(q, vec2(.6, -.8), .53, .07, 2.7) * k5 + wv(q, vec2(-.3, .95), .97, .07, 3.4) * k6 + wv(q, vec2(.95, .2), 1.6, .06, 4.2) * k7) * att + (wv(q, vec2(-.7, -.7), 2.9, .06, 5.3) * k8 + wv(q, vec2(.1, 1.), 4.7, .05, 6.4) * k9) * att * att;
+      float lost = 1.0 - (k3 + k4 + k5 + k6 + k7 + k8 + k9) / 7.0; // the detail that went: it comes back as a wider, softer glitter
       vec3 n = normalize(vec3(-g.x, 1.0, -g.y));
       vec2 uv = p / ${SPAN.toFixed(1)} + 0.5; float s = 0.0;
       if (uv.x > 0.0 && uv.x < 1.0 && uv.y > 0.0 && uv.y < 1.0) s = texture2D(hmap, uv).r;
@@ -994,7 +998,7 @@ const sea = new T.Mesh(new T.PlaneGeometry(60000, 60000), new T.ShaderMaterial({
       vec3 r = reflect(-v, n); r.y = abs(r.y);
       vec3 refl = mix(mix(hz, mix(zn, vec3(0.72, 0.9, 1.0), 0.5), smoothstep(0.0, 0.16, r.y)), zn, smoothstep(0.06, 0.7, r.y));
       vec3 c = mix(base, refl, fr * 0.85);
-      float sp = max(dot(r, sd), 0.0); c *= 1.0 - 0.3 * cs; c += sc * (pow(sp, 260.0) * 3.5 + pow(sp, 24.0) * 0.12) * (1.0 - 0.85 * cs);
+      float sp = max(dot(r, sd), 0.0); c *= 1.0 - 0.3 * cs; c += sc * (pow(sp, mix(260.0, 46.0, lost)) * mix(3.5, 0.75, lost) + pow(sp, 24.0) * 0.12) * (1.0 - 0.85 * cs);
       float wc = smoothstep(0.64, 0.8, texture2D(nz, q * vec2(0.021, 0.0065) + tm * vec2(0.012, 0.004)).g) * smoothstep(0.52, 0.72, texture2D(nz, q * 0.0031 - tm * vec2(0.003, 0.002)).r) * (1.0 - smoothstep(400.0, 2400.0, dist)) * (1.0 - smoothstep(0.05, 0.3, s));
       c = mix(c, vec3(0.9) * (1.0 - 0.3 * cs), wc * 0.5); // whitecaps
       float foam = smoothstep(0.37, 0.5, s) * (0.55 + 0.45 * sin(s * 70.0 - tm * 1.6 + g.x * 9.0));
@@ -1150,7 +1154,20 @@ function applyEnv(E) {
   scene.fog.color.copy(U.fogC.value); scene.fog.near = E.fog[0]; scene.fog.far = E.fog[1];
   hemi.color.copy(col(E.hemi[0])); hemi.groundColor.copy(col(E.hemi[1])); hemi.intensity = E.hemi[2];
   sunLight.color.copy(col(E.sunC)); sunLight.intensity = E.sunI * .4; sunLight.position.copy(SUN); hemi.intensity *= .58;
+  envBake();
 }
+// The sky and sea of the day, baked small, so metal skins, canopies and hulls reflect them.
+let PMREM = null, envRT = null; const envScene = new T.Scene();
+envScene.add(new T.Mesh(new T.SphereGeometry(40, 24, 16), new T.ShaderMaterial({ side: T.BackSide, depthWrite: false, fog: false, uniforms: U,
+  vertexShader: 'varying vec3 d; void main(){ d = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `uniform vec3 hz; uniform vec3 zn; uniform vec3 sd; uniform vec3 sc; uniform vec3 deep; varying vec3 d;
+    void main(){ vec3 n = normalize(d); float h = max(n.y, 0.0); vec3 c = mix(mix(hz, mix(zn, vec3(0.72, 0.9, 1.0), 0.5), smoothstep(0.0, 0.16, h)), zn, smoothstep(0.06, 0.7, h));
+      c += sc * (pow(max(dot(n, sd), 0.0), 60.0) * 2.5);
+      c = mix(c, mix(deep, hz, 0.25), smoothstep(0.0, -0.12, n.y));
+      gl_FragColor = vec4(c * 0.5, 1.0);
+      #include <encodings_fragment>
+    }` })));
+function envBake() { try { if (!PMREM) PMREM = new T.PMREMGenerator(renderer); const rt = PMREM.fromScene(envScene, 0, .1, 100); scene.environment = rt.texture; if (envRT) envRT.dispose(); envRT = rt; } catch (e) { scene.environment = null; } }
 
 /* ------------------------------------------------------------------ ships */
 const plateTex = canvasTex(256, (g, s) => { // hull plating: strakes, butt welds, rust streaks
@@ -3239,7 +3256,7 @@ let RS = 1, resCap = 1, fpsN = 0, fpsT = 0, fpsNow = 60, slowN = 0, fastN = 0, s
 const applyRes = () => { renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, CAR.q ? 2 : 1) * RS); resize(); };
 function tune() {
   sinceUp++;
-  if (fpsNow < 44) { fastN = 0; if (++slowN >= 2) { slowN = 0; if (RS > .56) { RS = Math.max(.55, RS - .15); if (sinceUp < 8) resCap = RS; applyRes(); } else if (detail > 0) setDetail(0); } }
+  if (fpsNow < 44) { fastN = 0; if (++slowN >= 2) { slowN = 0; if (RS > .71) { RS = Math.max(.7, RS - .15); if (sinceUp < 8) resCap = RS; applyRes(); } else if (detail > 0) setDetail(0); else if (RS > .56) { RS = Math.max(.55, RS - .15); if (sinceUp < 8) resCap = RS; applyRes(); } } }
   else if (fpsNow > 57) { slowN = 0; if (++fastN >= 6 && RS < resCap) { fastN = 0; sinceUp = 0; RS = Math.min(resCap, RS + .1); applyRes(); } }
   else slowN = fastN = 0;
   if (CAR.fps) $('fps').textContent = Math.round(fpsNow) + ' FPS · ' + Math.round(RS * 100) + '%' + (detail ? '' : ' · LITE');
