@@ -69,6 +69,7 @@ body { background: var(--ink); color: var(--hud); overflow: hidden; font-family:
 .c-mark.home { color: var(--go); }
 
 .obj { position: absolute; top: calc(14px + var(--sat)); left: var(--gl); max-width: min(250px, 38vw); padding-left: 10px; border-left: 2px solid var(--sight); }
+.obj-s { margin-top: 8px; padding: 4px 8px; font: 700 12px/1.35 var(--f-hud); letter-spacing: .06em; color: #ffc86a; background: var(--ink-plate); border-left: 2px solid #ffc86a; }
 .obj-t { font: 700 20px/1.1 var(--f-hud); letter-spacing: .05em; text-transform: uppercase; margin: 6px 0 8px; }
 .pips { display: flex; gap: 5px; align-items: center; }
 .pips i { width: 10px; height: 10px; border: 1.5px solid var(--hud); transform: rotate(45deg); margin: 0 2px; }
@@ -181,6 +182,12 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 .tmap-l .tip { margin-top: auto; padding-top: 4px; opacity: .7; }
 @media (orientation: portrait) { .tmap { flex-direction: column; } .tmap canvas { width: min(46vh, 88vw); height: min(46vh, 88vw); } .tmap-l { width: min(46vh, 88vw); } }
 @media (max-height: 460px) { .tmap { padding: 8px; gap: 10px; } .tmap canvas { width: min(84vh, 46vw); height: min(84vh, 46vw); } .tmap-l { font-size: 11px; line-height: 1.35; gap: 5px; } }
+.coach { position: absolute; left: 50%; top: calc(74px + var(--sat)); transform: translateX(-50%); width: min(430px, max(250px, calc(100vw - 400px))); padding: 7px 34px 8px 12px; z-index: 3; background: rgba(14, 20, 18, .82); border: 1px solid var(--hud-dim); border-left: 3px solid #ffc86a; color: var(--hud); pointer-events: auto; text-shadow: none; }
+.coach .k { color: #ffc86a; } .coach p { margin: 3px 0 5px; font: 700 14px/1.35 var(--f-hud); letter-spacing: .03em; } .coach .bar { height: 3px; background: rgba(243, 238, 222, .18); } .coach .bar i { display: block; height: 100%; width: 0; background: #ffc86a; transition: width .2s; }
+.coach button { position: absolute; right: 2px; top: 2px; width: 30px; height: 30px; border: 0; background: none; color: var(--hud); font: 700 16px/1 var(--f-hud); opacity: .7; cursor: pointer; }
+.coach.ok { border-left-color: #9fe0a0; } .coach.ok .k, .coach.ok p { color: #9fe0a0; } .coach.ok .bar i { background: #9fe0a0; width: 100% !important; }
+.touch .coach { top: 34%; width: min(430px, 92vw); }
+@media (max-height: 460px) { .coach, .touch .coach { top: calc(42px + var(--sat)); width: min(380px, 60vw); padding: 5px 30px 6px 10px; } .coach p { font-size: 12px; margin: 2px 0 4px; } }
 .lso { position: absolute; left: 50%; top: 27%; transform: translateX(-50%); max-width: 92%; padding: 6px 12px; text-align: center; font: 700 13px/1.5 var(--f-hud); letter-spacing: .14em; color: var(--hud); background: var(--ink-plate); border: 1px solid var(--hud-dim); }
 .lso b { color: var(--threat); } .lso i { font-style: normal; color: #9fe0a0; }
 #t-bomb { right: calc(98px + env(safe-area-inset-right, 0px)); bottom: calc(122px + var(--sab)); width: 62px; height: 62px; }
@@ -249,7 +256,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .pilots { position: absolute; left: var(--gl); top: calc(234px + var(--sat)); min-width: 132px; padding: 6px 9px 5px; background: var(--ink-plate); border-left: 2px solid var(--go); text-shadow: none; font: 600 12px/1.5 var(--f-hud); letter-spacing: .08em; color: var(--hud); }
 .pilots div { display: flex; justify-content: space-between; gap: 12px; } .pilots div.me { color: var(--go); } #obj-t[data-tail]::after { content: attr(data-tail); }
     .daily { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1.5px solid var(--type); } .daily li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 2px; border-bottom: 1px solid rgba(41, 40, 31, .3); font: 700 14px/1.2 var(--f-hud); letter-spacing: .06em; }
-    .daily li em { font-style: normal; color: var(--type-dim); font-variant-numeric: tabular-nums; } .daily li button { padding: 7px 10px 5px; min-width: 96px; } .daily li.got { color: var(--type-dim); } .daily li.got span:first-child { text-decoration: line-through; }
+    .daily li.wk { display: block; padding: 10px 2px 4px; font: 700 12px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; color: var(--type-dim); } .daily li em { font-style: normal; color: var(--type-dim); font-variant-numeric: tabular-nums; } .daily li button { padding: 7px 10px 5px; min-width: 96px; } .daily li.got { color: var(--type-dim); } .daily li.got span:first-child { text-decoration: line-through; }
     .modes { display: grid; gap: 12px; margin: 6px 0 16px; } .mode { border: 1.5px solid var(--type); padding: 12px 14px 12px; display: grid; gap: 6px; } .mode h2 { margin: 0; font: 700 20px/1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .mode .note { margin: 0; }
     .mode-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; } .mode-n { font: 700 12px/1.2 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; color: var(--type-dim); } .mode-n b { color: var(--type); font-size: 16px; }
     .fronts { display: grid; gap: 12px; margin: 4px 0 6px; } .front { border: 1.5px solid var(--type); padding: 10px 12px 12px; display: grid; gap: 8px; } .front.lock { opacity: .55; } .front-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font: 700 18px/1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .front-head span { font: 400 13px/1 var(--f-type); letter-spacing: 0; text-transform: none; color: var(--type-dim); }
@@ -295,11 +302,12 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
   <div id="hud">
     <div id="fps" hidden></div>
     <div class="compass"><div class="tape-wrap"><div class="tape" id="tape"></div></div><div class="needle"></div><div class="c-marks" id="cmarks"></div></div>
-    <div class="obj"><div class="k">Objective</div><div class="obj-t" id="obj-t">Destroy the targets</div><div class="pips" id="pips"></div></div>
+    <div class="obj"><div class="k">Objective</div><div class="obj-t" id="obj-t">Destroy the targets</div><div class="pips" id="pips"></div><div class="obj-s" id="obj-s" hidden></div></div>
     <div class="top-btns"><button class="ibtn" id="b-map" type="button" aria-label="Map" hidden>MAP</button><button class="ibtn" id="b-cam" type="button" aria-label="Change camera view">VIEW</button><button class="ibtn" id="b-mute" type="button" aria-label="Toggle sound">SND</button><button class="ibtn" id="b-pause" type="button" aria-label="Pause">II</button></div>
     <canvas class="radar" id="radar" width="248" height="248" aria-hidden="true"></canvas>
     <div class="warn" id="warn">Bandits inbound</div>
     <div class="cues"><div class="cue" id="pull">PULL UP</div><div class="cue" id="stall">STALL</div><div class="cue" id="six">CHECK SIX</div></div>
+    <div class="coach" id="coach" hidden><div class="k" id="coach-k">Flying lesson</div><p id="coach-t"></p><div class="bar"><i id="coach-b"></i></div><button id="coach-x" type="button" aria-label="Close the lesson">×</button></div>
     <div class="lso" id="lso" hidden></div>
     <div class="tmap" id="tmap" hidden><canvas id="tmap-c" width="560" height="560"></canvas><div class="tmap-l"><b>Island map</b>
       <div class="key"><span><i style="background:#9fe0a0"></i>Ours</span><span><i style="background:#ff5a44"></i>Theirs</span><span><i style="background:#f3eede"></i>Nobody's</span></div>
@@ -353,7 +361,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div id="daily" hidden>
           <div class="lab2">Daily orders</div>
           <ul class="daily" id="d-list"></ul>
-          <p class="note">A new day starts at midnight UTC. Collect your pay every day to build the streak.</p>
+          <p class="note">A new day starts at midnight UTC. Collect your pay every day to build the streak. A new week starts on Monday.</p>
         </div>
       </div>
       <div class="seg" id="m-pick" role="radiogroup" aria-label="Choose a sortie"></div>
@@ -404,6 +412,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Music</div><div class="seg" id="o-mus" role="radiogroup" aria-label="Music"></div>
       <div class="lab2">Pilot radio</div><div class="seg" id="o-voice" role="radiogroup" aria-label="Pilot radio"></div>
       <div class="lab2">Landing aid</div><div class="seg" id="o-aid" role="radiogroup" aria-label="Landing aid"></div>
+      <div class="lab2">Ordnance</div><div class="seg" id="o-load" role="radiogroup" aria-label="Ordnance"></div><p class="note" id="o-load-n"></p>
+      <div class="lab2">Night sortie</div><div class="seg" id="o-night" role="radiogroup" aria-label="Night sortie"></div><p class="note">Fly the sorties after dark: harder to see, and every point is worth a fifth more.</p>
       <p class="lede" style="font-size:13px">A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.</p>
       <div class="row"><button class="go" id="b-hback" type="button">Back</button></div>
     </div>
@@ -550,6 +560,70 @@ const DICT = {
   "Target": ["Hedef", "Ziel"], "Integrity": ["Sağlamlık", "Zustand"], "Range": ["Mesafe", "Entfernung"], "Bearing": ["Kerteriz", "Peilung"], "Altitude": ["İrtifa", "Höhe"], "Armour": ["Zırh", "Panzerung"], "Use": ["Silah", "Waffe"],
   "Airframe": ["Gövde", "Zelle"], "Airspeed": ["Hız", "Fahrt"], "Bombs": ["Bomba", "Bomben"], "Rockets": ["Roket", "Raketen"], "Guns cooling": ["Namlular soğuyor", "Rohre kühlen ab"],
   "GEAR": ["TEKER", "FAHRW."],
+  "Flying lesson": ["Uçuş dersi", "Flugstunde"],
+  "Hold W to lift the nose and take off.": ["Burnu kaldırıp kalkmak için W'ye basılı tut.", "Halte W, um die Nase zu heben und abzuheben."],
+  "Slide your left thumb up to lift the nose and take off.": ["Burnu kaldırıp kalkmak için sol başparmağını yukarı kaydır.", "Schiebe den linken Daumen nach oben, um die Nase zu heben und abzuheben."],
+  "Hold S to lift the nose and take off.": ["Burnu kaldırıp kalkmak için S'ye basılı tut.", "Halte S, um die Nase zu heben und abzuheben."],
+  "Slide your left thumb down to lift the nose and take off.": ["Burnu kaldırıp kalkmak için sol başparmağını aşağı kaydır.", "Schiebe den linken Daumen nach unten, um die Nase zu heben und abzuheben."],
+  "Bank left and right with A and D.": ["A ve D ile sola ve sağa yat.", "Lege dich mit A und D nach links und rechts."],
+  "Slide your thumb left and right to bank.": ["Yatmak için başparmağını sola ve sağa kaydır.", "Schiebe den Daumen nach links und rechts, um dich in die Kurve zu legen."],
+  "Climb with W, then dive with S.": ["W ile tırman, sonra S ile dal.", "Steige mit W, dann stürze mit S."],
+  "Slide up to climb, then down to dive.": ["Tırmanmak için yukarı, sonra dalmak için aşağı kaydır.", "Nach oben schieben zum Steigen, dann nach unten zum Stürzen."],
+  "Climb with S, then dive with W.": ["S ile tırman, sonra W ile dal.", "Steige mit S, dann stürze mit W."],
+  "Slide down to climb, then up to dive.": ["Tırmanmak için aşağı, sonra dalmak için yukarı kaydır.", "Nach unten schieben zum Steigen, dann nach oben zum Stürzen."],
+  "Hold Shift for emergency power. It overheats: watch the power bar.": ["Acil güç için Shift'e basılı tut. Motor ısınır: GÜÇ çubuğunu izle.", "Halte Shift für Notleistung. Der Motor überhitzt: Achte auf den Leistungsbalken."],
+  "Hold WEP for emergency power. It overheats: watch the power bar.": ["Acil güç için GÜÇ düğmesine basılı tut. Motor ısınır: GÜÇ çubuğunu izle.", "Halte NOTL. für Notleistung. Der Motor überhitzt: Achte auf den Leistungsbalken."],
+  "Follow the amber marker to the nearest target.": ["Sarı işareti takip ederek en yakın hedefe git.", "Folge der gelben Markierung zum nächsten Ziel."],
+  "Dive on the target and hold Space to fire.": ["Hedefe dal ve ateş için Boşluk tuşuna basılı tut.", "Stürze auf das Ziel und halte die Leertaste zum Feuern."],
+  "Dive on the target and hold FIRE.": ["Hedefe dal ve ATEŞ düğmesine basılı tut.", "Stürze auf das Ziel und halte FEUER."],
+  "Fly low over a target and press B when the dashed ring is on it.": ["Hedefin üstünden alçak uç; kesik çizgili halka hedefe gelince B'ye bas.", "Fliege tief über ein Ziel und drücke B, wenn der gestrichelte Ring darauf liegt."],
+  "Fly low over a target and press BOMB when the dashed ring is on it.": ["Hedefin üstünden alçak uç; kesik çizgili halka hedefe gelince BOMBA'ya bas.", "Fliege tief über ein Ziel und drücke BOMBE, wenn der gestrichelte Ring darauf liegt."],
+  "Destroy the remaining targets. Bandits show red on the radar.": ["Kalan hedefleri yok et. Düşman uçakları radarda kırmızı görünür.", "Zerstöre die übrigen Ziele. Gegner erscheinen rot auf dem Radar."],
+  "Fly to the green marker and press G to lower the wheels.": ["Yeşil işarete uç ve tekerlekleri indirmek için G'ye bas.", "Fliege zur grünen Markierung und drücke G, um das Fahrwerk auszufahren."],
+  "Fly to the green marker and press GEAR to lower the wheels.": ["Yeşil işarete uç ve tekerlekleri indirmek için TEKER'e bas.", "Fliege zur grünen Markierung und drücke FAHRW., um das Fahrwerk auszufahren."],
+  "Keep her steady down the approach and touch down.": ["Yaklaşmada uçağı sabit tut ve tekerlekleri yere koy.", "Halte sie im Anflug ruhig und setze auf."],
+  "Rockets: point at a gun battery and press F.": ["Roketler: bir top bataryasına nişan al ve F'ye bas.", "Raketen: Ziele auf eine Geschützbatterie und drücke F."],
+  "Rockets: point at a gun battery and press RKT.": ["Roketler: bir top bataryasına nişan al ve RKT'ye bas.", "Raketen: Ziele auf eine Geschützbatterie und drücke RAK."],
+  "Hold X to throttle back: she turns tighter and slows for the approach.": ["Gazı kısmak için X'e basılı tut: uçak daha dar döner ve iniş için yavaşlar.", "Halte X, um Gas wegzunehmen: Sie dreht enger und wird für den Anflug langsamer."],
+  "Tap SLOW to throttle back: she turns tighter and slows for the approach.": ["Gazı kısmak için YAVAŞ'a dokun: uçak daha dar döner ve iniş için yavaşlar.", "Tippe LANGS., um Gas wegzunehmen: Sie dreht enger und wird für den Anflug langsamer."],
+  "Q and E swing the nose without banking.": ["Q ve E, uçağı yatırmadan burnu sağa sola çevirir.", "Q und E schwenken die Nase, ohne zu rollen."],
+  "Press C to change the view.": ["Bakışı değiştirmek için C'ye bas.", "Drücke C, um die Sicht zu wechseln."],
+  "Tap VIEW to change the view.": ["Bakışı değiştirmek için BAKIŞ'a dokun.", "Tippe SICHT, um die Sicht zu wechseln."],
+  "This aircraft stalls when she gets slow. Keep the airspeed up in climbs and hard turns.": ["Bu uçak yavaşlayınca stall olur. Tırmanışta ve sert dönüşte hızını koru.", "Dieses Flugzeug reißt ab, wenn es langsam wird. Halte im Steigflug und in engen Kurven die Fahrt."],
+  "If she shakes or STALL shows: nose down and add power.": ["Uçak sarsılırsa ya da STALL yazarsa: burnu indir ve güç ver.", "Wenn sie schüttelt oder STALL erscheint: Nase runter und Gas geben."],
+  "Ships need bombs: fly low, put the dashed ring on the hull and press B.": ["Gemilere bomba gerekir: alçak uç, kesik çizgili halkayı gövdeye getir ve B'ye bas.", "Schiffe brauchen Bomben: Fliege tief, lege den gestrichelten Ring auf den Rumpf und drücke B."],
+  "Ships need bombs: fly low, put the dashed ring on the hull and press BOMB.": ["Gemilere bomba gerekir: alçak uç, kesik çizgili halkayı gövdeye getir ve BOMBA'ya bas.", "Schiffe brauchen Bomben: Fliege tief, lege den gestrichelten Ring auf den Rumpf und drücke BOMBE."],
+  "Imperial Japanese Navy": ["Japon İmparatorluk Donanması", "Kaiserlich Japanische Marine"],
+  "Luftwaffe": ["Luftwaffe", "Luftwaffe"],
+  "Standard": ["Standart", "Standard"],
+  "As issued for the sortie.": ["Sorti için verilen yük.", "Wie für den Einsatz ausgegeben."],
+  "Half as many rockets again, half the bombs.": ["Yüzde elli fazla roket, yarı bomba.", "Die Hälfte mehr Raketen, halb so viele Bomben."],
+  "Two more bombs, half the rockets.": ["İki bomba fazla, yarı roket.", "Zwei Bomben mehr, halb so viele Raketen."],
+  "Night sortie": ["Gece sortisi", "Nachteinsatz"],
+  "Fly the sorties after dark: harder to see, and every point is worth a fifth more.": ["Sortileri karanlıkta uç: görmek zorlaşır, her puan beşte bir fazla sayılır.", "Fliege die Einsätze bei Dunkelheit: schlechtere Sicht, dafür zählt jeder Punkt ein Fünftel mehr."],
+  "Side task": ["Yan görev", "Nebenauftrag"],
+  "Sink the gunboats": ["Hücumbotları batır", "Versenke die Kanonenboote"],
+  "Shoot down the ace": ["Ası düşür", "Schieß das Ass ab"],
+  "Convoy saved": ["Konvoy kurtarıldı", "Konvoi gerettet"],
+  "Ace shot down": ["As düşürüldü", "Ass abgeschossen"],
+  "The convoy is through.": ["Konvoy geçti.", "Der Konvoi ist durch."],
+  "Well done.": ["Aferin.", "Gut gemacht."],
+  "That was their best man.": ["En iyi adamlarıydı.", "Das war ihr bester Mann."],
+  "The convoy has taken hits.": ["Konvoy isabet aldı.", "Der Konvoi wurde getroffen."],
+  "Carry on with your orders.": ["Emirlerine devam et.", "Mach mit deinen Befehlen weiter."],
+  "Their ace has broken off.": ["Asları ayrıldı.", "Ihr Ass hat abgedreht."],
+  "Weekly orders": ["Haftalık emirler", "Wochenbefehle"],
+  "Fly 10 sorties": ["10 sorti uç", "Fliege 10 Einsätze"],
+  "Win 6 sorties": ["6 sorti kazan", "Gewinne 6 Einsätze"],
+  "Score 20000 points in sorties": ["Sortilerde 20000 puan topla", "Erziele 20000 Punkte in Einsätzen"],
+  "Fly 10 team dogfights": ["10 takım it dalaşı uç", "Fliege 10 Team-Luftkämpfe"],
+  "Shoot down 40 aircraft in team dogfights": ["Takım it dalaşlarında 40 uçak düşür", "Schieße 40 Flugzeuge in Team-Luftkämpfen ab"],
+  "Win 5 team dogfights": ["5 takım it dalaşı kazan", "Gewinne 5 Team-Luftkämpfe"],
+  "Collect your daily pay on 5 days": ["Günlük maaşını 5 gün al", "Hole deinen Tagessold an 5 Tagen ab"],
+  "A new week starts on Monday.": ["Yeni hafta pazartesi başlar.", "Eine neue Woche beginnt am Montag."],
+  "A new day starts at midnight UTC. Collect your pay every day to build the streak. A new week starts on Monday.": ["Yeni gün UTC gece yarısında başlar. Seriyi büyütmek için maaşını her gün al. Yeni hafta pazartesi başlar.", "Ein neuer Tag beginnt um Mitternacht UTC. Hol deinen Sold jeden Tag ab, um die Serie auszubauen. Eine neue Woche beginnt am Montag."],
+  "gunboats are closing on a supply convoy near you.": ["hücumbotlar yakınındaki bir ikmal konvoyuna yaklaşıyor.", "Kanonenboote nähern sich einem Versorgungskonvoi in deiner Nähe."], "Sink them before they reach it.": ["Ulaşmadan önce onları batır.", "Versenke sie, bevor sie ihn erreichen."],
+  "one of their aces has come up to find you.": ["aslarından biri seni bulmak için havalandı.", "eines ihrer Asse ist aufgestiegen, um dich zu suchen."], "Bring him down.": ["Onu düşür.", "Hol ihn runter."],
   "NO RADAR": ["RADAR YOK", "KEIN RADAR"], "Engine overheating": ["Motor aşırı ısınıyor", "Motor überhitzt"], "Engine cooling": ["Motor soğuyor", "Motor kühlt"], "Guns overheated": ["Namlular aşırı ısındı", "Waffen überhitzt"],
   "Engine is overheating!": ["Motor aşırı ısınıyor!", "Der Motor überhitzt!"], "Throttle back!": ["Gazı kes!", "Gas zurück!"], "MAP": ["HARİTA", "KARTE"], "Island map": ["Ada haritası", "Inselkarte"], "Ours": ["Bizim", "Unser"], "Theirs": ["Onların", "Gegner"], "Nobody's": ["Sahipsiz", "Niemand"],
   "Airstrip: land on it and stand still for three seconds to take it. It rearms and repairs you, and your side takes off from it.": ["Pist: üstüne in ve üç saniye dur, pist sizin olur. Mühimmatını doldurur, uçağını onarır ve takımın buradan kalkar.", "Piste: Lande darauf und bleib drei Sekunden stehen, dann gehört sie euch. Sie rüstet und repariert dich, und eure Seite startet von dort."],
@@ -876,9 +950,12 @@ const COST = [300, 700, 1200], PAR = [365, 410, 455, 500, 320, 365, 335], SENS =
 const CAR = { xp: 0, rp: 0, up: { eng: 0, arm: 0, gun: 0, ord: 0 }, stars: [0, 0, 0, 0, 0, 0, 0], diff: 1, sens: 1, q: 1, plane: -1, paint: 0, own: [], mus: 1, voice: 1, aid: 1, fps: 0 };
 try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (Array.isArray(j.own)) CAR.own = j.own.filter(n => Number.isInteger(n) && n >= 4 && n < 9); for (const k of ['xp', 'rp', 'diff', 'sens', 'q', 'plane', 'paint', 'mus', 'voice', 'aid', 'fps']) if (typeof j[k] === 'number' && isFinite(j[k])) CAR[k] = j[k]; if (j.up) for (const k in CAR.up) CAR.up[k] = clamp(j.up[k] | 0, 0, 3); if (Array.isArray(j.stars)) for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = (j.stars[i] | 0) & 7; } } catch (e) {}
 CAR.diff = clamp(CAR.diff | 0, 0, 2); CAR.sens = clamp(CAR.sens | 0, 0, 2); CAR.q = CAR.q ? 1 : 0; CAR.mus = CAR.mus ? 1 : 0; CAR.voice = CAR.voice ? 1 : 0; CAR.aid = CAR.aid ? 1 : 0; CAR.fps = CAR.fps ? 1 : 0; CAR.paint = clamp(CAR.paint | 0, 0, 6); CAR.plane = Number.isInteger(CAR.plane) && (CAR.plane < 4 || CAR.plane > 8 || CAR.own.includes(CAR.plane)) ? clamp(CAR.plane, -1, 11) : -1;
+CAR.load = clamp(CAR.load | 0, 0, 2); CAR.night = CAR.night ? 1 : 0;
+const LOADS = [['Standard', 'As issued for the sortie.', 1, 1, 0], ['Rockets', 'Half as many rockets again, half the bombs.', 1.5, .5, 0], ['Bombs', 'Two more bombs, half the rockets.', .5, 1, 2]]; // name, note, rockets x, bombs x, bombs +
+const loadR = () => Math.round(M.rockets * LOADS[CAR.load][2]), loadB = () => (M.bombs ? Math.max(1, Math.round(M.bombs * LOADS[CAR.load][3])) + LOADS[CAR.load][4] : 0);
 const saveCar = () => { try { localStorage.setItem('windfall-career', JSON.stringify(CAR)); } catch (e) {} };
 let D = DIFFS[CAR.diff], score = 0, bomberKills = 0, fleetHits = 0, siteBreaks = 0, tipI = 0;
-const addScore = n => { score += Math.round(n * D.sc); };
+const addScore = n => { score += Math.round(n * D.sc * (CAR.night && !DUEL.on ? 1.2 : 1)); }; // a night sortie pays a fifth more
 const rankOf = xp => { let i = 0; while (i < RANKS.length - 1 && xp >= RANKS[i + 1][0]) i++; return i; };
 const bits = n => (n & 1) + (n >> 1 & 1) + (n >> 2 & 1);
 const touchTip = s => touchMode ? s.replace('Press C to change view.', 'Tap VIEW to change view.') : s;
@@ -975,8 +1052,12 @@ const PLANES = [
   { n: 'P-51D Mustang', by: 'US Army Air Forces', cost: 1100, spd: 1.12, turn: 1.04, arm: 1, gun: 1.06, skin: { top: '#b9bfc4', top2: '#b9bfc4', under: '#c9ced2', nose: '#c9a227', spin: '#b3261e', radial: false, mark: 'us', jacket: '#7a5433', metal: true } },
   { n: 'Hawker Tempest', by: 'Royal Air Force', cost: 0, star: 15, spd: 1.1, turn: .98, arm: 1.06, gun: 1.1, skin: { top: '#5a6452', top2: '#6f777c', under: '#b4bfc4', nose: '#5a6452', spin: '#c9c7b4', radial: false, mark: 'raf', jacket: '#5a4632' } },
   { n: 'P-47D Thunderbolt', by: 'US Army Air Forces', cost: 0, star: 30, spd: 1.05, turn: .9, arm: 1.22, gun: 1.12, skin: { top: '#4f5438', top2: '#4f5438', under: '#9aa3a6', nose: '#e6e2d2', spin: '#4f5438', radial: true, mark: 'us', jacket: '#7a5433' } },
-  { n: 'Yak-3', by: 'Red Air Force', cost: 0, star: 45, spd: 1.07, turn: 1.24, arm: .88, gun: 1.04, skin: { top: '#6c7a78', top2: '#434f55', under: '#93b6cc', nose: '#6c7a78', spin: '#e2dfd0', radial: false, mark: 'su', jacket: '#4a3a2a' } }
-];
+  { n: 'Yak-3', by: 'Red Air Force', cost: 0, star: 45, spd: 1.07, turn: 1.24, arm: .88, gun: 1.04, skin: { top: '#6c7a78', top2: '#434f55', under: '#93b6cc', nose: '#6c7a78', spin: '#e2dfd0', radial: false, mark: 'su', jacket: '#4a3a2a' } },
+  { n: 'A6M Zero', by: 'Imperial Japanese Navy', cost: 1000, spd: 1, turn: 1.3, arm: .8, gun: 1.02, skin: { top: '#8f9a8c', top2: '#8f9a8c', under: '#b9bdb6', nose: '#1c1d1e', spin: '#8a8f8a', radial: true, mark: 'jp', jacket: '#6a5a3a' } },
+  { n: 'Bf 109 G', by: 'Luftwaffe', cost: 1200, spd: 1.08, turn: 1.08, arm: .95, gun: 1.12, skin: { top: '#69737a', top2: '#4d5859', under: '#a7c1cf', nose: '#d8b037', spin: '#2a2c2d', radial: false, mark: 'de', jacket: '#3c3a36' } },
+  { n: 'F6F Hellcat', by: 'US Navy', cost: 1300, spd: 1.06, turn: 1.02, arm: 1.2, gun: 1.08, skin: { top: '#1f2f4a', top2: '#1f2f4a', under: '#d7dcdc', nose: '#1f2f4a', spin: '#161d2a', radial: true, mark: 'us', jacket: '#b39c66' } },
+  { n: 'Fw 190 A', by: 'Luftwaffe', cost: 1400, spd: 1.1, turn: .98, arm: 1.1, gun: 1.2, skin: { top: '#5d6a5c', top2: '#3f4a45', under: '#a9c0cc', nose: '#c9a227', spin: '#e2dfd0', radial: true, mark: 'de', jacket: '#3c3a36' } }
+]; // sixteen types at most: the type rides in four bits of what each aircraft tells the others
 /* paint goes over whatever type is flown; like the last three types it is opened by stars (sorties and campaign together), never bought */
 const PAINTS = [
   { n: 'Factory finish', star: 0, s: null },
@@ -2084,7 +2165,7 @@ function groundRoll(dt) {
       }
       else if (phase === 'extract') { P.gnd = 3; if (!endT) { endT = 1.6; endWon = true; } }
       else { // turned round on the spot: rearmed and patched up
-        P.rkt = M.rockets; P.bombs = M.bombs; P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true);
+        P.rkt = loadR(); P.bombs = loadB(); P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true);
         spotPlane(); feed('Rearmed and repaired'); radio(M.cs + ', you are turned round and rearmed. Off you go again.');
       }
     }
@@ -2150,11 +2231,11 @@ function reset() {
   fxT.fill(0); fxD.fill(0); fxGeo.instanceCount = 0;
   for (const o of ord) { o.on = false; o.g.visible = false; }
   for (const o of objs) { o.hp = o.hp0; o.alive = true; o.top.visible = true; o.top.rotation.set(0, 0, 0); o.top.scale.set(1, 1, 1); o.top.position.set(0, 0, 0); o.group.position.y = o.pos.y; o.group.rotation.z = 0; o.group.visible = true; o.fireCd = 2; o.sink = 0; o.boomT = 0; }
-  P.told = false; P.told0 = false; P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.rkt = M.rockets; P.bombs = M.bombs; P.stall = false; P.g = 0; P.ordCd = 0;
+  P.told = false; P.told0 = false; P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.rkt = loadR(); P.bombs = loadB(); P.stall = false; P.g = 0; P.ordCd = 0;
   plane.visible = true; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true); beacon.visible = false;
   spotPlane(); setGate(1);
   downs = 0; failed = false; flakCall = -99; modeT = M.mode === 'escort' ? 12 : 6; waveI = 0; waveLive = false; resetPals();
-  score = 0; bomberKills = 0; fleetHits = 0; siteBreaks = 0; tipI = 0; raidT = 0; D = DIFFS[CAR.diff]; resetWing();
+  score = 0; bomberKills = 0; fleetHits = 0; siteBreaks = 0; tipI = 0; raidT = 0; coachStart(); sideReset(); if (!DUEL.on) { DUEL.wx = null; weatherSet(CAR.night ? 'night' : ''); } D = DIFFS[CAR.diff]; resetWing();
   time = 0; kills = 0; boatKills = 0; shots = 0; hits = 0; cut = 0; phase = 'targets'; seen = false; endT = 0; shake = 0; hitFlash = 0; radioQ.length = 0; radioT = 0; callT = 0; scanT = 0; for (const k in callCd) delete callCd[k]; target = null; leadFoe = null;
   $('radio').classList.remove('on'); $('feed').textContent = ''; for (const c of ['pull', 'six', 'stall']) $(c).classList.remove('on'); $('gloc').style.opacity = 0; updateObjective(); snapCam = true; resetGround(); patrolCall = false;
   if (!M.mode && M.patrol && objs.length) { spawnFighters(M.patrol, objs[0].aim); for (const e of enemies) { e.patrol = objs[0].aim; e.orb = rand(0, 6.28); } }
@@ -2919,7 +3000,7 @@ function duelSpawn() { // air start on the team's side of the field, nose toward
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
 function duelArm() { const L = DUEL.load || [1, 1], A = DUEL.am; P.rkt = A ? A[1] : Math.floor(M.rockets * L[1]); P.bombs = A ? A[0] : Math.floor(M.bombs * L[0]); P.ordCd = 0; plane.userData.rkt.forEach((r, i) => r.visible = i < P.rkt); plane.userData.bombs.forEach((r, i) => r.visible = i < P.bombs); } // a chapter may send its pilots up with less
-function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); landClear(); weatherSet(null); }
+function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); landClear(); weatherSet(!DUEL.on && CAR.night ? 'night' : null); } // a night sortie keeps its sky when the shared sky is joined
 /* weather for a match: the server picks it, so both sides fly through the same sky */
 const WX = {
   dusk: { hz: '#f29a5e', zn: '#39407c', sun: [-.82, .09, -.3], sunC: '#ff9850', sunI: 2.4, hemi: ['#d2a9bd', '#4a3f44', .85], fog: [800, 8200], deep: '#141d3a', shal: '#8a5c5c', dim: '#e6a488' },
@@ -3126,6 +3207,59 @@ function drawMap() {
   g.save(); g.translate(clamp(X(P.pos.x), 10, S - 10), clamp(Y(P.pos.z), 10, S - 10)); g.rotate(-P.yaw); g.beginPath(); g.moveTo(0, -13); g.lineTo(9, 10); g.lineTo(0, 5); g.lineTo(-9, 10); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#0a0e0c'; g.stroke(); g.restore();
   text('N', S - 22, 24, '#f3eede', 18); g.beginPath(); g.moveTo(S - 22, 58); g.lineTo(S - 22, 38); g.lineTo(S - 27, 45); g.moveTo(S - 22, 38); g.lineTo(S - 17, 45); g.lineWidth = 2; g.strokeStyle = '#f3eede'; g.stroke();
 }
+/* guided first sorties: one thing at a time, and the next only once the pilot has done it. Shown until that sortie has been flown home once. */
+const COACH = {
+  0: [
+    { k: ['Hold W to lift the nose and take off.', 'Slide your left thumb up to lift the nose and take off.'], inv: ['Hold S to lift the nose and take off.', 'Slide your left thumb down to lift the nose and take off.'], go: () => !P.gnd && P.airT > .6 },
+    { k: ['Bank left and right with A and D.', 'Slide your thumb left and right to bank.'], go: c => { if (P.roll > .4) c.a = 1; if (P.roll < -.4) c.b = 1; return ((c.a | 0) + (c.b | 0)) / 2; } },
+    { k: ['Climb with W, then dive with S.', 'Slide up to climb, then down to dive.'], inv: ['Climb with S, then dive with W.', 'Slide down to climb, then up to dive.'], go: c => { if (P.pitch > .2) c.a = 1; if (P.pitch < -.15) c.b = 1; return ((c.a | 0) + (c.b | 0)) / 2; } },
+    { k: ['Hold Shift for emergency power. It overheats: watch the power bar.', 'Hold WEP for emergency power. It overheats: watch the power bar.'], go: () => clamp((P.wep || 0) / .2, 0, 1) },
+    { k: ['Follow the amber marker to the nearest target.', 'Follow the amber marker to the nearest target.'], go: c => { let d = 1e9; for (const o of objs) if (o.alive) d = Math.min(d, o.pos.distanceTo(P.pos)); if (c.d0 == null) c.d0 = d; return d < 1000 ? 1 : clamp((c.d0 - d) / Math.max(1, c.d0 - 1000), 0, .95); } },
+    { k: ['Dive on the target and hold Space to fire.', 'Dive on the target and hold FIRE.'], go: c => { if (c.h0 == null) c.h0 = hits; return clamp((hits - c.h0) / 6, 0, 1); } },
+    { k: ['Fly low over a target and press B when the dashed ring is on it.', 'Fly low over a target and press BOMB when the dashed ring is on it.'], skip: () => P.bombs <= 0, go: c => { if (c.b0 == null) c.b0 = P.bombs; return P.bombs < c.b0 || phase === 'extract' ? 1 : 0; } },
+    { k: ['Destroy the remaining targets. Bandits show red on the radar.', 'Destroy the remaining targets. Bandits show red on the radar.'], go: c => { if (c.n0 == null) c.n0 = Math.max(1, objs.filter(o => o.alive).length); return phase === 'extract' ? 1 : clamp(1 - objs.filter(o => o.alive).length / c.n0, 0, .95); } },
+    { k: ['Fly to the green marker and press G to lower the wheels.', 'Fly to the green marker and press GEAR to lower the wheels.'], go: () => (P.gear && P.autoUp) || P.gnd ? 1 : 0 },
+    { k: ['Keep her steady down the approach and touch down.', 'Keep her steady down the approach and touch down.'], go: () => (P.gnd >= 2 ? 1 : 0) }],
+  1: [
+    { k: ['Rockets: point at a gun battery and press F.', 'Rockets: point at a gun battery and press RKT.'], wait: () => !P.gnd && P.airT > 4, skip: () => P.rkt <= 0, go: c => { if (c.r0 == null) c.r0 = P.rkt; return clamp((c.r0 - P.rkt) / 2, 0, 1); } },
+    { k: ['Hold X to throttle back: she turns tighter and slows for the approach.', 'Tap SLOW to throttle back: she turns tighter and slows for the approach.'], go: (c, dt) => { if (input.brake) c.t = (c.t || 0) + dt; return clamp((c.t || 0) / 1.2, 0, 1); } },
+    { k: ['Q and E swing the nose without banking.', ''], skip: () => touchMode, go: (c, dt) => { if (input.rud) c.t = (c.t || 0) + dt; return clamp((c.t || 0) / .8, 0, 1); } },
+    { k: ['Press C to change the view.', 'Tap VIEW to change the view.'], go: c => { if (c.m0 == null) c.m0 = camMode; return camMode !== c.m0 ? 1 : 0; } }],
+  2: [
+    { k: ['This aircraft stalls when she gets slow. Keep the airspeed up in climbs and hard turns.', 'This aircraft stalls when she gets slow. Keep the airspeed up in climbs and hard turns.'], wait: () => !P.gnd && P.airT > 4, go: (c, dt) => { c.t = (c.t || 0) + dt; return clamp(c.t / 8, 0, 1); } },
+    { k: ['If she shakes or STALL shows: nose down and add power.', 'If she shakes or STALL shows: nose down and add power.'], go: (c, dt) => { c.t = (c.t || 0) + dt; if (P.stall) c.s = 1; return c.s ? (P.stall ? .5 : 1) : clamp(c.t / 8, 0, 1); } },
+    { k: ['Ships need bombs: fly low, put the dashed ring on the hull and press B.', 'Ships need bombs: fly low, put the dashed ring on the hull and press BOMB.'], skip: () => P.bombs <= 0, go: c => { if (c.b0 == null) c.b0 = P.bombs; return P.bombs < c.b0 ? 1 : 0; } }] };
+const coach = { on: false, i: 0, c: {}, okT: 0, key: '' };
+function coachStart() { const L = COACH[mIdx]; coach.on = !!L && !DUEL.on && !done.includes(mIdx); coach.i = 0; coach.c = {}; coach.okT = 0; coach.key = ''; $('coach').hidden = true; }
+function coachTick(dt) {
+  const el = $('coach'); if (!coach.on) { if (!el.hidden) el.hidden = true; return; }
+  const L = COACH[mIdx]; if (!P.alive || endT > 0) { el.hidden = true; return; }
+  if (coach.okT > 0) { coach.okT -= dt; if (coach.okT <= 0) { coach.i++; coach.c = {}; coach.key = ''; el.classList.remove('ok'); } else return; }
+  while (coach.i < L.length && L[coach.i].skip && L[coach.i].skip()) coach.i++;
+  const st = L[coach.i]; if (!st) { coach.on = false; el.hidden = true; return; }
+  if (st.wait && !st.wait()) { el.hidden = true; return; }
+  const txt = (invertY && st.inv ? st.inv : st.k)[touchMode ? 1 : 0], key = coach.i + txt;
+  if (key !== coach.key) { coach.key = key; $('coach-k').textContent = tr('Flying lesson') + ' · ' + (coach.i + 1) + ' / ' + L.length; $('coach-t').textContent = txt; }
+  el.hidden = false; const v = +st.go(coach.c, dt) || 0; $('coach-b').style.width = (clamp(v, 0, 1) * 100).toFixed(0) + '%';
+  if (v >= 1) { coach.okT = 1.1; el.classList.add('ok'); if (ac && !muted) { const t = ac.currentTime; tone(81, t, .12, .12, 'triangle', 3000); tone(88, t + .1, .2, .12, 'triangle', 3000); } }
+}
+/* side tasks: once in a sortie something comes up beside the orders. Answering it pays; ignoring it costs nothing. */
+const SIDE = { k: '', t: 0, at: 0, used: false, list: [], shown: '' };
+function sideReset() { SIDE.k = ''; SIDE.t = 0; SIDE.at = rand(55, 85); SIDE.used = false; SIDE.list = []; SIDE.shown = ''; $('obj-s').hidden = true; }
+function sideEnd(won, pts, what, word) { if (won) { addScore(pts); feed(what, '+' + Math.round(pts * D.sc * (CAR.night ? 1.2 : 1))); warn(what, true); } radio(word); SIDE.k = ''; SIDE.list = []; }
+function sideTick(dt) {
+  const el = $('obj-s'); if (DUEL.on || !P.alive || endT > 0) { if (!el.hidden) el.hidden = true; return; }
+  if (!SIDE.k && !SIDE.used && mIdx >= 1 && phase === 'targets' && !P.gnd && time > SIDE.at) { SIDE.used = true; const n0 = enemies.length;
+    if (Math.random() < .5) { spawnBoats(3); SIDE.list = enemies.slice(n0); }
+    if (SIDE.list.length) { SIDE.k = 'convoy'; SIDE.t = 150; warn('Side task'); radio(M.cs + ', gunboats are closing on a supply convoy near you. Sink them before they reach it.'); }
+    else { spawnFighters(1); const e = enemies[enemies.length - 1]; if (e && enemies.length > n0) { e.hp = e.max = e.max * 2.5; e.ace = true; SIDE.list = [e]; SIDE.k = 'ace'; SIDE.t = 180; warn('Side task'); radio(M.cs + ', one of their aces has come up to find you. Bring him down.'); } } }
+  if (!SIDE.k) { if (!el.hidden) el.hidden = true; return; }
+  SIDE.t -= dt; const left = SIDE.list.filter(e => !e.dead && !e.falling).length;
+  if (!left) return sideEnd(true, 400, SIDE.k === 'convoy' ? 'Convoy saved' : 'Ace shot down', SIDE.k === 'convoy' ? 'The convoy is through. Well done.' : 'That was their best man. Well done.');
+  if (SIDE.t <= 0 || phase !== 'targets') return sideEnd(false, 0, '', SIDE.k === 'convoy' ? 'The convoy has taken hits. Carry on with your orders.' : 'Their ace has broken off. Carry on with your orders.');
+  const sec = Math.ceil(SIDE.t), txt = 'Side task · ' + (SIDE.k === 'convoy' ? 'Sink the gunboats' : 'Shoot down the ace') + ' · ' + Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+  if (txt !== SIDE.shown) { SIDE.shown = txt; el.textContent = txt; } el.hidden = false;
+}
 function tgSet(list) { // the radar and the fuel dump of each side, where the match server put them
   for (const t of DUEL.tg) world.remove(t.g); DUEL.tg = []; if (!Array.isArray(list)) return;
   const conc = std('#a8a495', .95), steel = std('#585d56', .6, .5), tank = std('#b9bdb8', .45, .7);
@@ -3302,7 +3436,7 @@ function fillHangar() {
   $('h-rp').textContent = CAR.rp + ' RP';
   $('h-list').innerHTML = Object.keys(UPG).map(k => { const l = CAR.up[k], max = l >= 3; return '<div class="upg"><b>' + UPG[k][0] + '<i>' + '■■■'.slice(0, l) + '□□□'.slice(0, 3 - l) + '</i></b><span>' + UPG[k][1] + '</span><button class="ghost" type="button" data-k="' + k + '"' + (max || CAR.rp < COST[l] ? ' disabled' : '') + '>' + (max ? 'Fitted' : 'Fit · ' + COST[l] + ' RP') + '</button></div>'; }).join('');
   $('h-list').querySelectorAll('button').forEach(b => { b.onclick = () => { const k = b.dataset.k, l = CAR.up[k]; if (l >= 3 || CAR.rp < COST[l]) return; if (NET.me) { netBuy('buy_upgrade', { p_key: k }); return; } CAR.rp -= COST[l]; CAR.up[k]++; saveCar(); fillHangar(); }; });
-  const rows = [['-1', 'Mission standard', 'The type each front was flown with', 0]].concat(PLANES.map((p, i) => ['' + i, p.n, p.by + ' · ' + planeNote(p), p.cost]));
+  const rows = [['-1', 'Mission standard', 'The type each front was flown with', 0]].concat(PLANES.map((p, i) => ['' + i, p.n, p.by + ' · ' + planeNote(p), p.cost]).filter(r => +r[0] < 12 || !NET.me || srvNew)); // the four newest types are offered to a signed-in pilot only once the server knows them
   $('h-stars').textContent = 'Stars held: ' + starsAll();
   $('h-planes').innerHTML = rows.map(r => { const i = +r[0], st = i >= 0 && PLANES[i].star, own = planeOk(i), cur = CAR.plane === i; return '<div class="upg"><b>' + r[1] + '</b><span>' + r[2] + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || (!own && (st || CAR.rp < r[3])) ? ' disabled' : '') + '>' + (cur ? 'Flying' : own ? 'Fly' : st ? 'Opens at ' + st + ' stars' : 'Buy · ' + r[3] + ' RP') + '</button></div>'; }).join('');
   $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i, st = i >= 0 && PLANES[i].star; if (!planeOk(i) && (st || CAR.rp < PLANES[i].cost)) return; LOOK.pi = i; if (NET.me) { netBuy('buy_plane', { p_i: i }); return; } if (!planeOk(i)) { CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
@@ -3315,6 +3449,8 @@ function fillHangar() {
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
   seg('o-voice', 'voice', ['Off', 'On'], CAR.voice, v => { CAR.voice = v; if (!v) hush(); else { voxWarm(); setTimeout(() => say('Check your six!'), 900); } });
   seg('o-aid', 'aid', ['Off', 'On'], CAR.aid, v => { CAR.aid = v; });
+  seg('o-load', 'load', LOADS.map(l => l[0]), CAR.load, v => { CAR.load = v; $('o-load-n').textContent = LOADS[v][1]; if (state === 'menu' && !DUEL.on) { P.rkt = loadR(); P.bombs = loadB(); } }); $('o-load-n').textContent = LOADS[CAR.load][1];
+  seg('o-night', 'night', ['Off', 'On'], CAR.night, v => { CAR.night = v; if (!DUEL.on) { DUEL.wx = null; weatherSet(v ? 'night' : ''); } });
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
 }
@@ -3365,7 +3501,7 @@ roleFill();
 $('b-calog').onclick = logOpen; $('b-lgback').onclick = campOpen; $('b-camp').onclick = campOpen; $('b-caback').onclick = onlineOpen; $('b-camp2').onclick = campOpen; $('b-cafly').onclick = () => { if (campOpenF((CAMP.sel - 1) / 5 | 0)) duelStart(CHAPS[CAMP.sel - 1][0], CAMP.sel); };
 $('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-isle').onclick = () => duelStart('isle'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
-$('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam; $('b-map').onclick = () => mapSet(!mapOn); $('tmap').onclick = () => mapSet(false);
+$('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam; $('coach-x').onclick = () => { coach.on = false; $('coach').hidden = true; canvas.focus(); }; $('b-map').onclick = () => mapSet(!mapOn); $('tmap').onclick = () => mapSet(false);
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
 $('o-inv').onchange = e => { invertY = e.target.checked; try { localStorage.setItem('windfall-inv', invertY ? '1' : '0'); } catch (er) {} };
 let startAt = 0;
@@ -3451,7 +3587,7 @@ function tick(dt, now) {
   clock += dt; U.tm.value = clock;
   if (state === 'play') {
     time += P.alive && !endT ? dt : 0; readInput();
-    if (mIdx === 0 && !done.includes(0) && tipI < TIPS.length && time > TIPS[tipI][0]) radio(touchTip(TIPS[tipI++][1]));
+    coachTick(dt); sideTick(dt); // the step-by-step lesson has taken over from the timed tips of the first sortie
     if (mIdx === 0 && touchMode && !P.toldT && !P.gnd && P.airT > 1.5) { P.toldT = true; radio('Your left thumb flies her, anywhere on the left half of the screen. FIRE is under your right thumb.'); }
     updatePlayer(dt); updateEnemies(dt); updateObjs(dt); if (!(DUEL.on && DUEL.mates)) updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); scanThreats(dt); tickRadio(dt); chatTick(dt); skyTick(dt);
     beacon.rotation.y += dt * .4; beacon.material.opacity = .15 + Math.sin(now / 300) * .05;
@@ -3550,20 +3686,25 @@ function netBuy(fn, args) {
 }
 let rankTab = 0;
 // daily pay and the day's three orders; the competition server counts the progress, the game only shows it
+let srvNew = false;
+const WEEK_T = { sorties: 'Fly 10 sorties', win: 'Win 6 sorties', score: 'Score 20000 points in sorties', duel: 'Fly 10 team dogfights', dkills: 'Shoot down 40 aircraft in team dogfights', dwin: 'Win 5 team dogfights', days: 'Collect your daily pay on 5 days' };
 const DAILY_T = { sorties: 'Fly 2 sorties', win: 'Win a sortie', score: 'Score 3000 points in sorties', duel: 'Fly 2 team dogfights', dkills: 'Shoot down 8 aircraft in team dogfights', dwin: 'Win a team dogfight' };
 function dailyShow(st) {
   const box = $('daily'), ul = $('d-list'); if (!st || !st.login || !Array.isArray(st.tasks) || !NET.me) { box.hidden = true; return; }
   if (typeof st.rp === 'number') { CAR.rp = st.rp | 0; NET.me.rp = CAR.rp; saveCar(); $('h-rp').textContent = CAR.rp + ' RP'; }
   ul.textContent = '';
-  const row = (slot, text, note, rp, ready, got) => {
+  const row = (slot, text, note, rp, ready, got, fn) => {
     const li = document.createElement('li'), a = document.createElement('span'), b = document.createElement('em'), c = document.createElement('button'), ct = document.createElement('span'), cn = document.createElement('b');
     a.textContent = text; b.setAttribute('data-raw', ''); b.textContent = note; c.type = 'button'; c.className = ready && !got ? 'go' : 'ghost'; c.disabled = !ready || got; ct.textContent = got ? 'Collected' : 'Collect'; cn.setAttribute('data-raw', ''); cn.textContent = got ? '' : ' +' + rp;
     c.appendChild(ct); c.appendChild(cn); if (got) li.className = 'got';
-    c.onclick = async () => { c.disabled = true; try { dailyShow(await rpc('daily_claim', { p_slot: slot })); } catch (e) { dailyLoad(); } };
+    c.onclick = async () => { c.disabled = true; try { dailyShow(await rpc(fn || 'daily_claim', { p_slot: slot })); } catch (e) { dailyLoad(); } };
     li.appendChild(a); li.appendChild(b); li.appendChild(c); ul.appendChild(li);
   };
   row(0, 'Daily pay', '\u00d7' + (st.streak | 0), st.login.rp | 0, true, !!st.login.claimed);
   for (const t of st.tasks) row(t.slot | 0, DAILY_T[t.key] || String(t.key), (t.have | 0) + ' / ' + (t.goal | 0), t.rp | 0, (t.have | 0) >= (t.goal | 0), !!t.claimed);
+  srvNew = Array.isArray(st.week);
+  if (Array.isArray(st.week) && st.week.length) { const h = document.createElement('li'), a = document.createElement('span'); h.className = 'wk'; a.textContent = 'Weekly orders'; h.appendChild(a); ul.appendChild(h); // the week's orders, counted by the server like the day's
+    for (const t of st.week) row(t.slot | 0, WEEK_T[t.key] || String(t.key), (t.have | 0) + ' / ' + (t.goal | 0), t.rp | 0, (t.have | 0) >= (t.goal | 0), !!t.claimed, 'weekly_claim'); }
   box.hidden = false;
 }
 async function dailyLoad() { if (!NET.me || !NET.sb) { $('daily').hidden = true; return; } try { dailyShow(await rpc('daily_state')); } catch (e) { $('daily').hidden = true; } }
@@ -3686,7 +3827,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { coach, SIDE, LOADS, storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
