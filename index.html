@@ -200,6 +200,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
   background: linear-gradient(90deg, rgba(10, 12, 8, .5), rgba(10, 12, 8, .08) 60%, transparent); overflow-y: auto; }
 .sheet { position: relative; width: min(470px, 100%); margin-block: auto; display: flex; flex-direction: column; gap: 12px; padding: 22px 24px 22px; color: var(--type);
   background: var(--paper) repeating-linear-gradient(0deg, transparent 0 27px, rgba(41, 40, 31, .05) 27px 28px); border: 1px solid var(--paper-edge); box-shadow: 0 18px 50px rgba(0, 0, 0, .55), inset 0 0 60px rgba(120, 96, 50, .18); }
+.mast { background: #040d1c; display: grid; place-items: center; padding: 10px 12px; margin-bottom: 12px; border: 1.5px solid var(--type); } .mast img { height: clamp(96px, 22vh, 170px); width: auto; display: block; }
 .sheet-head { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--type); font: 400 12px/1.2 var(--f-type); letter-spacing: .08em; text-transform: uppercase; color: var(--type-dim); }
 .stamp { position: absolute; right: 20px; bottom: 26px; padding: 5px 9px 2px; border: 2.5px solid var(--stamp); color: var(--stamp); font: 700 15px/1 var(--f-stencil); letter-spacing: .16em; transform: rotate(-7deg); opacity: .78; }
 h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); letter-spacing: .02em; text-transform: uppercase; text-wrap: balance; }
@@ -394,6 +395,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 
   <div class="screen" id="s-menu">
     <div class="sheet">
+      <div class="mast"><img src="img/logo.webp" alt="Operation Windfall" width="770" height="600"></div>
       <div class="sheet-head"><span id="m-no">Mission orders no. 1</span><span id="m-when">South Pacific · 1942</span></div>
       <div class="rec"><b id="r-rank">Pilot Officer</b><div class="bar"><i id="r-bar"></i></div><span id="r-xp">0 XP</span><span id="r-rp">0 RP</span></div>
       <div class="quick"><button class="ghost" id="b-hangar2" type="button">Hangar</button><button class="ghost" id="b-pilot2" type="button">Pilot</button></div>
