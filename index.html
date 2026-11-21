@@ -447,6 +447,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div class="mode"><h2>Zone control</h2><p class="note">Zone control: three rings in the sky. Fly inside a ring with more aircraft than the other side to take it; each pays a point every three seconds and a kill pays two. The airfield rearms and repairs you, the radar halves your wait to fly again, the harbour pays double. First side to 100 wins.</p><div class="mode-foot"><span class="mode-n"><b id="on-zone" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-zone" type="button">Fly</button></div></div>
         <div class="mode"><h2>Carrier strike</h2><p class="note">Carrier strike: each side has an aircraft carrier. Sink theirs with bombs and rockets before they sink yours. The carriers shoot back; fly low over your own carrier to rearm and repair.</p><div class="mode-foot"><span class="mode-n"><b id="on-ship" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-ship" type="button">Fly</button></div></div>
         <div class="mode"><h2>Island assault</h2><p class="note">Island assault: both sides have landed troops and tanks on the same island. Strafe their squads, break their tanks with rockets and bombs, and help your men take the three strongpoints. Every strongpoint held pays a point every three seconds. First side to 200 wins; fly low over your own beach to rearm. A tank destroyed earns three bombs, a squad two rockets, an aircraft four rockets and repairs.</p><div class="mode-foot"><span class="mode-n"><b id="on-land" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-land" type="button">Fly</button></div></div>
+        <div class="mode"><h2>Island campaign</h2><p class="note">Island campaign: the island assault on a bigger island, with an airstrip on its south shore. Land on the strip and stand there for three seconds to take it. The strip pays like a strongpoint, rearms and repairs whoever of its side lands on it, and its side takes off from it instead of flying in. A bomb on the runway closes it for thirty seconds. Each side has a radar and a fuel dump behind its beach: bomb their radar and they lose you on their scope, burn their fuel and they wait longer to fly again. First side to 200 wins.</p><div class="mode-foot"><span class="mode-n"><b id="on-isle" data-raw>–</b> <span>pilots flying now</span></span><button class="go" id="b-isle" type="button">Fly</button></div></div>
       </div>
       <div class="row"><button class="ghost" id="b-oback" type="button">Back</button></div>
     </div>
@@ -529,6 +530,21 @@ const DICT = {
   "Target": ["Hedef", "Ziel"], "Integrity": ["Sağlamlık", "Zustand"], "Range": ["Mesafe", "Entfernung"], "Bearing": ["Kerteriz", "Peilung"], "Altitude": ["İrtifa", "Höhe"], "Armour": ["Zırh", "Panzerung"], "Use": ["Silah", "Waffe"],
   "Airframe": ["Gövde", "Zelle"], "Airspeed": ["Hız", "Fahrt"], "Bombs": ["Bomba", "Bomben"], "Rockets": ["Roket", "Raketen"], "Guns cooling": ["Namlular soğuyor", "Rohre kühlen ab"],
   "GEAR": ["TEKER", "FAHRW."],
+  "NO RADAR": ["RADAR YOK", "KEIN RADAR"], "FUEL": ["YAKIT", "TREIBST."],
+  "Our radar is destroyed": ["Radarımız yok edildi", "Unser Radar ist zerstört"], "Their radar is destroyed": ["Onların radarı yok edildi", "Ihr Radar ist zerstört"], "Our fuel dump is destroyed": ["Yakıt depomuz yok edildi", "Unser Treibstofflager ist zerstört"], "Their fuel dump is destroyed": ["Onların yakıt deposu yok edildi", "Ihr Treibstofflager ist zerstört"],
+  "Our radar is rebuilt": ["Radarımız yeniden kuruldu", "Unser Radar steht wieder"], "Their radar is rebuilt": ["Onların radarı yeniden kuruldu", "Ihr Radar steht wieder"], "Our fuel dump is rebuilt": ["Yakıt depomuz yeniden kuruldu", "Unser Treibstofflager steht wieder"], "Their fuel dump is rebuilt": ["Onların yakıt deposu yeniden kuruldu", "Ihr Treibstofflager steht wieder"],
+  "Fuel dump destroyed": ["Yakıt deposu yok edildi", "Treibstofflager zerstört"], "Radar destroyed": ["Radar yok edildi", "Radar zerstört"],
+  "They have burnt our fuel.": ["Yakıtımızı yaktılar.", "Sie haben unseren Treibstoff verbrannt."], "Every pilot waits longer to fly again until it is rebuilt.": ["Yeniden kurulana kadar her pilot uçmak için daha uzun bekler.", "Bis zum Wiederaufbau wartet jeder Pilot länger auf den nächsten Start."],
+  "Our radar is down.": ["Radarımız devre dışı.", "Unser Radar ist ausgefallen."], "No bandits on your scope until it is rebuilt.": ["Yeniden kurulana kadar ekranında düşman görünmez.", "Bis zum Wiederaufbau siehst du keine Gegner auf dem Schirm."],
+  "Their fuel is burning!": ["Yakıtları yanıyor!", "Ihr Treibstoff brennt!"], "Their radar is down!": ["Radarları devre dışı!", "Ihr Radar ist ausgefallen!"], "Our fuel dump is under attack!": ["Yakıt depomuz saldırı altında!", "Unser Treibstofflager wird angegriffen!"], "Our radar is under attack!": ["Radarımız saldırı altında!", "Unser Radar wird angegriffen!"],
+  "Island campaign": ["Ada harekâtı", "Inselfeldzug"], "Island campaign · you are RED": ["Ada harekâtı · KIRMIZI taraftasın", "Inselfeldzug · du bist ROT"], "Island campaign · you are BLUE": ["Ada harekâtı · MAVİ taraftasın", "Inselfeldzug · du bist BLAU"],
+  "Island campaign: the island assault on a bigger island, with an airstrip on its south shore. Land on the strip and stand there for three seconds to take it. The strip pays like a strongpoint, rearms and repairs whoever of its side lands on it, and its side takes off from it instead of flying in. A bomb on the runway closes it for thirty seconds. Each side has a radar and a fuel dump behind its beach: bomb their radar and they lose you on their scope, burn their fuel and they wait longer to fly again. First side to 200 wins.": ["Ada harekâtı: ada çıkarması, daha büyük bir adada ve güney kıyısında bir pistle. Piste in ve üç saniye yerde kal: pist senin tarafının olur. Pist bir direnek gibi puan öder, kendi tarafından inen herkesi silahlandırıp onarır ve tarafın uzaktan gelmek yerine pistten kalkar. Piste düşen bir bomba onu otuz saniye kapatır. Her tarafın kumsalının arkasında bir radarı ve bir yakıt deposu var: radarlarını bombalarsan seni ekranlarında göremezler, yakıtlarını yakarsan yeniden uçmak için daha uzun beklerler. 200 puana ilk ulaşan kazanır.", "Inselfeldzug: der Inselangriff auf einer größeren Insel, mit einem Flugfeld an der Südküste. Lande auf der Bahn und bleib drei Sekunden stehen, dann gehört sie deiner Seite. Sie zahlt wie ein Stützpunkt, bewaffnet und repariert jeden der eigenen Seite, der dort landet, und deine Seite startet von dort, statt anzufliegen. Eine Bombe auf die Bahn sperrt sie für dreißig Sekunden. Jede Seite hat hinter ihrem Strand ein Radar und ein Treibstofflager: Zerbombst du ihr Radar, sehen sie dich nicht mehr auf dem Schirm; brennt ihr Treibstoff, warten sie länger auf den nächsten Start. Wer zuerst 200 hat, gewinnt."],
+  "island campaign.": ["ada harekâtı.", "Inselfeldzug."], "Land on the airstrip and stand there for three seconds to take it.": ["Piste in ve almak için üç saniye yerde kal.", "Lande auf dem Flugfeld und bleib drei Sekunden stehen, um es zu nehmen."], "It rearms you, and your side takes off from it.": ["Seni silahlandırır, tarafın da oradan kalkar.", "Es bewaffnet dich neu, und deine Seite startet von dort."],
+  "Strip": ["Pist", "Bahn"], "Strip closed": ["Pist kapalı", "Bahn gesperrt"], "STRIP": ["PİST", "BAHN"], "STRIP CLOSED": ["PİST KAPALI", "BAHN GESPERRT"],
+  "Airstrip taken": ["Pist alındı", "Flugfeld genommen"], "Airstrip lost": ["Pist kaybedildi", "Flugfeld verloren"], "The airstrip is ours": ["Pist bizim", "Das Flugfeld gehört uns"], "They hold the airstrip": ["Pist onların elinde", "Sie halten das Flugfeld"],
+  "It is ours.": ["Artık bizim.", "Es gehört uns."], "Land there to rearm.": ["Silahlanmak için oraya in.", "Lande dort zum Aufmunitionieren."], "The strip is ours.": ["Pist bizim.", "Die Bahn gehört uns."], "They have landed on the strip.": ["Piste indiler.", "Sie sind auf der Bahn gelandet."], "Bomb the runway or take it back.": ["Pisti bombala ya da geri al.", "Bombardiere die Bahn oder hol sie zurück."],
+  "Our runway is cratered": ["Pistimiz bombalandı", "Unsere Bahn ist zerbombt"], "Their runway is cratered": ["Onların pisti bombalandı", "Ihre Bahn ist zerbombt"], "Runway closed": ["Pist kapatıldı", "Bahn gesperrt"], "Our runway is open again": ["Pistimiz yeniden açık", "Unsere Bahn ist wieder offen"], "Their runway is open again": ["Onların pisti yeniden açık", "Ihre Bahn ist wieder offen"],
+  "The strip is closed": ["Pist kapalı", "Die Bahn ist gesperrt"], "Rearming": ["Silahlanıyor", "Wird aufmunitioniert"], "Hold the strip": ["Pistte kal", "Bleib auf der Bahn"], "Taking off from the strip": ["Pistten kalkıyorsun", "Start vom Flugfeld"],
   "Send feedback": ["Geri bildirim gönder", "Feedback senden"], "Feedback": ["Geri bildirim", "Feedback"], "Tell us": ["Bize yaz", "Schreib uns"], "Send": ["Gönder", "Senden"],
   "What went wrong, what was too hard, what would you like to see? Your message goes straight to the people who make the game.": ["Ne ters gitti, ne fazla zordu, ne görmek isterdin? Mesajın doğrudan oyunu yapanlara gider.", "Was lief schief, was war zu schwer, was wünschst du dir? Deine Nachricht geht direkt an die Macher des Spiels."],
   "Write a few words first.": ["Önce birkaç kelime yaz.", "Schreib zuerst ein paar Worte."], "Sending…": ["Gönderiliyor…", "Wird gesendet…"], "Thank you. Your message has arrived.": ["Teşekkürler. Mesajın ulaştı.", "Danke. Deine Nachricht ist angekommen."],
@@ -706,6 +722,7 @@ const DICT = {
 };
 const CSN = '(Kestrel One|Lantern Red One|Sirocco Lead|Sokol One)', MEN = '(The Marines|The commandos|Eighth Army|The Guards)';
 const RXT = [
+  [/^(.+) is down on the strip\.$/, ['$1 piste indi.', '$1 steht auf der Bahn.']],
   [/^First side to (\d+) wins\.$/, ['$1 puana ilk ulaşan kazanır.', 'Wer zuerst $1 hat, gewinnt.']],
   [new RegExp('^' + CSN + ', ([\\s\\S]+)$'), ['$1, $2', '$1, $2']],
   [new RegExp('^([\\s\\S]+), ' + CSN + '\\.$'), ['$1, $2.', '$1, $2.']],
@@ -957,7 +974,8 @@ const painted = (sk, i) => PAINTS[i] && PAINTS[i].s ? Object.assign({}, sk, PAIN
 const pct = (v, good) => (v > 1 ? '+' : '−') + Math.round(Math.abs(v - 1) * 100) + '% ' + good;
 const planeNote = p => [p.spd !== 1 && pct(p.spd, 'speed'), p.turn !== 1 && pct(p.turn, 'agility'), p.arm !== 1 && pct(p.arm, 'armour'), p.gun !== 1 && pct(p.gun, 'firepower')].filter(Boolean).join(' · ') || 'Balanced';
 let M = MISSIONS[0], mIdx = 0, ISL = M.islands;
-const ARENA = 3700, SPAN = 7600; let AF = null;
+const ARENA = 3700, SPAN = 7600; let AF = null, ISLE = false, isleWorld = false; // ISLE: the island campaign, flown over a bigger island with an airstrip on its south shore
+const onAF = (x, z) => { if (!AF || !AF.cut) return false; const dx = x - AF.x, dz = z - AF.z, lz = clamp(dx * AF.s + dz * AF.c, -AF.hl, AF.hl); return Math.hypot(dx - lz * AF.s, dz - lz * AF.c) < 100; };
 const lite = () => MOBILE || !CAR.q; // phones and the Fast setting get a coarser terrain grid and thinner scenery
 function heightAt(x, z) {
   let best = 0;
@@ -978,7 +996,7 @@ function heightAt(x, z) {
   }
   if (AF) { // the airfield spit: a flat strip with dunes round it, sloping into the sea
     const dx = x - AF.x, dz = z - AF.z, lz = clamp(dx * AF.s + dz * AF.c, -AF.hl, AF.hl), dc = Math.hypot(dx - lz * AF.s, dz - lz * AF.c);
-    if (dc < 250) { const sm = t => t * t * (3 - 2 * t), land = AF.y + (noise(x * .02 + 5, z * .02) * 13 - 3) * sm(clamp((dc - 62) / 50, 0, 1)) * clamp((Math.abs(dx * AF.c - dz * AF.s) - 30) / 60, 0, 1), v = lerp(land, -10, sm(clamp((dc - 135) / 110, 0, 1))) + 10; if (v > best) best = v; }
+    if (dc < 250) { const sm = t => t * t * (3 - 2 * t), land = AF.y + (noise(x * .02 + 5, z * .02) * 13 - 3) * sm(clamp((dc - 62) / 50, 0, 1)) * clamp((Math.abs(dx * AF.c - dz * AF.s) - 30) / 60, 0, 1), v = lerp(land, -10, sm(clamp((dc - 135) / 110, 0, 1))) + 10; if (AF.cut) best = lerp(v, Math.max(best, v), sm(clamp((dc - 70) / 90, 0, 1))); /* cut into the island: flat on the strip, the hills come back beyond it */ else if (v > best) best = v; }
   }
   return best - 10;
 }
@@ -1136,21 +1154,21 @@ function buildTerrain(L) {
   const putTree = (x, z, y, a) => { const low = kinds[0] === 'palm' ? y < 32 : noise(x * .004 + 3, z * .004) > .5, m = low ? tA : tB; if ((low ? nA : nB) >= N) return; d.position.set(x, y - 1, z); const sc = rand(.7, 1.4); d.scale.set(sc, sc * rand(.8, 1.3), sc); d.rotation.set(0, a, 0); d.updateMatrix(); const i = low ? nA++ : nB++; m.setMatrixAt(i, d.matrix); m.setColorAt(i, t2.copy(tc).multiplyScalar(rand(.75, 1.3))); };
   for (let tries = 0, n = 0; tries < N * 8 && n < N; tries++) {
     const [x, z, y, s, r] = spot();
-    if (y < 5 || y > 110 || slopeAt(x, z) > .62 || (s.pad && r < s.r * .24) || noise(x * .012, z * .012) < (tries % 5 ? .4 : .22) || scarAt(x, z) > rand(.06, .45)) continue;
+    if (y < 5 || y > 110 || onAF(x, z) || slopeAt(x, z) > .62 || (s.pad && r < s.r * .24) || noise(x * .012, z * .012) < (tries % 5 ? .4 : .22) || scarAt(x, z) > rand(.06, .45)) continue;
     putTree(x, z, y, Math.random() * 6.283); n++;
   }
   if (AF) for (let i = 0; i < 60; i++) { const lz = rand(-AF.hl - 60, AF.hl + 60), lx = rand(72, 150) * (Math.random() > .5 ? 1 : -1), x = AF.x + lx * AF.c + lz * AF.s, z = AF.z - lx * AF.s + lz * AF.c, y = heightAt(x, z); if (y > 3) putTree(x, z, y, Math.random() * 6.283); }
   for (const [m, n] of [[tA, nA], [tB, nB]]) { m.count = n; m.frustumCulled = false; if (n) world.add(m); else m.geometry.dispose(); }
   const rocks = new T.InstancedMesh(new T.DodecahedronGeometry(1, 0), new T.MeshLambertMaterial({ color: 0xffffff }), NR), bush = new T.InstancedMesh(IC.clone(), new T.MeshLambertMaterial({ color: 0xffffff }), NB), rc = col(L.rock), bc = col(L.dark); let nr = 0, nb = 0;
   for (let tries = 0; tries < 9000 && (nr < NR || nb < NB); tries++) {
-    const [x, z, y, s, r] = spot(); if (y < .6 || (s.pad && r < s.r * .22)) continue; const sl = slopeAt(x, z);
+    const [x, z, y, s, r] = spot(); if (y < .6 || onAF(x, z) || (s.pad && r < s.r * .22)) continue; const sl = slopeAt(x, z);
     if (nr < NR && ((y < 6 && Math.random() < .22) || (sl > .42 && Math.random() < .6))) { const sc = rand(1.4, y < 6 ? 4 : 7); d.position.set(x, y - sc * .25, z); d.scale.set(sc, sc * rand(.5, .9), sc * rand(.7, 1.2)); d.rotation.set(rand(0, 3), rand(0, 6), rand(0, 3)); d.updateMatrix(); rocks.setMatrixAt(nr, d.matrix); rocks.setColorAt(nr++, t2.copy(rc).multiplyScalar(rand(.6, 1.05))); }
     else if (nb < NB && y > 4 && y < 95 && sl < .5 && scarAt(x, z) < .2) { const sc = rand(1.2, 2.8); d.position.set(x, y + sc * .2, z); d.scale.set(sc * rand(1, 1.6), sc * .7, sc * rand(1, 1.6)); d.rotation.set(0, rand(0, 6), 0); d.updateMatrix(); bush.setMatrixAt(nb, d.matrix); bush.setColorAt(nb++, t2.copy(bc).multiplyScalar(rand(.7, 1.25))); }
   }
   rocks.count = nr; bush.count = nb; rocks.frustumCulled = bush.frustumCulled = false; world.add(rocks); world.add(bush);
   const HB = new Batch(), wallC = col(L.wall || '#b9ad94'), roofC = col(L.roof || '#7a4a3a'); part(HB, null, UB, wallC, 8, 3.4, 5.6, 0, 1.7, 0); part(HB, null, UB, roofC, 8.6, .35, 3.9, 0, 4.25, -1.5, .6); part(HB, null, UB, roofC, 8.6, .35, 3.9, 0, 4.25, 1.5, -.6); part(HB, null, UB, wallC, .9, 1.8, .9, 2.6, 5.2, 0); part(HB, null, UB, new T.Color(.03, .03, .03), .1, 1.9, 1, -4.02, 1, 0); for (const wx of [-2, 2]) part(HB, null, UB, new T.Color(.04, .05, .06), 1, 1, .1, wx, 2, 2.82); part(HB, null, UB, wallC.clone().multiplyScalar(.8), 5, 2.4, 4, 9, 1.2, 3); part(HB, null, UB, roofC, 5.4, .3, 4.6, 9, 2.6, 3, 0, 0, .12);
   const farms = new T.InstancedMesh(HB.geo(), GM, 54); let nf = 0;
-  for (let tries = 0; tries < 2500 && nf < 54; tries++) { const [x, z, y, s, r] = spot(); if (y < 7 || y > 70 || (s.pad && r < s.r * .3) || slopeAt(x, z) > .1 || scarAt(x, z) > .03) continue; d.position.set(x, y - .4, z); d.scale.setScalar(rand(.9, 1.25)); d.rotation.set(0, rand(0, 6.283), 0); d.updateMatrix(); farms.setMatrixAt(nf, d.matrix); farms.setColorAt(nf++, t2.setScalar(rand(.8, 1.1))); }
+  for (let tries = 0; tries < 2500 && nf < 54; tries++) { const [x, z, y, s, r] = spot(); if (y < 7 || y > 70 || onAF(x, z) || (s.pad && r < s.r * .3) || slopeAt(x, z) > .1 || scarAt(x, z) > .03) continue; d.position.set(x, y - .4, z); d.scale.setScalar(rand(.9, 1.25)); d.rotation.set(0, rand(0, 6.283), 0); d.updateMatrix(); farms.setMatrixAt(nf, d.matrix); farms.setColorAt(nf++, t2.setScalar(rand(.8, 1.1))); }
   farms.count = nf; farms.frustumCulled = false; world.add(farms); SCEN = { trees: [tA, tB], full: [nA, nB], extra: [rocks, bush] }; K6.dispose(); K5.dispose(); IC.dispose();
   // shoreline map for the sea shader
   const S = 512, data = new Uint8Array(S * S);
@@ -2014,7 +2032,10 @@ function groundRoll(dt) {
     P.pitch += ((P.speed < 22 ? SIT * (1 - P.speed / 22) : 0) - P.pitch) * (1 - Math.exp(-5 * dt));
     if (Math.abs(l[0]) > PAD.hw + 1.5 || Math.abs(l[1]) > PAD.hl + 1.5) { crash(M.cs + ' ran off the ' + (PAD.carrier ? 'deck.' : 'runway.')); return; }
     if (P.speed <= 0) {
-      if (phase === 'extract') { P.gnd = 3; if (!endT) { endT = 1.6; endWon = true; } }
+      if (DUEL.on && DUEL.mode === 'isle') { // stand on the strip: the match server counts three seconds, then it is ours and she is turned round
+        if (!P.ldT) { P.ldT = time + .001; duelTell({ t: 'ld', on: 1 }); warn(DUEL.ap.own === DUEL.team ? 'Rearming' : 'Hold the strip', true); } else if (time - P.ldT > 8) { P.ldT = 0; isleSpot(); }
+      }
+      else if (phase === 'extract') { P.gnd = 3; if (!endT) { endT = 1.6; endWon = true; } }
       else { // turned round on the spot: rearmed and patched up
         P.rkt = M.rockets; P.bombs = M.bombs; P.hp = 100; P.heat = 0; P.hot = false; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true);
         spotPlane(); feed('Rearmed and repaired'); radio(M.cs + ', you are turned round and rearmed. Off you go again.');
@@ -2053,12 +2074,14 @@ function landAid(dt) {
 }
 
 function loadMission(i) {
-  mIdx = i; M = MISSIONS[i]; ISL = M.islands; NET.peers.clear();
+  mIdx = i; M = MISSIONS[i]; ISL = M.islands; NET.peers.clear(); isleWorld = ISLE;
+  if (ISLE) { const big = ISL.reduce((a, q) => (q.r > a.r ? q : a)); ISL = ISL.map(q => (q === big ? Object.assign({}, q, { r: q.r * 1.5 }) : q)); }
   if (world) { scene.remove(world); world.traverse(o => { if (o.geometry && o.geometry !== GEO.wing && !o.geometry.userData.keep) o.geometry.dispose(); if (o.material && o.material.dispose && o.isSprite && o.material !== FOEGLOW) o.material.dispose(); }); }
   world = new T.Group(); scene.add(world); enemies = []; HG = null;
   START.set(M.start[0], M.start[1], M.start[2]); SHIP.set(M.ship[0], 0, M.ship[1]);
   if (M.home === 'carrier') { Object.assign(PAD, { x: SHIP.x, z: SHIP.z, y: 13.56, yaw: -.3, hw: 21, hl: 122, carrier: true, name: 'CARRIER', spot: 104, td: 78 }); AF = null; }
   else { Object.assign(PAD, { x: SHIP.x + (SHIP.x > 0 ? -850 : 850), z: 2500, y: 4.24, yaw: .12, hw: 34, hl: 205, carrier: false, name: 'AIRSTRIP', spot: 186, td: 120 }); AF = { x: PAD.x, z: PAD.z, s: Math.sin(PAD.yaw), c: Math.cos(PAD.yaw), hl: 215, y: 4.1 }; }
+  if (ISLE) { const q = landIsle(); Object.assign(PAD, { x: q.x, z: q.z + q.r - 70, y: 4.24, yaw: Math.PI / 2, hw: 34, hl: 205, carrier: false, name: 'AIRSTRIP', spot: 186, td: 120 }); AF = { x: PAD.x, z: PAD.z, s: 1, c: 0, hl: 215, y: 4.1, cut: 1 }; }
   planFront();
   applyEnv(M.env); buildTerrain(M.env.land); buildClouds(M.env.clouds);
   START.set(M.start[0], M.start[1], M.start[2]); SHIP.set(M.ship[0], 0, M.ship[1]);
@@ -2130,7 +2153,7 @@ function chatTick(dt) {
   if (DUEL.on) { if (!DUEL.id || DUEL.over) return; foe = true; } else for (const e of enemies) if (e.kind === 'fighter' && !e.dead && !e.falling && e.pos.distanceTo(P.pos) < 1800) { foe = true; break; }
   if (!foe) return;
   const pool = [["I've got one on my tail!", "Hold on, I'm coming!"], ["They're all over us!"], ["He's smoking! Finish him!"], ['Check your six!'], ["Tally ho! Bandits, two o'clock high!", 'I see them. Going in!'], ['Break! Break!'], ["I'm on him!"], ["I'm hit! I'm hit!", "Hold on, I'm coming!"]];
-  if (DUEL.on && (DUEL.mode === 'land' || DUEL.mode === 'ship')) pool.push(['Target in sight. Rolling in!'], ['Target in sight. Rolling in!']);
+  if (DUEL.on && (dLand() || DUEL.mode === 'ship')) pool.push(['Target in sight. Rolling in!'], ['Target in sight. Rolling in!']);
   const c = pool[Math.random() * pool.length | 0]; chat(c[0], null, c[1]);
 }
 function tickRadio(dt) {
@@ -2147,7 +2170,7 @@ function feed(what, note) {
   setTimeout(() => d.classList.add('out'), 3200); setTimeout(() => d.remove(), 4000);
 }
 function updateObjective() {
-  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'land' ? (DUEL.team ? 'Island assault · you are RED' : 'Island assault · you are BLUE') : DUEL.mode === 'ship' ? (DUEL.team ? 'Carrier strike · you are RED' : 'Carrier strike · you are BLUE') : DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('')); return; } $('obj-t').removeAttribute('data-tail');
+  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'isle' ? (DUEL.team ? 'Island campaign · you are RED' : 'Island campaign · you are BLUE') : DUEL.mode === 'land' ? (DUEL.team ? 'Island assault · you are RED' : 'Island assault · you are BLUE') : DUEL.mode === 'ship' ? (DUEL.team ? 'Carrier strike · you are RED' : 'Carrier strike · you are BLUE') : DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('') + (DUEL.mode === 'isle' ? ' · ' + tr(DUEL.ap.shut ? 'Strip closed' : 'Strip') + (DUEL.ap.own < 0 ? '\u25cb' : DUEL.ap.own === DUEL.team ? '\u25b2' : '\u25bc') : '')); return; } $('obj-t').removeAttribute('data-tail');
   $('pips').querySelectorAll('i').forEach((p, i) => p.classList.toggle('done', i < cut));
   $('obj-n').textContent = cut + ' / ' + goalN();
   $('obj-t').textContent = phase === 'extract' ? (PAD.carrier ? 'Land on the carrier' : 'Land at the airstrip') : M.mode === 'dogfight' ? 'Shoot down the fighters' : M.mode === 'defend' ? 'Defend the ' + M.homeName.toLowerCase() : M.mode === 'escort' ? 'Protect the bombers' : cut === objs.length - 1 ? 'Destroy the last target' : 'Destroy the targets';
@@ -2404,7 +2427,9 @@ function drawRadar() {
   for (const S2 of SITES) if (S2.camp && S2.campLeft > 0 && S2.near < 1900) dot(S2.campV, 'rgba(255,90,68,.8)', 4, true);
   if (phase === 'extract') { dot(PADV, '#9fe0a0', 8, true); if (!P.ap && !P.gnd) dot(gateMark.aim, '#9fe0a0', 4); } else for (const o of objs) if (o.alive) dot(o.aim, '#ffc86a', 7, true);
   for (const e of enemies) if (!e.falling && !e.dead) dot(e.aim || e.pos, '#ff5a44', e.kind === 'bomber' ? 8 : 5);
-  for (const p of NET.peers.values()) if (p.alive) dot(p.pos, '#9fe0a0', 5.5);
+  { const blind = isleBlind(); for (const p of NET.peers.values()) if (p.alive) { const foe = DUEL.on && p.team !== undefined && p.team !== DUEL.team; if (!(foe && blind)) dot(p.pos, foe ? '#ff5a44' : '#9fe0a0', 5.5); }
+    for (const t of DUEL.tg) if (t.hp > 0) dot(t.aim, t.team === DUEL.team ? '#9fe0a0' : '#ffc86a', 5, true);
+    if (blind) { rc.fillStyle = '#ff8a6a'; rc.font = '700 22px sans-serif'; rc.textAlign = 'center'; rc.fillText(tr('NO RADAR'), c, S - 34); } }
   if (wing) dot(wing.pos, '#9fe0a0', 4.5); for (const p of pals) if (p.alive) dot(p.pos, '#9fe0a0', 7);
   rc.fillStyle = '#f3eede'; rc.beginPath(); rc.moveTo(c, c - 11); rc.lineTo(c + 7, c + 8); rc.lineTo(c, c + 4); rc.lineTo(c - 7, c + 8); rc.fill();
 }
@@ -2475,7 +2500,7 @@ function updatePlayer(dt) {
   P.pitch += input.y * ys * (lc ? .5 : .95) * sens * PM.turn * rk().turn * auth * dt; if (input.y === 0) P.pitch -= P.pitch * .35 * dt;
   if (P.pos.y > 640) P.pitch -= dt * 1.1;
   if (P.stall) P.pitch -= dt * .9;
-  if (phase === 'extract') landAid(dt); else P.ap = null;
+  if (phase === 'extract' || (ISLE && DUEL.on && P.gear && P.autoUp)) landAid(dt); else P.ap = null; // in the island campaign the approach aid helps once the pilot has put the wheels down himself
   P.pitch = clamp(P.pitch, -1.15, 1.15);
   if (Math.hypot(P.pos.x, P.pos.z) > ARENA) { // nudge back toward the operations area
     const want = Math.atan2(P.pos.x, P.pos.z); let df = want - P.yaw; df = Math.atan2(Math.sin(df), Math.cos(df)); P.yaw += Math.sign(df) * Math.min(Math.abs(df), .9 * dt);
@@ -2650,12 +2675,14 @@ function updateHud(dt) {
   if (DUEL.on) for (const h of DUEL.ships) if (h.hp > 0) put(h.aim, h.team === DUEL.team ? 'h' : 'e', '\u2693', h.aim.distanceTo(P.pos), h.hp / h.max);
   if (DUEL.on) for (const z of DUEL.zones) put(z.pos, z.own < 0 ? 'o' : z.own === DUEL.team ? 'h' : 'e', '\u25ce ' + z.name, Math.hypot(z.pos.x - P.pos.x, z.pos.z - P.pos.z), (z.v * (DUEL.team ? 1 : -1) + 1) / 2);
   if (LAND.on) { for (const u of LAND.units.values()) if (u.team !== DUEL.team) { const d = u.aim.distanceTo(P.pos); if (d < (u.kind ? 1500 : 1000)) put(u.aim, 'e', u.kind ? 'TANK' : 'TROOPS', d, u.hp / u.max); }
-    const b = LAND.beach[DUEL.team]; if (b && (P.bombs < M.bombs || P.rkt < M.rockets || P.hp < 70)) put(b, 'h', 'BEACH', b.distanceTo(P.pos)); }
+    const b = LAND.beach[DUEL.team]; if (b && (P.bombs < M.bombs || P.rkt < M.rockets || P.hp < 70)) put(b, 'h', 'BEACH', b.distanceTo(P.pos));
+    for (const t of DUEL.tg) if (t.team !== DUEL.team && t.hp > 0) { const d = t.aim.distanceTo(P.pos); if (d < 2600) put(t.aim, 'o', tr(t.kind ? 'FUEL' : 'RADAR'), d, t.hp / t.max); }
+    if (DUEL.mode === 'isle' && !P.gnd) { _pv.set(PAD.x, PAD.y + 30, PAD.z); put(_pv, DUEL.ap.own === DUEL.team ? 'h' : DUEL.ap.own < 0 ? 'o' : 'e', DUEL.ap.shut ? 'STRIP CLOSED' : 'STRIP', _pv.distanceTo(P.pos)); } }
   for (; mi < marks.length; mi++) marks[mi].d.hidden = true;
   updateTarget(); drawRadar();
   let lso = '';
   if (P.alive && P.gnd === 1) lso = P.rollT < 1.8 ? 'STAND BY' : P.speed < VR ? 'TAKE-OFF RUN · FLYING SPEED ' + Math.round(VR * 2.237) : '<i>RAISE THE NOSE</i>';
-  else if (P.alive && !P.gnd && phase === 'extract' && P.ap) { const a = P.ap, dh = a.h - Math.max(0, a.d) * .08; lso = (P.gear ? '<i>WHEELS DOWN</i>' : '<b>WHEELS UP · ' + (touchMode ? 'GEAR' : 'G') + '</b>') + ' · ' + (dh > 16 ? '<b>HIGH</b>' : dh < -8 ? '<b>LOW</b>' : '<i>ON SLOPE</i>') + ' · ' + (a.l > 10 ? '<b>COME LEFT</b>' : a.l < -10 ? '<b>COME RIGHT</b>' : '<i>LINED UP</i>') + ' · ' + (P.speed > 70 ? '<b>FAST' + (touchMode && !input.brake ? ' · CUT THE THROTTLE' : '') + '</b>' : '<i>SPEED OK</i>'); }
+  else if (P.alive && !P.gnd && (phase === 'extract' || ISLE) && P.ap) { const a = P.ap, dh = a.h - Math.max(0, a.d) * .08; lso = (P.gear ? '<i>WHEELS DOWN</i>' : '<b>WHEELS UP · ' + (touchMode ? 'GEAR' : 'G') + '</b>') + ' · ' + (dh > 16 ? '<b>HIGH</b>' : dh < -8 ? '<b>LOW</b>' : '<i>ON SLOPE</i>') + ' · ' + (a.l > 10 ? '<b>COME LEFT</b>' : a.l < -10 ? '<b>COME RIGHT</b>' : '<i>LINED UP</i>') + ' · ' + (P.speed > 70 ? '<b>FAST' + (touchMode && !input.brake ? ' · CUT THE THROTTLE' : '') + '</b>' : '<i>SPEED OK</i>'); }
   else if (P.alive && !P.gnd && phase === 'extract') lso = (PAD.carrier ? 'LAND ON THE CARRIER' : 'LAND AT THE AIRSTRIP') + ' · FOLLOW THE GREEN MARKER' + (P.gear ? ' · WHEELS DOWN' : '');
   else if (P.alive && !P.gnd && P.gear && P.autoUp) lso = 'WHEELS DOWN';
   if (lso !== lsoWas) { lsoWas = lso; $('lso').hidden = !lso; $('lso').innerHTML = lso; }
@@ -2826,9 +2853,12 @@ function campOpen() {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
   if (!campOpenF((CAMP.sel - 1) / 5 | 0)) CAMP.sel = 1; campFill(); show('s-camp'); $('b-cafly').focus(); campLoad();
 }
+const dLand = () => DUEL.mode === 'land' || DUEL.mode === 'isle';
+DUEL.ap = { own: -1, shut: 0 }; DUEL.tg = [];
+const isleBlind = () => DUEL.on && DUEL.mode === 'isle' && DUEL.tg.some(t => t.team === DUEL.team && t.kind === 0 && t.hp <= 0); // our radar is down: no bandits on the scope
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
-  const side = DUEL.team ? 1 : -1, lc = DUEL.mode === 'land' ? landC() : null; if (lc) P.pos.set(lc[0] + side * (1300 + rand(0, 300)), 480 + rand(-60, 60), lc[1] + 700 + rand(-250, 250)); else P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
+  const side = DUEL.team ? 1 : -1, lc = dLand() ? landC() : null, ik = DUEL.mode === 'isle' ? 1.5 : 1; if (lc) P.pos.set(lc[0] + side * (1300 * ik + rand(0, 300)), 480 + rand(-60, 60), lc[1] + 700 * ik + rand(-250, 250)); else P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
   P.yaw = side > 0 ? Math.PI / 2 : -Math.PI / 2; P.pitch = 0; P.roll = 0; P.speed = 82; P.gnd = 0; P.gear = false; P.gearK = 0; P.rollT = 0; P.rot = 0; P.airT = 5; P.autoUp = true; P.ap = null; P.stall = false;
   P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
@@ -2918,6 +2948,7 @@ function landQuiet() { // the mission's own front line stands down: this island 
 function landClear() {
   for (const u of LAND.units.values()) if (u.g) world.remove(u.g); LAND.units.clear(); LAND.gq.clear();
   for (const w of LAND.wrecks) world.remove(w.g); LAND.wrecks = [];
+  for (const t of DUEL.tg) world.remove(t.g); DUEL.tg = [];
   for (const m of LAND.extra) { world.remove(m); if (!m.geometry.userData.keep) m.geometry.dispose(); } LAND.extra = []; LAND.beach = [];
   if (LAND.men) { world.remove(LAND.men); LAND.men = null; }
   if (LAND.on) { LAND.on = false; for (const k of gtanks) k.g.visible = true; if (menMesh) menMesh.visible = true; }
@@ -3017,24 +3048,46 @@ function zonesGot(zs) {
     if (own !== z.own) { if (own === DUEL.team) feed(z.name + ' taken'); else if (z.own === DUEL.team) feed(z.name + ' lost'); z.own = own; z.mesh.material.color.setHex(ZCOL[own < 0 ? 0 : own === DUEL.team ? 1 : 2]); }
     z.v = +r[1] || 0; z.mesh.material.opacity = .1 + .1 * Math.abs(z.v); });
 }
+function tgSet(list) { // the radar and the fuel dump of each side, where the match server put them
+  for (const t of DUEL.tg) world.remove(t.g); DUEL.tg = []; if (!Array.isArray(list)) return;
+  const conc = std('#a8a495', .95), steel = std('#585d56', .6, .5), tank = std('#b9bdb8', .45, .7);
+  list.slice(0, 4).forEach(r => { if (!Array.isArray(r) || r.length < 6 || !r.every(v => typeof v === 'number' && isFinite(v))) return;
+    const g = new T.Group(), top = new T.Group(), kind = r[1] ? 1 : 0, y = Math.max(.5, groundAt(r[2], r[3])); g.add(top);
+    if (!kind) { g.add(box(22, 1.2, 22, conc, 0, .6, 0)); for (const sx of [-1, 1]) for (const sz of [-1, 1]) top.add(box(.7, 34, .7, steel, sx * 3, 17, sz * 3));
+      for (let h = 5; h <= 33; h += 7) { top.add(box(6.7, .45, .45, steel, 0, h, 3)); top.add(box(6.7, .45, .45, steel, 0, h, -3)); top.add(box(.45, .45, 6.7, steel, 3, h, 0)); top.add(box(.45, .45, 6.7, steel, -3, h, 0)); }
+      const pv = new T.Group(); pv.position.y = 40; for (const h of [-5, -1.7, 1.7, 5]) pv.add(box(20, .4, .4, steel, 0, h, 0)); for (let x = -10; x <= 10; x += 2.5) pv.add(box(.4, 10.4, .4, steel, x, 0, 0)); top.add(pv); g.add(box(10, 5, 8, conc, 14, 2.5, 8)); }
+    else { g.add(box(38, 1, 30, conc, 0, .5, 0)); for (const [x, z] of [[-10, -6], [3, -6], [-3.5, 6]]) { top.add(cyl(5.4, 5.4, 8, tank, x, 5, z, 18)); top.add(cyl(5.5, 5.5, .5, steel, x, 9.2, z, 18)); } g.add(box(10, 5, 8, std('#6e6a55', .9), 13, 3.5, 7)); }
+    g.position.set(r[2], y, r[3]); world.add(g); const t = { team: r[0] ? 1 : 0, kind, hp: r[4], max: r[5] || 600, g, top, aim: new V3(r[2], y + (kind ? 8 : 24), r[3]) }; DUEL.tg.push(t); tgLook(t); });
+}
+function tgLook(t) { const up = t.hp > 0; if (t.kind) t.top.visible = up; else { t.top.scale.y = up ? 1 : .45; t.top.rotation.z = up ? 0 : .6; } }
+function tgGot(m) {
+  const t = DUEL.tg[m.i | 0]; if (!t || DUEL.over) return; const was = t.hp; t.hp = Math.max(0, +m.hp || 0); if (Array.isArray(m.sc)) duelScore(m.sc); tgLook(t);
+  const ours = t.team === DUEL.team, what = (ours ? 'Our ' : 'Their ') + (t.kind ? 'fuel dump' : 'radar');
+  if (was > 0 && t.hp <= 0) { explode(t.aim, t.kind ? 60 : 36); if (t.aim.distanceTo(P.pos) < 500) shake = Math.max(shake, .5); feed(what + ' is destroyed'); if (m.by === DUEL.id) warn(t.kind ? 'Fuel dump destroyed' : 'Radar destroyed', true);
+    if (ours) radio(t.kind ? 'They have burnt our fuel. Every pilot waits longer to fly again until it is rebuilt.' : 'Our radar is down. No bandits on your scope until it is rebuilt.'); else if (m.by !== DUEL.id) call('tgdown', t.kind ? 'Their fuel is burning!' : 'Their radar is down!', 20); }
+  else if (m.k === 'up') feed(what + ' is rebuilt'); else if (t.hp < was && t.hp > 0 && ours) call('tghit', t.kind ? 'Our fuel dump is under attack!' : 'Our radar is under attack!', 30);
+  updateObjective();
+}
+function apGot(a, quiet) { DUEL.ap.own = a[0] === 0 ? 0 : a[0] === 1 ? 1 : -1; DUEL.ap.shut = a[1] | 0; }
+function isleSpot() { spotPlane(); P.told0 = true; P.ldT = 0; P.alive = true; plane.visible = true; } // on the runway, engine running: the take-off run starts by itself
 function duelTell(m) { if (DUEL.ws && DUEL.ws.readyState === 1) try { DUEL.ws.send(JSON.stringify(m)); } catch (e) {} }
 async function duelConnect(n) {
   duelClose(); DUEL.n = n; DUEL.full = false; let tok = '';
   try { const r = await NET.sb.auth.getSession(); tok = r.data && r.data.session ? r.data.session.access_token : ''; } catch (e) {}
   if (!DUEL.on || DUEL.ws) return; let ws; try { ws = new WebSocket(DUEL.url + '/ws?room=' + (DUEL.ch && roomKey() === 'open' ? 'p' + String(NET.uid || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) : roomKey()) + '&n=' + n + (DUEL.ch ? '&ch=' + DUEL.ch : DUEL.mode === 'df' ? '' : '&mode=' + DUEL.mode)); /* a chapter is flown in the pilot's own room, or his squadron's */ } catch (e) { DUEL.retry = 3; return; }
   DUEL.ws = ws; DUEL.retry = 6;
-  ws.onopen = () => { if (DUEL.ws === ws) duelTell({ t: 'hi', tok, dev: DUEL.dev || undefined, k: skyPlane(), r: ROLE, a: [M.bombs, M.rockets], c: DUEL.mode === 'land' ? landC() : [PAD.x, PAD.z - 1900], g: DUEL.mode === 'land' ? landBeach() : undefined }); };
+  ws.onopen = () => { if (DUEL.ws === ws) duelTell({ t: 'hi', tok, dev: DUEL.dev || undefined, k: skyPlane(), r: ROLE, a: [M.bombs, M.rockets], c: dLand() ? landC() : [PAD.x, PAD.z - 1900], g: dLand() ? landBeach() : undefined, s: DUEL.mode === 'isle' ? [Math.round(PAD.x), Math.round(PAD.z), PAD.y] : undefined }); };
   ws.onmessage = e => { if (DUEL.ws !== ws || !DUEL.on) return; let m; try { m = JSON.parse(e.data); } catch (x) { return; } if (m && typeof m === 'object') duelMsg(m); };
   ws.onclose = () => { if (DUEL.ws !== ws) return; DUEL.ws = null; if (!DUEL.on || DUEL.over) return; if (DUEL.full) duelConnect(n < 15 ? n + 1 : 0); else { DUEL.retry = 2; if (DUEL.id) warn('Connection lost. Reconnecting'); } };
 }
 function duelStart(mode, ch) {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
   if (mode) DUEL.ch = ch >= 1 && ch <= CHAPS.length ? ch | 0 : 0; if (DUEL.ch) mode = CHAPS[DUEL.ch - 1][0]; DUEL.load = null; { const x = (roleLv(RXP[ROLE]) - 1) / 3 | 0; DUEL.am = [ROLE === 'f' ? 0 : ROLE === 'a' ? 2 : 6 + x, ROLE === 'a' ? 14 + 2 * x : 4]; } DUEL.rx = 0; DUEL.bhp = 1; DUEL.stars = null; DUEL.sr = 0; DUEL.st = 0; DUEL.s2 = 0; DUEL.lmax = 0;
-  if (mode === 'df' || mode === 'zone' || mode === 'ship' || mode === 'land') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship', land = DUEL.mode === 'land';
-  const i = duelIdx(); if (i < 0) return; DUEL.on = true; if (mIdx !== i) loadMission(i);
+  if (mode === 'df' || mode === 'zone' || mode === 'ship' || mode === 'land' || mode === 'isle') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship', land = dLand(), isle = DUEL.mode === 'isle';
+  const i = duelIdx(); if (i < 0) return; DUEL.on = true; ISLE = isle; if (mIdx !== i || isleWorld !== ISLE) loadMission(i); DUEL.ap = { own: -1, shut: 0 }; P.ldT = 0;
   initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship || land ? 420 : 300; DUEL.goal = DUEL.ch && CHAPS[DUEL.ch - 1][3] || (zone ? 100 : land ? 200 : 25); DUEL.tb = []; DUEL.id = ''; DUEL.streak = 0; DUEL.dcam = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
   state = 'play'; show(null); canvas.focus(); if (land) landQuiet(); duelSpawn(); updateObjective(); warn(DUEL.ch ? 'Chapter ' + DUEL.ch : 'Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
-  radio(M.cs + (land ? ', island assault. Our troops are ashore. Hit their tanks and squads and help our men take the strongpoints.' : ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
+  radio(M.cs + (isle ? ', island campaign. Land on the airstrip and stand there for three seconds to take it. It rearms you, and your side takes off from it.' : land ? ', island assault. Our troops are ashore. Hit their tanks and squads and help our men take the strongpoints.' : ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
 }
 function duelDown(why, told) { // the player is out; the server brings him back
   if (!P.alive) return; P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; DUEL.respT = 8;
@@ -3046,7 +3099,7 @@ function duelHit(id, dmg) { DUEL.hitQ.set(id, (DUEL.hitQ.get(id) || 0) + dmg); }
 function duelScore(sc) { if (Array.isArray(sc) && sc.length === 2) { DUEL.us = sc[DUEL.team] | 0; DUEL.them = sc[1 - DUEL.team] | 0; } }
 function duelMsg(m) {
   if (m.t === 's') { // the server's picture of the fight, fifteen times a second
-    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; if (!DUEL.over) { duelScore(m.sc); if (Array.isArray(m.z)) zonesGot(m.z); if (Array.isArray(m.g)) landGot(m.g); if (Array.isArray(m.sh)) m.sh.forEach((v, i) => { const h = DUEL.ships[i]; if (h) h.hp = +v || 0; }); }
+    if (!Array.isArray(m.e)) return; DUEL.left = m.l | 0; if (!DUEL.over) { duelScore(m.sc); if (Array.isArray(m.z)) zonesGot(m.z); if (Array.isArray(m.ap)) apGot(m.ap); if (Array.isArray(m.g)) landGot(m.g); if (Array.isArray(m.sh)) m.sh.forEach((v, i) => { const h = DUEL.ships[i]; if (h) h.hp = +v || 0; }); }
     for (const e of m.e) {
       if (!Array.isArray(e) || e.length < 12) continue;
       if (e[0] === DUEL.id) { kills = e[10] | 0; continue; }
@@ -3063,7 +3116,7 @@ function duelMsg(m) {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
     DUEL.load = Array.isArray(m.ld) && m.ld.length === 2 ? [clamp(+m.ld[0] || 0, 0, 1), clamp(+m.ld[1] || 0, 0, 1)] : null; DUEL.bhp = clamp(+m.bhp || 1, 1, 3); DUEL.am = Array.isArray(m.am) && m.am.length === 2 ? [clamp(m.am[0] | 0, 0, 12), clamp(m.am[1] | 0, 0, 20)] : null;
-    weatherSet(m.wx); if (m.mode === 'land') landSet(m); else { zonesSet(m.zp); shipsSet(m.sp, m.shp, m.shm); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective(); chatT = 7;
+    weatherSet(m.wx); if (Array.isArray(m.ap)) apGot(m.ap, true); if (m.mode === 'land' || m.mode === 'isle') { landSet(m); tgSet(m.tg); } else { zonesSet(m.zp); shipsSet(m.sp, m.shp, m.shm); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective(); chatT = 7;
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
@@ -3087,7 +3140,18 @@ function duelMsg(m) {
     plane.userData.bombs.forEach((x, i) => x.visible = i < P.bombs); plane.userData.rkt.forEach((x, i) => x.visible = i < P.rkt);
     if (b || r) { feed(b ? 'Reward: ' + b + ' bombs' : m.k === 'air' ? 'Reward: ' + r + ' rockets and repairs' : 'Reward: ' + r + ' rockets'); warn('+' + (b ? b + ' bombs' : r + ' rockets'), true); } else if (m.k === 'air' && m.hp) feed('Reward: repairs');
   } else if (m.t === 'arm') { const kb = P.bombs, kr = P.rkt; duelArm(); P.bombs = Math.max(P.bombs, kb); P.rkt = Math.max(P.rkt, kr); if (P.alive) P.hp = 100; feed('Rearmed and repaired');
-  } else if (m.t === 'r') { if (!P.alive && !DUEL.over) { duelSpawn(); warn('Back in the fight', true); }
+  } else if (m.t === 'tg') { tgGot(m);
+  } else if (m.t === 'ap') { // the airstrip changed hands, was bombed shut, or is open again
+    if (DUEL.over) return; if (Array.isArray(m.sc)) duelScore(m.sc); apGot([m.own, m.shut]); const mine = m.own === DUEL.team, r = DUEL.ro.get(m.by);
+    if (m.k === 'take') { feed(mine ? 'Airstrip taken' : 'Airstrip lost'); warn(mine ? 'The airstrip is ours' : 'They hold the airstrip', mine); if (m.by !== DUEL.id) radio(mine ? (r ? r.name + ' is down on the strip. It is ours. Land there to rearm.' : 'The strip is ours. Land there to rearm.') : 'They have landed on the strip. Bomb the runway or take it back.'); }
+    else if (m.k === 'shut') { feed(mine ? 'Our runway is cratered' : 'Their runway is cratered'); if (m.by === DUEL.id) warn('Runway closed', true); }
+    else if (m.k === 'open' && m.own >= 0) feed(mine ? 'Our runway is open again' : 'Their runway is open again');
+    updateObjective();
+  } else if (m.t === 'ld') { // the server's word on the landing: taken and turned round, or not
+    if (!P.alive || P.gnd !== 2 || !P.ldT) return; P.ldT = 0;
+    if (m.ok) { duelArm(); P.hp = 100; P.heat = 0; P.hot = false; feed('Rearmed and repaired'); } else feed('The strip is closed');
+    isleSpot();
+  } else if (m.t === 'r') { if (!P.alive && !DUEL.over) { duelSpawn(); if (DUEL.mode === 'isle' && DUEL.ap.own === DUEL.team && !DUEL.ap.shut) { isleSpot(); warn('Taking off from the strip', true); } else warn('Back in the fight', true); }
   } else if (m.t === 'end') {
     if (DUEL.over) return; duelScore(m.sc); DUEL.rx = m.rx && m.rx[DUEL.id] | 0; { const s = DUEL.ch && m.st && m.st[DUEL.id]; DUEL.stars = Array.isArray(s) ? (s[0] ? 1 : 0) | (s[1] ? 2 : 0) | (s[2] ? 4 : 0) : null; } DUEL.tb = Array.isArray(m.tb) ? m.tb.filter(r => Array.isArray(r) && r.length >= 6) : []; updateObjective(); const won = DUEL.us > DUEL.them, tie = DUEL.us === DUEL.them; DUEL.over = DUEL.ships.some(h => h.hp <= 0) ? 11 : 7; hush(); radioQ.length = 0;
     warn(tie ? 'Draw' : won ? 'Victory' : 'Defeat', won || tie); radio(tie ? 'That is time. Honours even.' : won ? 'That is the match. Your side has it. Well flown.' : 'That is the match. They had the better of us today.');
@@ -3113,7 +3177,7 @@ function duelDone() { // the match is over: both sides' sheets, then fly again o
     $('du-note').hidden = !!ch; $('du-stars').hidden = !ch; $('du-cnote').hidden = !ch; $('b-camp2').hidden = !ch;
     if (ch) { $('du-stars').innerHTML = campLines(got); $('du-crp').textContent = gain * 30 + ' RP'; if (gain) { CAMP.st[ch - 1] = old | got; try { localStorage.setItem('windfall-camp', JSON.stringify(CAMP.st)); } catch (e) {} } setTimeout(campLoad, 2500); } }
   $('du-story').hidden = !DUEL.ch || tie; if (DUEL.ch && !tie) $('du-story').textContent = STORY[DUEL.ch - 1][won ? 'w' : 'l'][0];
-  $('du-mode').textContent = DUEL.ch ? 'Chapter ' + DUEL.ch + ' · ' + STORY[DUEL.ch - 1].t[0] : DUEL.mode === 'land' ? 'Island assault' : DUEL.mode === 'ship' ? 'Carrier strike' : DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
+  $('du-mode').textContent = DUEL.ch ? 'Chapter ' + DUEL.ch + ' · ' + STORY[DUEL.ch - 1].t[0] : DUEL.mode === 'isle' ? 'Island campaign' : DUEL.mode === 'land' ? 'Island assault' : DUEL.mode === 'ship' ? 'Carrier strike' : DUEL.mode === 'zone' ? 'Zone control' : 'Team dogfight'; $('du-status').textContent = tie ? 'Draw' : won ? 'Victory' : 'Defeat'; $('du-score').textContent = DUEL.us + ' : ' + DUEL.them; $('du-pts').textContent = me ? (me[3] | 0) * 10 + (won ? 30 : 0) : 0; $('du-rp').textContent = (me ? 20 + (me[3] | 0) * 8 + (won ? 40 : 0) : 0) + ' RP';
   setTimeout(() => { if (NET.me && NET.sb) rpc('my_pilot').then(adopt).catch(() => {}); }, 2500); // the server's report has landed by now: pick up the pay
   [DUEL.team, 1 - DUEL.team].forEach((t, i) => {
     const ol = $(i ? 'du-b' : 'du-a'); ol.textContent = ''; $(i ? 'du-bl' : 'du-al').textContent = t ? 'Red' : 'Blue';
@@ -3176,7 +3240,7 @@ function fillHangar() {
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
 }
-function board() { DUEL.on = false; hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); dailyLoad(); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
+function board() { DUEL.on = false; if (isleWorld) { ISLE = false; loadMission(mIdx); } hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); dailyLoad(); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
 function startGame() { if (DUEL.on) return duelStart(); initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); skyJoin(); netStart(); }
 function pause() { if (state !== 'play') return; hush(); state = 'pause'; show('s-pause'); $('b-resume').focus(); }
 function resume() { if (state !== 'pause') return; state = 'play'; show(null); last = performance.now(); canvas.focus(); }
@@ -3206,7 +3270,7 @@ function finish() {
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
-  try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land']) $('on-' + k).textContent = '–'; }
+  try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = '–'; }
 }
 function onlineOpen() {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
@@ -3221,7 +3285,7 @@ async function roleLoad() { // the experience the match server has written for e
 }
 roleFill();
 $('b-calog').onclick = logOpen; $('b-lgback').onclick = campOpen; $('b-camp').onclick = campOpen; $('b-caback').onclick = onlineOpen; $('b-camp2').onclick = campOpen; $('b-cafly').onclick = () => { if (campOpenF((CAMP.sel - 1) / 5 | 0)) duelStart(CHAPS[CAMP.sel - 1][0], CAMP.sel); };
-$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-isle').onclick = () => duelStart('isle'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
