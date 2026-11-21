@@ -8,7 +8,6 @@
 <meta name="theme-color" content="#0c1210">
 <meta name="color-scheme" content="dark">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -333,9 +332,12 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 }
 @media (max-width: 480px) { .stamp { display: none; } .sheet { padding: 18px 18px; } }
 @media (prefers-reduced-motion: reduce) { .warn.on, .cue.on { animation-duration: .01s; animation-iteration-count: 1; opacity: 1; } }
+#boot { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #040d1c; transition: opacity .45s ease; } #boot img { width: min(62vw, 92vh, 520px); height: auto; } #boot.out { opacity: 0; pointer-events: none; }
 </style>
 </head>
 <body>
+<div id="boot" aria-hidden="true"><img src="img/logo.webp" alt="" width="770" height="600"></div>
+<script>setTimeout(function () { var b = document.getElementById("boot"); if (b) b.remove(); }, 20000);</script>
 <div id="app">
   <canvas id="view" tabindex="0" aria-label="Flight view"></canvas>
   <div class="film"></div><div class="gloc" id="gloc"></div>
@@ -4144,6 +4146,8 @@ netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
 window.__game = { GEAR, NET, LOG, FACTIONS, PK, pkSet, CAR, pilotOpen, fillPilot, PARTS, EVENTS, sideTick, radioQ, finish: () => finish(), coach, SIDE, LOADS, storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
+/* the logo holds the screen until the first frames are out, and for at least a second so it is seen */
+setTimeout(() => requestAnimationFrame(() => { const b = $('boot'); if (b) { b.classList.add('out'); setTimeout(() => b.remove(), 500); } }), Math.max(0, 1100 - performance.now()));
 })();
 </script>
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;margin:0;padding:24px;font:16px system-ui;color:#f3eede;background:#0c1210;text-align:center">Operation Windfall needs JavaScript and WebGL to run.</p></noscript>
