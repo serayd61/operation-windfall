@@ -158,6 +158,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 .heat { width: 150px; }
 .heat-bar { height: 7px; margin: 7px 0 3px; box-shadow: inset 0 0 0 1px var(--hud-dim); background: rgba(12, 18, 16, .4); }
 .heat-bar i { display: block; height: 100%; width: 0; background: var(--sight); }
+#spd.best { color: #9fe0a0; }
 .heat.hot .heat-bar i { background: var(--threat); } .heat.hot .k { color: var(--threat); }
 .heat.warm .heat-bar i { background: #ffc86a; animation: blink .35s steps(1) infinite; } .heat.wep { width: 96px; } .touch .heat.wep { width: 60px; } .t-btn.hot { border-color: var(--threat); color: var(--threat); opacity: .55; }
 .touch .arms { right: auto; left: 50%; transform: translateX(-50%); bottom: calc(8px + var(--sab)); gap: 12px; }
@@ -1058,6 +1059,11 @@ const PLANES = [
   { n: 'F6F Hellcat', by: 'US Navy', cost: 1300, spd: 1.06, turn: 1.02, arm: 1.2, gun: 1.08, skin: { top: '#1f2f4a', top2: '#1f2f4a', under: '#d7dcdc', nose: '#1f2f4a', spin: '#161d2a', radial: true, mark: 'us', jacket: '#b39c66' } },
   { n: 'Fw 190 A', by: 'Luftwaffe', cost: 1400, spd: 1.1, turn: .98, arm: 1.1, gun: 1.2, skin: { top: '#5d6a5c', top2: '#3f4a45', under: '#a9c0cc', nose: '#c9a227', spin: '#e2dfd0', radial: true, mark: 'de', jacket: '#3c3a36' } }
 ]; // sixteen types at most: the type rides in four bits of what each aircraft tells the others
+/* the airframe of each type in three numbers: the most lift the wing gives (a higher one stalls later and turns tighter when slow), the drag she carries
+   at no lift (a lower one keeps her speed in a dive and a zoom), and what lift costs in drag (a lower one loses less speed in a hard turn) */
+const AERO = [[1.42, .0235, .048], [1.36, .0225, .054], [1.40, .0225, .050], [1.44, .0215, .046], [1.50, .0260, .046], [1.52, .0215, .040], [1.42, .0225, .047], [1.40, .0205, .052],
+  [1.36, .0185, .052], [1.36, .0205, .054], [1.32, .0215, .060], [1.50, .0205, .042], [1.58, .0240, .038], [1.44, .0210, .050], [1.46, .0225, .048], [1.34, .0205, .056]];
+PLANES.forEach((p, i) => { p.aero = AERO[i]; });
 /* paint goes over whatever type is flown; like the last three types it is opened by stars (sorties and campaign together), never bought */
 const PAINTS = [
   { n: 'Factory finish', star: 0, s: null },
@@ -2231,7 +2237,7 @@ function reset() {
   fxT.fill(0); fxD.fill(0); fxGeo.instanceCount = 0;
   for (const o of ord) { o.on = false; o.g.visible = false; }
   for (const o of objs) { o.hp = o.hp0; o.alive = true; o.top.visible = true; o.top.rotation.set(0, 0, 0); o.top.scale.set(1, 1, 1); o.top.position.set(0, 0, 0); o.group.position.y = o.pos.y; o.group.rotation.z = 0; o.group.visible = true; o.fireCd = 2; o.sink = 0; o.boomT = 0; }
-  P.told = false; P.told0 = false; P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.rkt = loadR(); P.bombs = loadB(); P.stall = false; P.g = 0; P.ordCd = 0;
+  P.told = false; P.told0 = false; P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.rkt = loadR(); P.bombs = loadB(); P.stall = false; P.g = 0; P.thr = 0; P.ordCd = 0;
   plane.visible = true; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true); beacon.visible = false;
   spotPlane(); setGate(1);
   downs = 0; failed = false; flakCall = -99; modeT = M.mode === 'escort' ? 12 : 6; waveI = 0; waveLive = false; resetPals();
@@ -2619,7 +2625,7 @@ function updateOrd(dt) {
 }
 function updatePlayer(dt) {
   if (!P.alive) return;
-  if (P.gnd) { groundRoll(dt); gearTick(dt); P.wep = Math.max(0, (P.wep || 0) - dt / 20); if (P.wep < .45) P.wepHot = false; P.buf = 0; return; }
+  if (P.gnd) { groundRoll(dt); gearTick(dt); P.thr = 0; P.wep = Math.max(0, (P.wep || 0) - dt / 20); if (P.wep < .45) P.wepHot = false; P.buf = 0; return; }
   P.airT += dt; if (!P.autoUp && P.airT > 2.5) { P.autoUp = true; P.gear = false; feed('Undercarriage up'); } gearTick(dt);
   const fl = M.flight, ys = invertY ? -1 : 1, auth = P.stall ? .3 : 1;
   const bst = input.boost && !P.wepHot; // war emergency power runs the engine hot: about fourteen seconds of it, then she has to cool
@@ -2627,10 +2633,15 @@ function updatePlayer(dt) {
   else { P.wep = Math.max(0, (P.wep || 0) - dt / 20); if (P.wepHot && P.wep < .45) P.wepHot = false; }
   if (bst && P.wep > .75) shake = Math.max(shake, (P.wep - .75) * .5); if (P.wepHot) { P.wepS = (P.wepS || 0) - dt; if (P.wepS <= 0) { P.wepS = .09; spawnFx(_c.copy(P.pos).addScaledVector(P.fwd, 3), rand(1.6, 2.6), 'rtrail'); } }
   const sens = SENS[CAR.sens], lc = P.gear && P.autoUp; // wheels down: gentler controls for the approach
-  P.roll += (-input.x * (lc ? .5 : 1.15) * auth + (P.stall ? (P.stSide || 1) * .75 : 0) - P.roll) * (1 - Math.exp(-4.5 * sens * dt));
-  const turnK = fl >= 2 ? Math.pow(M.v0 / Math.max(P.speed, 45), .7) : 1;
+  // the airframe: every type turns best near its own corner speed, stalls sooner the harder it is pulled, and flies worse when shot up
+  const A = PM.aero || AERO[[0, 1, 2, 3, 1, 0, 2][mIdx] || 0], NMAX = 2.1, vs = 47 * Math.sqrt(1.42 / A[0]), vc = vs * Math.sqrt(NMAX); // stall speed from the lift of the wing; corner speed is where that lift first reaches the most the airframe is pulled to
+  const dmgK = .82 + .18 * clamp(P.hp / 60, 0, 1), fT = v => (v < vc ? v / (vs * vs) : NMAX / vc * Math.pow(vc / v, .8)); // turn rate: held back by lift below the corner speed, by the load limit above it
+  const ld = 1 + Math.abs(input.y) * .35 + Math.abs(P.roll) * .22, vsE = vs * (1 + (Math.sqrt(ld) - 1) * (fl >= 4 ? 1 : .5)); // stall speed, and what the load makes of it
+  const mush = fl >= 3 && !P.gear ? clamp((P.speed - vsE * .92) / (vsE * .3), .4, 1) : 1; P.vc = vc;
+  P.roll += (-input.x * (lc ? .5 : 1.15) * auth * (.6 + .4 * mush) + (P.stall ? (P.stSide || 1) * .75 : 0) - P.roll) * (1 - Math.exp(-4.5 * sens * dt));
+  const tk = fT(Math.max(P.speed, 30)) / fT(M.v0), turnK = (fl >= 3 ? tk : fl === 2 ? .5 + .5 * tk : 1) * dmgK * mush;
   P.yaw += (P.roll * .78 * turnK * PM.turn * rk().turn - input.rud * .34) * dt;
-  P.pitch += input.y * ys * (lc ? .5 : .95) * sens * PM.turn * rk().turn * auth * dt; if (input.y === 0) P.pitch -= P.pitch * .35 * dt;
+  P.pitch += input.y * ys * (lc ? .5 : .95) * sens * PM.turn * rk().turn * auth * dmgK * mush * dt; if (input.y === 0) P.pitch -= P.pitch * .35 * dt;
   if (P.pos.y > 640) P.pitch -= dt * 1.1;
   if (P.stall) P.pitch -= dt * .9;
   if (phase === 'extract' || (ISLE && DUEL.on && P.gear && P.autoUp)) landAid(dt); else P.ap = null; // in the island campaign the approach aid helps once the pilot has put the wheels down himself
@@ -2639,10 +2650,16 @@ function updatePlayer(dt) {
     const want = Math.atan2(P.pos.x, P.pos.z); let df = want - P.yaw; df = Math.atan2(Math.sin(df), Math.cos(df)); P.yaw += Math.sign(df) * Math.min(Math.abs(df), .9 * dt);
     boundsT -= dt; if (boundsT <= 0) { boundsT = 8; radio(M.cs + ', you are leaving the operations area. Turning you back.'); }
   }
-  const tgt = bst ? M.vmax * (1 + .04 * CAR.up.eng) * PM.spd * rk().spd : input.brake ? (lc ? 42 : 50) : lc ? 52 : M.v0 * PM.spd * rk().spd; // throttle closed: 50 clean, 42 with the wheels down
-  P.speed += (tgt - P.speed) * (1 - Math.exp(-(input.brake ? 2 : 1.2) * dt)) - Math.sin(P.pitch) * (fl >= 3 ? 22 : 12) * (lc && !bst ? .4 : 1) * dt; // wheels down she does not run away in the descent
-  if (fl >= 3) { P.speed -= (Math.abs(P.roll) * 5 + Math.abs(input.y) * 4) * dt * (bst ? .4 : 1); if (P.speed < 47 && !P.gear) { if (!P.stall) { P.stSide = P.roll >= 0 ? 1 : -1; burst(140, 'lowpass', .6, .3); } P.stall = true; } else if (P.speed > 60 || P.gear) P.stall = false; }
-  P.buf = fl >= 3 && !P.gear ? clamp((59 - P.speed) / 12, 0, 1) : 0; if (P.buf > 0) shake = Math.max(shake, .08 + P.buf * .24); // the airframe shakes before she lets go
+  const tgt = (bst ? M.vmax * (1 + .04 * CAR.up.eng) * PM.spd * rk().spd : input.brake ? (lc ? 42 : 50) : lc ? 52 : M.v0 * PM.spd * rk().spd) * (input.brake || lc ? 1 : dmgK); // throttle closed: 50 clean, 42 with the wheels down
+  { // thrust against drag. Drag is what she carries at no lift, growing with the square of the speed, plus what the lift costs, growing with the square of the load and falling with the speed.
+    const k0 = .005 * A[1] / .0235, ci = 16 * (fl >= 3 ? 1 : fl === 2 ? .5 : .25) * (A[2] / .048) * 4637 / (NMAX * NMAX), v = Math.max(P.speed, 30), need = u => k0 * u * u + ci / (u * u); // thrust that holds a speed in level flight
+    const dem = clamp(Math.abs(input.y) * .6 + Math.abs(P.roll) / 1.15 * .6, 0, 1), nA = Math.min(1 + dem * (NMAX - 1), Math.max(1, v * v / (vs * vs))); // the load she is actually pulling: no more than the wing can lift at this speed
+    const grav = Math.sin(P.pitch) * (fl >= 3 ? 22 : 12) * (lc && !bst ? .4 : 1); // wheels down she does not run away in the descent
+    if (input.brake || lc) { P.speed += (tgt - P.speed) * (1 - Math.exp(-(input.brake ? 2 : 1.2) * dt)) - grav * dt - ci * (nA * nA - 1) / (v * v) * .3 * dt; P.thr = need(v); } // throttle closed, or flaps and wheels down: she settles on her approach speed
+    else { const want = need(tgt); P.thr = P.thr > 0 ? P.thr + (want - P.thr) * (1 - Math.exp(-2.5 * dt)) : want; P.speed += (P.thr - k0 * v * v - ci * nA * nA / (v * v) - grav) * dt; } // the engine takes a moment to answer the throttle
+  }
+  if (fl >= 3) { if (P.speed < vsE && !P.gear) { if (!P.stall) { P.stSide = P.roll >= 0 ? 1 : -1; burst(140, 'lowpass', .6, .3); } P.stall = true; } else if (P.speed > vsE + 13 || P.gear) P.stall = false; }
+  P.buf = fl >= 3 && !P.gear ? clamp((vsE + 12 - P.speed) / 12, 0, 1) : 0; if (P.buf > 0) shake = Math.max(shake, .08 + P.buf * .24); // the airframe shakes before she lets go
   P.speed = Math.max(P.speed, 30); $('stall').classList.toggle('on', P.stall); if (P.stall) call('stall', 'Stalling! Nose down!', 12);
   if (fl >= 4) { const load = Math.abs(P.roll) / 1.15 * (P.speed / M.v0) * (1 + Math.abs(input.y) * .4); P.g = clamp(P.g + (load > 1.45 ? dt * .45 : -dt * .7), 0, 1); $('gloc').style.opacity = (Math.max(0, P.g - .25) * 1.25).toFixed(2); }
   const cp = Math.cos(P.pitch); P.fwd.set(-Math.sin(P.yaw) * cp, Math.sin(P.pitch), -Math.cos(P.yaw) * cp);
@@ -2829,7 +2846,7 @@ function updateHud(dt) {
   if (P.bombs > 0 && P.alive) { _e.copy(P.pos); _d.copy(P.vel); let ok = false; for (let i = 0; i < 90; i++) { _d.y -= 26 * .1; _d.multiplyScalar(1 - .012); _e.addScaledVector(_d, .1); if (_e.y <= Math.max(0, heightAt(_e.x, _e.z))) { ok = true; break; } } placePip($('bpip'), _e, ok); } else $('bpip').hidden = true;
   const hp = Math.max(0, Math.ceil(P.hp)); $('hp-n').textContent = hp; $('hp').classList.toggle('crit', hp <= 35);
   for (let i = 0; i < 10; i++) hpPips[i].className = i < Math.ceil(hp / 10) ? '' : 'off';
-  $('spd').textContent = Math.round(P.speed * 2.237); $('alt').textContent = Math.max(0, Math.round(P.pos.y * 3.281 / 10) * 10);
+  $('spd').textContent = Math.round(P.speed * 2.237); $('spd').classList.toggle('best', M.flight >= 2 && !P.gnd && P.alive && Math.abs(P.speed / (P.vc || 1) - 1) < .1); // green: she is at her best turning speed $('alt').textContent = Math.max(0, Math.round(P.pos.y * 3.281 / 10) * 10);
   $('heat-fill').style.width = (P.heat * 100).toFixed(0) + '%'; $('heat').classList.toggle('hot', P.hot); $('heat').classList.toggle('warm', !P.hot && P.heat > .75); $('gun-k').textContent = P.hot ? 'Guns cooling' : M.gun.name;
   { const w = P.wep || 0; $('wep-fill').style.width = (w * 100).toFixed(0) + '%'; $('wep').classList.toggle('hot', !!P.wepHot); $('wep').classList.toggle('warm', !P.wepHot && w > .75); const k = P.wepHot ? 'Engine cooling' : 'WEP'; if ($('wep-k').textContent !== tr(k)) $('wep-k').textContent = k; $('t-boost').classList.toggle('hot', !!P.wepHot); }
   $('rkt-n').textContent = P.rkt; $('a-rkt').classList.toggle('out', !P.rkt); $('bomb-n').textContent = P.bombs; $('a-bomb').classList.toggle('out', !P.bombs);
@@ -2995,7 +3012,7 @@ const isleBlind = () => DUEL.on && DUEL.mode === 'isle' && DUEL.tg.some(t => t.t
 const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
   const side = DUEL.team ? 1 : -1, lc = dLand() ? landC() : null, ik = DUEL.mode === 'isle' ? 1.5 : 1; if (lc) P.pos.set(lc[0] + side * (1300 * ik + rand(0, 300)), 480 + rand(-60, 60), lc[1] + 700 * ik + rand(-250, 250)); else P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
-  P.yaw = side > 0 ? Math.PI / 2 : -Math.PI / 2; P.pitch = 0; P.roll = 0; P.speed = 82; P.gnd = 0; P.gear = false; P.gearK = 0; P.rollT = 0; P.rot = 0; P.airT = 5; P.autoUp = true; P.ap = null; P.stall = false;
+  P.yaw = side > 0 ? Math.PI / 2 : -Math.PI / 2; P.pitch = 0; P.roll = 0; P.speed = 82; P.thr = 0; P.gnd = 0; P.gear = false; P.gearK = 0; P.rollT = 0; P.rot = 0; P.airT = 5; P.autoUp = true; P.ap = null; P.stall = false;
   P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
