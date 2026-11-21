@@ -170,6 +170,13 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 #t-rkt { right: calc(22px + env(safe-area-inset-right, 0px)); bottom: calc(146px + var(--sab)); width: 62px; height: 62px; }
 #t-gear { right: calc(26px + env(safe-area-inset-right, 0px)); bottom: calc(222px + var(--sab)); width: 54px; height: 54px; font-size: 11px; }
 #t-slow { right: calc(94px + env(safe-area-inset-right, 0px)); bottom: calc(198px + var(--sab)); width: 54px; height: 54px; font-size: 10px; letter-spacing: .04em; }
+.tmap { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; gap: 14px; align-items: stretch; padding: 12px; max-width: 96vw; max-height: 92vh; background: rgba(14, 20, 18, .96); border: 1px solid var(--hud-dim); pointer-events: auto; cursor: pointer; text-shadow: none; z-index: 5; }
+.tmap canvas { width: min(64vh, 50vw); height: min(64vh, 50vw); flex: none; border: 1px solid var(--hud-faint); }
+.tmap-l { width: 250px; min-width: 0; display: flex; flex-direction: column; gap: 7px; color: var(--hud); font: 12px/1.45 var(--f-hud); overflow: auto; }
+.tmap-l b { font-size: 15px; letter-spacing: .14em; } .tmap-l p { margin: 0; } .tmap-l .key { display: flex; flex-wrap: wrap; gap: 4px 12px; } .tmap-l .key i { display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 50%; }
+.tmap-l .tip { margin-top: auto; padding-top: 4px; opacity: .7; }
+@media (orientation: portrait) { .tmap { flex-direction: column; } .tmap canvas { width: min(46vh, 88vw); height: min(46vh, 88vw); } .tmap-l { width: min(46vh, 88vw); } }
+@media (max-height: 460px) { .tmap { padding: 8px; gap: 10px; } .tmap canvas { width: min(84vh, 46vw); height: min(84vh, 46vw); } .tmap-l { font-size: 11px; line-height: 1.35; gap: 5px; } }
 .lso { position: absolute; left: 50%; top: 27%; transform: translateX(-50%); max-width: 92%; padding: 6px 12px; text-align: center; font: 700 13px/1.5 var(--f-hud); letter-spacing: .14em; color: var(--hud); background: var(--ink-plate); border: 1px solid var(--hud-dim); }
 .lso b { color: var(--threat); } .lso i { font-style: normal; color: #9fe0a0; }
 #t-bomb { right: calc(98px + env(safe-area-inset-right, 0px)); bottom: calc(122px + var(--sab)); width: 62px; height: 62px; }
@@ -285,11 +292,19 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div id="fps" hidden></div>
     <div class="compass"><div class="tape-wrap"><div class="tape" id="tape"></div></div><div class="needle"></div><div class="c-marks" id="cmarks"></div></div>
     <div class="obj"><div class="k">Objective</div><div class="obj-t" id="obj-t">Destroy the targets</div><div class="pips" id="pips"></div></div>
-    <div class="top-btns"><button class="ibtn" id="b-cam" type="button" aria-label="Change camera view">VIEW</button><button class="ibtn" id="b-mute" type="button" aria-label="Toggle sound">SND</button><button class="ibtn" id="b-pause" type="button" aria-label="Pause">II</button></div>
+    <div class="top-btns"><button class="ibtn" id="b-map" type="button" aria-label="Map" hidden>MAP</button><button class="ibtn" id="b-cam" type="button" aria-label="Change camera view">VIEW</button><button class="ibtn" id="b-mute" type="button" aria-label="Toggle sound">SND</button><button class="ibtn" id="b-pause" type="button" aria-label="Pause">II</button></div>
     <canvas class="radar" id="radar" width="248" height="248" aria-hidden="true"></canvas>
     <div class="warn" id="warn">Bandits inbound</div>
     <div class="cues"><div class="cue" id="pull">PULL UP</div><div class="cue" id="stall">STALL</div><div class="cue" id="six">CHECK SIX</div></div>
     <div class="lso" id="lso" hidden></div>
+    <div class="tmap" id="tmap" hidden><canvas id="tmap-c" width="560" height="560"></canvas><div class="tmap-l"><b>Island map</b>
+      <div class="key"><span><i style="background:#9fe0a0"></i>Ours</span><span><i style="background:#ff5a44"></i>Theirs</span><span><i style="background:#f3eede"></i>Nobody's</span></div>
+      <p id="tmap-ap">Airstrip: land on it and stand still for three seconds to take it. It rearms and repairs you, and your side takes off from it.</p>
+      <p id="tmap-shut">A bomb on the runway closes it for thirty seconds.</p>
+      <p id="tmap-tg">Radar: bomb theirs and they lose you on their scope. Fuel dump: burn theirs and they wait longer to fly again.</p>
+      <p>Strongpoints A, B and C pay points while your side holds them. Bomb the tanks and troops that march on them.</p>
+      <p>First side to 200 wins.</p>
+      <p class="tip">Tap the map or press N to close it. The MAP button opens it again.</p></div></div>
     <div id="marks"></div>
     <div class="tbox" id="tbox" hidden><i></i><i></i><i></i><i></i></div>
     <div class="tgt" id="tgt" hidden><div class="k" id="tg-type">Target</div><div class="tg-name" id="tg-name"></div><div class="tg-bar"><i id="tg-fill"></i></div><div class="tg-row"><span>Integrity</span><b id="tg-hp"></b></div><div class="tg-row"><span>Range</span><b id="tg-rng"></b></div><div class="tg-row"><span id="tg-xk">Bearing</span><b id="tg-xv"></b></div><div class="tg-row tg-x"><span>Armour</span><b id="tg-arm"></b></div><div class="tg-row tg-x"><span>Use</span><b id="tg-use"></b></div></div>
@@ -530,7 +545,13 @@ const DICT = {
   "Target": ["Hedef", "Ziel"], "Integrity": ["Sağlamlık", "Zustand"], "Range": ["Mesafe", "Entfernung"], "Bearing": ["Kerteriz", "Peilung"], "Altitude": ["İrtifa", "Höhe"], "Armour": ["Zırh", "Panzerung"], "Use": ["Silah", "Waffe"],
   "Airframe": ["Gövde", "Zelle"], "Airspeed": ["Hız", "Fahrt"], "Bombs": ["Bomba", "Bomben"], "Rockets": ["Roket", "Raketen"], "Guns cooling": ["Namlular soğuyor", "Rohre kühlen ab"],
   "GEAR": ["TEKER", "FAHRW."],
-  "NO RADAR": ["RADAR YOK", "KEIN RADAR"], "FUEL": ["YAKIT", "TREIBST."],
+  "NO RADAR": ["RADAR YOK", "KEIN RADAR"], "MAP": ["HARİTA", "KARTE"], "Island map": ["Ada haritası", "Inselkarte"], "Ours": ["Bizim", "Unser"], "Theirs": ["Onların", "Gegner"], "Nobody's": ["Sahipsiz", "Niemand"],
+  "Airstrip: land on it and stand still for three seconds to take it. It rearms and repairs you, and your side takes off from it.": ["Pist: üstüne in ve üç saniye dur, pist sizin olur. Mühimmatını doldurur, uçağını onarır ve takımın buradan kalkar.", "Piste: Lande darauf und bleib drei Sekunden stehen, dann gehört sie euch. Sie rüstet und repariert dich, und eure Seite startet von dort."],
+  "A bomb on the runway closes it for thirty seconds.": ["Piste düşen bir bomba onu otuz saniye kapatır.", "Eine Bombe auf die Bahn sperrt sie für dreißig Sekunden."],
+  "Radar: bomb theirs and they lose you on their scope. Fuel dump: burn theirs and they wait longer to fly again.": ["Radar: onlarınkini bombalarsan seni ekranlarında göremezler. Yakıt deposu: onlarınkini yakarsan yeniden uçmak için daha uzun beklerler.", "Radar: Zerbombst du ihres, sehen sie dich nicht mehr auf dem Schirm. Treibstofflager: Brennt ihres, warten sie länger auf den nächsten Start."],
+  "Strongpoints A, B and C pay points while your side holds them. Bomb the tanks and troops that march on them.": ["A, B ve C mevzileri sizdeyken puan kazandırır. Onlara yürüyen tankları ve askerleri bombala.", "Die Stützpunkte A, B und C bringen Punkte, solange eure Seite sie hält. Bombardiere die Panzer und Truppen, die darauf vorrücken."],
+  "First side to 200 wins.": ["200 puana ilk ulaşan kazanır.", "Wer zuerst 200 hat, gewinnt."],
+  "Tap the map or press N to close it. The MAP button opens it again.": ["Kapatmak için haritaya dokun ya da N'ye bas. HARİTA düğmesi yeniden açar.", "Tippe auf die Karte oder drücke N zum Schließen. Die Taste KARTE öffnet sie wieder."], "FUEL": ["YAKIT", "TREIBST."],
   "Our radar is destroyed": ["Radarımız yok edildi", "Unser Radar ist zerstört"], "Their radar is destroyed": ["Onların radarı yok edildi", "Ihr Radar ist zerstört"], "Our fuel dump is destroyed": ["Yakıt depomuz yok edildi", "Unser Treibstofflager ist zerstört"], "Their fuel dump is destroyed": ["Onların yakıt deposu yok edildi", "Ihr Treibstofflager ist zerstört"],
   "Our radar is rebuilt": ["Radarımız yeniden kuruldu", "Unser Radar steht wieder"], "Their radar is rebuilt": ["Onların radarı yeniden kuruldu", "Ihr Radar steht wieder"], "Our fuel dump is rebuilt": ["Yakıt depomuz yeniden kuruldu", "Unser Treibstofflager steht wieder"], "Their fuel dump is rebuilt": ["Onların yakıt deposu yeniden kuruldu", "Ihr Treibstofflager steht wieder"],
   "Fuel dump destroyed": ["Yakıt deposu yok edildi", "Treibstofflager zerstört"], "Radar destroyed": ["Radar yok edildi", "Radar zerstört"],
@@ -2679,7 +2700,7 @@ function updateHud(dt) {
     for (const t of DUEL.tg) if (t.team !== DUEL.team && t.hp > 0) { const d = t.aim.distanceTo(P.pos); if (d < 2600) put(t.aim, 'o', tr(t.kind ? 'FUEL' : 'RADAR'), d, t.hp / t.max); }
     if (DUEL.mode === 'isle' && !P.gnd) { _pv.set(PAD.x, PAD.y + 30, PAD.z); put(_pv, DUEL.ap.own === DUEL.team ? 'h' : DUEL.ap.own < 0 ? 'o' : 'e', DUEL.ap.shut ? 'STRIP CLOSED' : 'STRIP', _pv.distanceTo(P.pos)); } }
   for (; mi < marks.length; mi++) marks[mi].d.hidden = true;
-  updateTarget(); drawRadar();
+  updateTarget(); drawRadar(); drawMap();
   let lso = '';
   if (P.alive && P.gnd === 1) lso = P.rollT < 1.8 ? 'STAND BY' : P.speed < VR ? 'TAKE-OFF RUN · FLYING SPEED ' + Math.round(VR * 2.237) : '<i>RAISE THE NOSE</i>';
   else if (P.alive && !P.gnd && (phase === 'extract' || ISLE) && P.ap) { const a = P.ap, dh = a.h - Math.max(0, a.d) * .08; lso = (P.gear ? '<i>WHEELS DOWN</i>' : '<b>WHEELS UP · ' + (touchMode ? 'GEAR' : 'G') + '</b>') + ' · ' + (dh > 16 ? '<b>HIGH</b>' : dh < -8 ? '<b>LOW</b>' : '<i>ON SLOPE</i>') + ' · ' + (a.l > 10 ? '<b>COME LEFT</b>' : a.l < -10 ? '<b>COME RIGHT</b>' : '<i>LINED UP</i>') + ' · ' + (P.speed > 70 ? '<b>FAST' + (touchMode && !input.brake ? ' · CUT THE THROTTLE' : '') + '</b>' : '<i>SPEED OK</i>'); }
@@ -2948,7 +2969,7 @@ function landQuiet() { // the mission's own front line stands down: this island 
 function landClear() {
   for (const u of LAND.units.values()) if (u.g) world.remove(u.g); LAND.units.clear(); LAND.gq.clear();
   for (const w of LAND.wrecks) world.remove(w.g); LAND.wrecks = [];
-  for (const t of DUEL.tg) world.remove(t.g); DUEL.tg = [];
+  for (const t of DUEL.tg) world.remove(t.g); DUEL.tg = []; mapOn = false; $('tmap').hidden = true; $('b-map').hidden = true;
   for (const m of LAND.extra) { world.remove(m); if (!m.geometry.userData.keep) m.geometry.dispose(); } LAND.extra = []; LAND.beach = [];
   if (LAND.men) { world.remove(LAND.men); LAND.men = null; }
   if (LAND.on) { LAND.on = false; for (const k of gtanks) k.g.visible = true; if (menMesh) menMesh.visible = true; }
@@ -3048,6 +3069,29 @@ function zonesGot(zs) {
     if (own !== z.own) { if (own === DUEL.team) feed(z.name + ' taken'); else if (z.own === DUEL.team) feed(z.name + ' lost'); z.own = own; z.mesh.material.color.setHex(ZCOL[own < 0 ? 0 : own === DUEL.team ? 1 : 2]); }
     z.v = +r[1] || 0; z.mesh.material.opacity = .1 + .1 * Math.abs(z.v); });
 }
+/* the island map: a chart of the island with everything that can be held or broken on it, and the rules beside it */
+let mapOn = false, mapT = 0, mapN = 0, mapBase = null, mapKey = '';
+function mapSet(v, auto) { mapOn = !!v && DUEL.on && LAND.on; mapT = mapOn && auto ? performance.now() + auto * 1000 : 0; $('tmap').hidden = !mapOn; if (mapOn) { const isle = DUEL.mode === 'isle'; $('tmap-ap').hidden = $('tmap-shut').hidden = $('tmap-tg').hidden = !isle; mapN = 0; drawMap(); } }
+function drawMap() {
+  if (!mapOn) return; if (mapT && performance.now() > mapT) return mapSet(false); if (mapN++ % 6) return;
+  const cv = $('tmap-c'), g = cv.getContext('2d'), S = cv.width, big = ISL.reduce((a, q) => (q.r > a.r ? q : a)), half = big.r * 1.1, k = S / 2 / half, X = x => (x - big.x) * k + S / 2, Y = z => (z - big.z) * k + S / 2;
+  const key = mIdx + '|' + isleWorld + '|' + big.r;
+  if (mapKey !== key || !mapBase) { mapKey = key; mapBase = document.createElement('canvas'); mapBase.width = mapBase.height = S; const b = mapBase.getContext('2d'), N = 140, c = S / N; b.fillStyle = '#1d3340'; b.fillRect(0, 0, S, S);
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const h = heightAt(big.x + ((i + .5) / N * 2 - 1) * half, big.z + ((j + .5) / N * 2 - 1) * half); if (h <= .6) continue; const t = clamp(h / 150, 0, 1); b.fillStyle = h < 5 ? '#b9ad82' : 'rgb(' + Math.round(58 + t * 70) + ',' + Math.round(92 + t * 46) + ',' + Math.round(54 + t * 40) + ')'; b.fillRect(i * c, j * c, c + .6, c + .6); } }
+  g.drawImage(mapBase, 0, 0); g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+  const own = t => (t < 0 ? '#f3eede' : t === DUEL.team ? '#9fe0a0' : '#ff5a44'), text = (s, x, y, colr, f) => { g.font = '700 ' + (f || 15) + 'px sans-serif'; g.lineWidth = 4; g.strokeStyle = 'rgba(10,14,12,.85)'; g.strokeText(s, x, y); g.fillStyle = colr; g.fillText(s, x, y); };
+  for (const z of DUEL.zones) { const x = X(z.pos.x), y = Y(z.pos.z); g.beginPath(); g.arc(x, y, 17, 0, 7); g.fillStyle = 'rgba(10,14,12,.55)'; g.fill(); g.lineWidth = 3; g.strokeStyle = own(z.own); g.stroke(); text(z.name, x, y + 1, own(z.own), 17); }
+  if (DUEL.mode === 'isle') { const A = DUEL.ap, x = X(PAD.x), y = Y(PAD.z), colr = own(A.own); g.save(); g.translate(x, y); g.rotate(-PAD.yaw); g.fillStyle = 'rgba(10,14,12,.6)'; g.fillRect(-9, -PAD.hl * k - 3, 18, PAD.hl * 2 * k + 6); g.fillStyle = colr; g.fillRect(-5, -PAD.hl * k, 10, PAD.hl * 2 * k); g.restore();
+    text(tr(A.shut ? 'STRIP CLOSED' : 'STRIP') + (A.shut ? ' ' + Math.ceil(A.shut) : ''), x, y - 22, A.shut ? '#ffc86a' : colr); }
+  for (const t of DUEL.tg) { const x = X(t.aim.x), y = Y(t.aim.z), colr = t.hp > 0 ? own(t.team) : 'rgba(243,238,222,.45)'; g.beginPath(); if (t.kind) g.rect(x - 8, y - 8, 16, 16); else { g.moveTo(x, y - 10); g.lineTo(x + 10, y + 8); g.lineTo(x - 10, y + 8); g.closePath(); } g.fillStyle = 'rgba(10,14,12,.6)'; g.fill(); g.lineWidth = 3; g.strokeStyle = colr; g.stroke();
+    if (t.hp <= 0) { g.beginPath(); g.moveTo(x - 11, y - 11); g.lineTo(x + 11, y + 11); g.moveTo(x + 11, y - 11); g.lineTo(x - 11, y + 11); g.stroke(); } text(tr(t.kind ? 'FUEL' : 'RADAR'), x, y - 20, colr, 13); }
+  for (let i = 0; i < 2; i++) { const b = LAND.beach[i]; if (b) text(tr('BEACH'), X(b.x), Y(b.z) + 12, own(i), 12); }
+  for (const u of LAND.units.values()) if (u.hp > 0) { g.fillStyle = own(u.team); const x = X(u.aim.x), y = Y(u.aim.z); if (u.kind) g.fillRect(x - 3.5, y - 3.5, 7, 7); else { g.beginPath(); g.arc(x, y, 2.6, 0, 7); g.fill(); } }
+  const blind = isleBlind(); for (const p of NET.peers.values()) if (p.alive) { const foe = p.team !== DUEL.team; if (foe && blind) continue; g.beginPath(); g.arc(clamp(X(p.pos.x), 6, S - 6), clamp(Y(p.pos.z), 6, S - 6), 5, 0, 7); g.fillStyle = own(p.team); g.fill(); g.lineWidth = 1.5; g.strokeStyle = '#0a0e0c'; g.stroke(); }
+  if (blind) text(tr('NO RADAR'), S / 2, S - 20, '#ff8a6a', 18);
+  g.save(); g.translate(clamp(X(P.pos.x), 10, S - 10), clamp(Y(P.pos.z), 10, S - 10)); g.rotate(-P.yaw); g.beginPath(); g.moveTo(0, -13); g.lineTo(9, 10); g.lineTo(0, 5); g.lineTo(-9, 10); g.closePath(); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#0a0e0c'; g.stroke(); g.restore();
+  text('N', S - 22, 24, '#f3eede', 18); g.beginPath(); g.moveTo(S - 22, 58); g.lineTo(S - 22, 38); g.lineTo(S - 27, 45); g.moveTo(S - 22, 38); g.lineTo(S - 17, 45); g.lineWidth = 2; g.strokeStyle = '#f3eede'; g.stroke();
+}
 function tgSet(list) { // the radar and the fuel dump of each side, where the match server put them
   for (const t of DUEL.tg) world.remove(t.g); DUEL.tg = []; if (!Array.isArray(list)) return;
   const conc = std('#a8a495', .95), steel = std('#585d56', .6, .5), tank = std('#b9bdb8', .45, .7);
@@ -3084,7 +3128,7 @@ function duelStart(mode, ch) {
   if (!NET.me || !NET.sb) { netMsg('Join the competition with a pilot name first.'); return; }
   if (mode) DUEL.ch = ch >= 1 && ch <= CHAPS.length ? ch | 0 : 0; if (DUEL.ch) mode = CHAPS[DUEL.ch - 1][0]; DUEL.load = null; { const x = (roleLv(RXP[ROLE]) - 1) / 3 | 0; DUEL.am = [ROLE === 'f' ? 0 : ROLE === 'a' ? 2 : 6 + x, ROLE === 'a' ? 14 + 2 * x : 4]; } DUEL.rx = 0; DUEL.bhp = 1; DUEL.stars = null; DUEL.sr = 0; DUEL.st = 0; DUEL.s2 = 0; DUEL.lmax = 0;
   if (mode === 'df' || mode === 'zone' || mode === 'ship' || mode === 'land' || mode === 'isle') DUEL.mode = mode; const zone = DUEL.mode === 'zone', ship = DUEL.mode === 'ship', land = dLand(), isle = DUEL.mode === 'isle';
-  const i = duelIdx(); if (i < 0) return; DUEL.on = true; ISLE = isle; if (mIdx !== i || isleWorld !== ISLE) loadMission(i); DUEL.ap = { own: -1, shut: 0 }; P.ldT = 0;
+  const i = duelIdx(); if (i < 0) return; DUEL.on = true; ISLE = isle; if (mIdx !== i || isleWorld !== ISLE) loadMission(i); DUEL.ap = { own: -1, shut: 0 }; P.ldT = 0; DUEL.brief = 0;
   initAudio(); reset(); skyLeave(); DUEL.respT = 0; DUEL.over = 0; DUEL.lastBy = ''; DUEL.botT = 0; DUEL.us = DUEL.them = 0; DUEL.team = 0; DUEL.left = ship || land ? 420 : 300; DUEL.goal = DUEL.ch && CHAPS[DUEL.ch - 1][3] || (zone ? 100 : land ? 200 : 25); DUEL.tb = []; DUEL.id = ''; DUEL.streak = 0; DUEL.dcam = ''; DUEL.tries = 0; DUEL.ro.clear(); DUEL.hitQ.clear();
   state = 'play'; show(null); canvas.focus(); if (land) landQuiet(); duelSpawn(); updateObjective(); warn(DUEL.ch ? 'Chapter ' + DUEL.ch : 'Looking for a match', true); NET.sendT = 0; NET.listT = 0; duelConnect(0);
   radio(M.cs + (isle ? ', island campaign. Land on the airstrip and stand there for three seconds to take it. It rearms you, and your side takes off from it.' : land ? ', island assault. Our troops are ashore. Hit their tanks and squads and help our men take the strongpoints.' : ship ? ', carrier strike. Sink their carrier before they sink ours. Bombs and rockets only.' : zone ? ', zone control. Hold the rings. First side to 100 wins.' : ', team dogfight. First side to ' + DUEL.goal + ' wins. Good hunting.'));
@@ -3116,7 +3160,7 @@ function duelMsg(m) {
     DUEL.id = String(m.id); DUEL.team = m.team ? 1 : 0; DUEL.goal = m.goal | 0 || 25; DUEL.left = m.left | 0; DUEL.tries = 0; duelScore(m.sc);
     for (const p of NET.peers.values()) world.remove(p.mesh); NET.peers.clear();
     DUEL.load = Array.isArray(m.ld) && m.ld.length === 2 ? [clamp(+m.ld[0] || 0, 0, 1), clamp(+m.ld[1] || 0, 0, 1)] : null; DUEL.bhp = clamp(+m.bhp || 1, 1, 3); DUEL.am = Array.isArray(m.am) && m.am.length === 2 ? [clamp(m.am[0] | 0, 0, 12), clamp(m.am[1] | 0, 0, 20)] : null;
-    weatherSet(m.wx); if (Array.isArray(m.ap)) apGot(m.ap, true); if (m.mode === 'land' || m.mode === 'isle') { landSet(m); tgSet(m.tg); } else { zonesSet(m.zp); shipsSet(m.sp, m.shp, m.shm); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective(); chatT = 7;
+    weatherSet(m.wx); if (Array.isArray(m.ap)) apGot(m.ap, true); if (m.mode === 'land' || m.mode === 'isle') { landSet(m); tgSet(m.tg); $('b-map').hidden = false; if (!DUEL.brief) { DUEL.brief = 1; mapSet(true, m.mode === 'isle' ? 12 : 8); } } else { zonesSet(m.zp); shipsSet(m.sp, m.shp, m.shm); } duelSpawn(); warn(DUEL.team ? 'You are on RED' : 'You are on BLUE', true); updateObjective(); chatT = 7;
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
@@ -3287,7 +3331,7 @@ roleFill();
 $('b-calog').onclick = logOpen; $('b-lgback').onclick = campOpen; $('b-camp').onclick = campOpen; $('b-caback').onclick = onlineOpen; $('b-camp2').onclick = campOpen; $('b-cafly').onclick = () => { if (campOpenF((CAMP.sel - 1) / 5 | 0)) duelStart(CHAPS[CAMP.sel - 1][0], CAMP.sel); };
 $('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-isle').onclick = () => duelStart('isle'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
-$('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam;
+$('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam; $('b-map').onclick = () => mapSet(!mapOn); $('tmap').onclick = () => mapSet(false);
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
 $('o-inv').onchange = e => { invertY = e.target.checked; try { localStorage.setItem('windfall-inv', invertY ? '1' : '0'); } catch (er) {} };
 let startAt = 0;
@@ -3306,6 +3350,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyP' || e.code === 'Escape') { if (state === 'play') pause(); else if (state === 'pause') resume(); }
   if (e.code === 'KeyM') setMuted(!muted);
   if (e.code === 'KeyC' && state === 'play' && !e.repeat) nextCam();
+  if (e.code === 'KeyN' && state === 'play' && !e.repeat && DUEL.on && LAND.on) mapSet(!mapOn);
   if (e.code === 'KeyG' && state === 'play' && !e.repeat) toggleGear();
   if (e.code === 'Enter' && state === 'menu' && $('s-hangar').hidden && e.target.tagName !== 'BUTTON') startGame();
 });
