@@ -4,7 +4,7 @@
   "private": true,
   "description": "Android and iOS wrapper for Operation Windfall (Capacitor); the game files are copied from the repo root.",
   "scripts": {
-    "www": "rm -rf www && mkdir -p www && cp -R ../index.html ../privacy.html ../vendor ../icons ../voice www/",
+    "www": "rm -rf www && mkdir -p www && cp -R ../index.html ../privacy.html ../vendor ../icons ../voice ../img www/",
     "sync": "npm run www && cap sync"
   },
   "dependencies": {
