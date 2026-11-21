@@ -66,9 +66,10 @@ body { background: var(--ink); color: var(--hud); overflow: hidden; font-family:
 .c-marks { position: absolute; left: 50%; top: 31px; }
 .c-mark { position: absolute; left: -32px; width: 64px; text-align: center; font: 700 12px/1 var(--f-hud); letter-spacing: .12em; color: var(--sight); will-change: transform; }
 .c-mark::before { content: ''; display: block; width: 0; height: 0; margin: 0 auto 3px; border: 5px solid transparent; border-top: 0; border-bottom: 7px solid currentColor; }
-.c-mark.home { color: var(--go); }
+.c-mark.home { color: var(--go); } .c-mark.pri { color: #ff7a5c; }
 
 .obj { position: absolute; top: calc(14px + var(--sat)); left: var(--gl); max-width: min(250px, 38vw); padding-left: 10px; border-left: 2px solid var(--sight); }
+.obj-s.pri { color: #ff9c84; border-left-color: #ff7a5c; }
 .obj-s { margin-top: 8px; padding: 4px 8px; font: 700 12px/1.35 var(--f-hud); letter-spacing: .06em; color: #ffc86a; background: var(--ink-plate); border-left: 2px solid #ffc86a; }
 .obj-t { font: 700 20px/1.1 var(--f-hud); letter-spacing: .05em; text-transform: uppercase; margin: 6px 0 8px; }
 .pips { display: flex; gap: 5px; align-items: center; }
@@ -229,6 +230,15 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .rec b { font: 700 17px/1 var(--f-stencil); letter-spacing: .08em; } .rec span { color: var(--type-dim); } .rec .bar { flex: 1 1 80px; height: 6px; box-shadow: inset 0 0 0 1px var(--type-dim); align-self: center; } .rec .bar i { display: block; height: 100%; background: var(--olive); }
 .medals { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font: 400 14px/1.35 var(--f-type); color: var(--type-dim); }
 .medals li::before { content: '☆ '; color: var(--type-dim); } .medals li.on { color: var(--type); } .medals li.on::before { content: '★ '; color: var(--stamp); }
+.brf { display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 14px; align-items: start; } .brf canvas { width: 200px; height: 200px; border: 1px solid rgba(41, 40, 31, .45); background: rgba(41, 40, 31, .04); }
+.brf h3 { margin: 10px 0 3px; font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--stamp); } .brf h3:first-child { margin-top: 0; } .brf .side { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font: 700 12px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; color: var(--type-dim); }
+.brf p, .brf li { margin: 0; font: 400 15px/1.4 var(--f-type); color: var(--type); } .brf ul { margin: 0; padding-left: 18px; } .brf .sign { margin-top: 10px; font-style: italic; color: var(--type-dim); }
+.more summary { cursor: pointer; font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type-dim); } .more p { margin-top: 8px; }
+@media (max-width: 620px) { .brf { grid-template-columns: 1fr; } .brf canvas { justify-self: center; } }
+.fac { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-bottom: 6px; font: 700 12px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; color: var(--type-dim); }
+.fmark { flex: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font: 700 11px/1 var(--f-hud); font-style: normal; color: #fff; }
+.fmark.us { background: #1f3a63; } .fmark.su { background: #f1ede0; color: #b3261e; box-shadow: inset 0 0 0 1px rgba(41, 40, 31, .35); } .fmark.axis { background: #4b4f52; font-size: 10px; }
+.fmark.raf { background: radial-gradient(circle, #b3261e 0 26%, #f1ede0 27% 54%, #1f3a63 55%); }
 .lab2 { font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type-dim); margin-bottom: -6px; }
 .upg { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(41, 40, 31, .3); }
 .upg b { font: 700 16px/1.1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .upg b i { font-style: normal; letter-spacing: .2em; color: var(--stamp); margin-left: 8px; } .upg.pick { cursor: pointer; } .upg.look { box-shadow: inset 4px 0 0 var(--stamp); padding-left: 10px; } .upg.pick:focus-visible { outline: 2px solid var(--stamp); outline-offset: 2px; }
@@ -367,7 +377,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       </div>
       <div class="seg" id="m-pick" role="radiogroup" aria-label="Choose a sortie"></div>
       <h1 id="m-title">Operation Windfall</h1>
-      <p class="lede" id="m-brief"></p>
+      <div class="brf"><div id="m-brf"></div><canvas id="m-map" width="440" height="440" aria-hidden="true"></canvas></div>
+      <details class="more"><summary>Full orders</summary><p class="lede" id="m-brief"></p></details>
       <ul class="medals" id="m-stars"></ul>
       <dl class="keys" id="m-keys"></dl>
       <div id="sky-box" hidden>
@@ -449,7 +460,12 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="sheet-head"><span>Debriefing</span><span id="end-status">Mission accomplished</span></div>
       <h1 id="end-title">Welcome aboard</h1>
       <p class="lede" id="end-lede"></p>
+      <p class="note" id="end-why" hidden></p>
+      <p class="note" id="end-tone" style="font-style:italic"></p>
       <ul class="medals" id="end-stars"></ul>
+      <div class="lab2">Objectives</div>
+      <ul class="medals" id="end-goals"></ul>
+      <p class="note" id="end-pilot"></p>
       <p class="note" id="end-next"></p>
       <p class="note" id="end-net" hidden></p>
       <div class="stats">
@@ -461,6 +477,10 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div><span class="lab">Bombers</span><b id="st-bomb">0</b></div>
         <div><span class="lab">Earned</span><b id="st-rp">0</b></div>
         <div><span class="lab">Gunnery</span><b id="st-acc">0%</b></div>
+        <div><span class="lab">Damage taken</span><b id="st-dmg">0%</b></div>
+        <div><span class="lab">Rockets / bombs used</span><b id="st-ord">0 / 0</b></div>
+        <div><span class="lab">Stalls</span><b id="st-stall">0</b></div>
+        <div><span class="lab">Touchdown</span><b id="st-land">–</b></div>
         <div><span class="lab">Best time</span><b id="st-best">–</b></div>
       </div>
       <div class="row"><button class="go" id="b-again" type="button">Fly again</button><button class="ghost" id="b-retry" type="button">Fly it again</button><button class="ghost" id="b-board2" type="button">Sortie board</button></div>
@@ -788,7 +808,9 @@ const DICT = {
   "Back": ["Geri", "Zurück"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
   "Harder-hitting, cooler-running guns, 12% a step": ["Daha sert vuran, daha serin çalışan toplar, kademe başına %12", "Härter treffende, kühler laufende Waffen, 12 % je Stufe"], "Heavier rocket and bomb warheads, 15% a step": ["Daha ağır roket ve bomba başlıkları, kademe başına %15", "Schwerere Raketen- und Bombenköpfe, 15 % je Stufe"],
-  "Fitted": ["Takıldı", "Eingebaut"], "Fit": ["Tak", "Einbauen"], "Buy": ["Satın al", "Kaufen"], "Fly": ["Uç", "Fliegen"], "Flying": ["Uçuyor", "In Benutzung"], "Mission standard": ["Görev standardı", "Einsatzstandard"], "The type each front was flown with": ["Her cephede kullanılan tip", "Der Typ, der an jeder Front flog"],
+  "Fitted": ["Takıldı", "Eingebaut"], "Fit": ["Tak", "Einbauen"], "Buy": ["Satın al", "Kaufen"], "Fly": ["Uç", "Fliegen"], "Flying": ["Uçuyor", "In Benutzung"], "Mission standard": ["Görev standardı", "Einsatzstandard"], "United States": ["Amerika Birleşik Devletleri", "Vereinigte Staaten"], "Soviet Union": ["Sovyetler Birliği", "Sowjetunion"], "Axis": ["Mihver", "Achse"], "Captured types": ["Ele geçirilen tipler", "Erbeutete Typen"],
+  "Priority target": ["Öncelikli hedef", "Vorrangiges Ziel"], "Priority": ["Öncelik", "Vorrang"], "Stop the tanks": ["Tankları durdur", "Die Panzer stoppen"], "Armour stopped": ["Zırhlılar durduruldu", "Panzer gestoppt"], "Clear your wingman": ["Kanat arkadaşını kurtar", "Den Rottenflieger freikämpfen"], "Wingman clear": ["Kanat arkadaşı kurtuldu", "Rottenflieger frei"], "Stay under the cloud": ["Bulutun altında kal", "Unter der Wolke bleiben"], "Through the storm": ["Fırtına atlatıldı", "Durch den Sturm"], "gunboats are going for our supply convoy.": ["hücumbotlar ikmal konvoyumuza gidiyor.", "Kanonenboote gehen auf unseren Versorgungskonvoi."], "Go sink them.": ["Git batır onları.", "Versenk sie."], "they sent up one of their aces for you.": ["senin için as pilotlarından birini kaldırdılar.", "sie haben eines ihrer Asse auf dich angesetzt."], "Knock him down.": ["İndir onu.", "Hol ihn runter."], "change of plan.": ["plan değişti.", "Planänderung."], "Tanks are rolling on the beach.": ["Tanklar kumsalda ilerliyor.", "Panzer rollen auf den Strand."], "Hit them now.": ["Hemen vur.", "Greif sie sofort an."], "your wingman has two on his tail.": ["kanat arkadaşının peşinde iki tane var.", "dein Rottenflieger hat zwei im Nacken."], "Get them off him.": ["Onları üstünden al.", "Hol sie ihm vom Hals."], "weather is closing in fast.": ["hava hızla kapanıyor.", "das Wetter zieht schnell zu."], "Get under the cloud and stay there.": ["Bulutun altına in ve orada kal.", "Geh unter die Wolke und bleib dort."], "Nice work.": ["İyi iş.", "Gute Arbeit."], "Back to the main job.": ["Asıl işe dön.", "Zurück zur Hauptaufgabe."], "Too late for that one.": ["O iş için geç kaldık.", "Dafür ist es zu spät."], "Good hit.": ["İyi isabet.", "Guter Treffer."], "Keep it up.": ["Böyle devam.", "Weiter so."], "enemy gunboats are closing on a supply convoy.": ["düşman hücumbotları bir ikmal konvoyuna yaklaşıyor.", "feindliche Kanonenboote nähern sich einem Versorgungskonvoi."], "You are to sink them.": ["Onları batıracaksınız.", "Sie sind zu versenken."], "an enemy ace is airborne and looking for you.": ["bir düşman ası havada ve sizi arıyor.", "ein feindliches Ass ist in der Luft und sucht Sie."], "Engage and destroy.": ["Angaje olun ve imha edin.", "Angreifen und vernichten."], "priority has changed.": ["öncelik değişti.", "die Priorität hat sich geändert."], "Enemy armour is advancing on the beach.": ["Düşman zırhlıları kumsalda ilerliyor.", "Feindliche Panzer rücken am Strand vor."], "Attack it at once.": ["Derhal taarruz edin.", "Sofort angreifen."], "your number two reports two bandits astern.": ["iki numaranız arkasında iki düşman bildiriyor.", "Ihre Nummer zwei meldet zwei Banditen achteraus."], "Kindly remove them.": ["Lütfen onları uzaklaştırın.", "Entfernen Sie sie bitte."], "the weather is deteriorating rapidly.": ["hava hızla bozuluyor.", "das Wetter verschlechtert sich rasch."], "Descend below the cloud base and remain there.": ["Bulut tabanının altına inin ve orada kalın.", "Unter die Wolkenuntergrenze sinken und dort bleiben."], "Well done indeed.": ["Gerçekten iyi iş.", "Wirklich gut gemacht."], "Resume your primary task.": ["Asıl görevinize dönün.", "Hauptaufgabe wieder aufnehmen."], "That opportunity has passed.": ["O fırsat kaçtı.", "Diese Gelegenheit ist vorbei."], "Target destroyed.": ["Hedef imha edildi.", "Ziel zerstört."], "Good show.": ["Güzel iş.", "Saubere Leistung."], "gunboats near the convoy.": ["konvoyun yanında hücumbotlar.", "Kanonenboote beim Konvoi."], "Sink them.": ["Batır.", "Versenken."], "enemy ace in the air.": ["düşman ası havada.", "feindliches Ass in der Luft."], "Destroy him.": ["İmha et.", "Vernichten."], "new order.": ["yeni emir.", "neuer Befehl."], "Tanks on the beach.": ["Kumsalda tanklar.", "Panzer am Strand."], "Strike now.": ["Şimdi vur.", "Jetzt zuschlagen."], "wingman attacked.": ["kanat arkadaşı saldırı altında.", "Rottenflieger wird angegriffen."], "Help him.": ["Yardım et.", "Hilf ihm."], "storm coming.": ["fırtına geliyor.", "Sturm zieht auf."], "Go low.": ["Alçal.", "Geh tief."], "Done.": ["Tamam.", "Erledigt."], "Continue the task.": ["Göreve devam.", "Aufgabe fortsetzen."], "Too late.": ["Geç kaldın.", "Zu spät."], "Good.": ["İyi.", "Gut."],
+  "The job": ["Görev", "Der Auftrag"], "Targets": ["Hedefler", "Ziele"], "Also worth your time": ["Fırsat bulursan", "Auch lohnend"], "What is up there": ["Yukarıda ne var", "Was dort oben wartet"], "How to fly it": ["Nasıl uçulur", "So fliegst du es"], "Go get them.": ["Haydi, göster onlara.", "Hol sie dir."], "Intention": ["Maksat", "Absicht"], "Primary objectives": ["Ana hedefler", "Hauptziele"], "Secondary objectives": ["İkincil hedefler", "Nebenziele"], "Opposition expected": ["Beklenen mukavemet", "Erwarteter Widerstand"], "Recommended method": ["Önerilen usul", "Empfohlenes Vorgehen"], "Task": ["Görev", "Aufgabe"], "Also": ["Ayrıca", "Außerdem"], "Enemy": ["Düşman", "Feind"], "Method": ["Usul", "Vorgehen"], "Carry it out.": ["Yerine getir.", "Ausführen."], "Order": ["Emir", "Befehl"], "Further targets": ["Diğer hedefler", "Weitere Ziele"], "Full orders": ["Emrin tamamı", "Vollständiger Befehl"], "Gun battery": ["Top bataryası", "Geschützbatterie"], "Freighter": ["Yük gemisi", "Frachter"], "Shoot down eight fighters": ["Sekiz avcı düşür", "Acht Jäger abschießen"], "Stop three bomber raids": ["Üç bombardıman akınını durdur", "Drei Bomberangriffe stoppen"], "Keep the carrier afloat": ["Uçak gemisini su üstünde tut", "Den Träger über Wasser halten"], "Bring two of the three bombers to the depot": ["Üç bombardıman uçağından ikisini depoya ulaştır", "Zwei der drei Bomber zum Lager bringen"], "Flak: none": ["Uçaksavar: yok", "Flak: keine"], "Flak: light": ["Uçaksavar: hafif", "Flak: leicht"], "Flak: medium": ["Uçaksavar: orta", "Flak: mittel"], "Flak: heavy": ["Uçaksavar: yoğun", "Flak: schwer"], "The fleet sails through this strait tonight. While those radars are up, the enemy sees it coming.": ["Filo bu gece bu boğazdan geçecek. O radarlar ayakta kaldıkça düşman geldiğini görür.", "Die Flotte läuft heute Nacht durch diese Meerenge. Solange die Radare stehen, sieht der Feind sie kommen."], "Enemy tanks above the beaches": ["Kumsalların üstündeki düşman tankları", "Feindpanzer oberhalb der Strände"], "Infantry camps behind the line": ["Hattın gerisindeki piyade kampları", "Infanterielager hinter der Linie"], "Light fighters in pairs. They out-turn you.": ["İkişerli hafif avcılar. Senden sıkı dönerler.", "Leichte Jäger in Paaren. Sie kurven enger als du."], "Guns for the radars. Keep both bombs for the tanks.": ["Radarlara top. İki bombayı da tanklara sakla.", "Bordwaffen für die Radare. Beide Bomben für die Panzer aufheben."], "The coastal guns close the Channel to our convoys. With them silenced, the commandos can hold the shore.": ["Kıyı topları Manş'ı konvoylarımıza kapatıyor. Susturulurlarsa komandolar kıyıyı tutabilir.", "Die Küstengeschütze sperren den Kanal für unsere Geleitzüge. Sind sie zum Schweigen gebracht, können die Kommandos das Ufer halten."], "Panzers pinning down the commandos": ["Komandoları yere yapıştıran panzerler", "Panzer, die die Kommandos niederhalten"], "E-boats in the Channel": ["Manş'taki hücumbotlar", "Schnellboote im Kanal"], "Fast fighters above the coast.": ["Kıyı üstünde hızlı avcılar.", "Schnelle Jäger über der Küste."], "Rockets for the batteries; cannon will do for the radar post.": ["Bataryalara roket; radar karakoluna top yeter.", "Raketen für die Batterien; für den Radarposten genügt die Kanone."], "The garrison lives on that fuel and those two ships. Cut them off and it cannot fight on.": ["Garnizon o yakıtla ve o iki gemiyle ayakta. Onları kes, savaşamaz.", "Die Garnison lebt von diesem Treibstoff und diesen zwei Schiffen. Ohne sie kann sie nicht weiterkämpfen."], "Enemy armour facing Eighth Army": ["Sekizinci Ordu'nun karşısındaki düşman zırhlıları", "Feindpanzer vor der Achten Armee"], "Agile fighters over the islands.": ["Adaların üstünde çevik avcılar.", "Wendige Jäger über den Inseln."], "Bomb the freighters from low level. Watch your speed in the climb: she will stall.": ["Yük gemilerini alçaktan bombala. Tırmanışta hızına dikkat: stall olur.", "Die Frachter im Tiefflug bombardieren. Im Steigflug auf die Fahrt achten: Sie reißt ab."], "The ships at anchor cover the enemy retreat. Break them and the coast is ours.": ["Demirdeki gemiler düşmanın çekilişini örtüyor. Onları kır, kıyı bizim.", "Die Schiffe vor Anker decken den Rückzug des Feindes. Zerschlage sie, und die Küste gehört uns."], "Tanks dug in on the slope": ["Yamaca gömülü tanklar", "Am Hang eingegrabene Panzer"], "Veteran fighters.": ["Tecrübeli avcılar.", "Erfahrene Jäger."], "Aim at the red lead ring. Rockets for the battery, bombs for the cruiser.": ["Kırmızı önleme halkasına nişan al. Bataryaya roket, kruvazöre bomba.", "Auf den roten Vorhaltering zielen. Raketen für die Batterie, Bomben für den Kreuzer."], "The enemy fighter force on this coast is to be worn down before the next operation.": ["Bu kıyıdaki düşman avcı gücü bir sonraki harekâttan önce yıpratılacak.", "Die feindliche Jagdwaffe an dieser Küste ist vor der nächsten Operation abzunutzen."], "Fighters, three at a time.": ["Avcılar, üçer üçer.", "Jäger, je drei auf einmal."], "Stay with your wingman and keep your speed. Do not turn with three at once.": ["Kanat arkadaşından ayrılma, hızını koru. Üçüyle birden dönüşe girme.", "Beim Rottenflieger bleiben und Fahrt halten. Nicht mit dreien zugleich kurven."], "Lose the carrier and there is no deck to come home to.": ["Gemiyi kaybedersen dönecek güverte kalmaz.", "Geht der Träger verloren, gibt es kein Deck mehr für die Heimkehr."], "The escorting fighters": ["Refakat avcıları", "Die Begleitjäger"], "Bombers with fighter cover, from the north.": ["Avcı korumalı bombardıman uçakları, kuzeyden.", "Bomber mit Jagdschutz, aus Norden."], "Bombers first. Hit them from above before they reach the ships.": ["Önce bombardıman uçakları. Gemilere varmadan yukarıdan vur.", "Zuerst die Bomber. Von oben angreifen, bevor sie die Schiffe erreichen."], "The depot is now too well protected for fighter-bombers. The bombers can finish it, if they arrive.": ["Depo artık avcı-bombardıman uçakları için fazla iyi korunuyor. Bombardıman uçakları bitirebilir, varabilirlerse.", "Das Lager ist für Jagdbomber inzwischen zu gut geschützt. Die Bomber können es erledigen, wenn sie ankommen."], "Fighters that break away": ["Kopup kaçan avcılar", "Jäger, die abdrehen"], "Fighters going for the bombers.": ["Bombardıman uçaklarına saldıran avcılar.", "Jäger, die auf die Bomber gehen."], "Stay close to the bombers. Do not chase a fighter that runs.": ["Bombardıman uçaklarının yanında kal. Kaçan avcının peşine düşme.", "Dicht bei den Bombern bleiben. Keinen fliehenden Jäger verfolgen."], "Objectives": ["Hedefler", "Ziele"], "Damage taken": ["Alınan hasar", "Erlittener Schaden"], "Rockets / bombs used": ["Atılan roket / bomba", "Raketen / Bomben verbraucht"], "Stalls": ["Stall", "Strömungsabrisse"], "Touchdown": ["Teker koyuş", "Aufsetzen"], "Secondary": ["İkincil", "Nebenziel"], "Break the enemy line at a beach": ["Bir kumsalda düşman hattını yar", "Die Feindlinie an einem Strand durchbrechen"], "Pilot assessment": ["Pilot değerlendirmesi", "Pilotenbeurteilung"], "Exceptional": ["Olağanüstü", "Hervorragend"], "Sound": ["Sağlam", "Solide"], "Fair": ["Orta", "Ordentlich"], "Needs work": ["Geliştirilmeli", "Ausbaufähig"], "Sharp shooting": ["Keskin atış", "Scharf geschossen"], "Wild shooting": ["Dağınık atış", "Wild geschossen"], "Barely scratched": ["Neredeyse çiziksiz", "Kaum ein Kratzer"], "Badly shot up": ["Ağır hasarlı", "Schwer zerschossen"], "Stalled more than once": ["Birden çok stall", "Mehrfach abgerissen"], "Stalled once": ["Bir kez stall", "Einmal abgerissen"], "Speed well kept": ["Hız iyi korundu", "Fahrt gut gehalten"], "Smooth landing": ["Yumuşak iniş", "Weiche Landung"], "Heavy landing": ["Sert iniş", "Harte Landung"], "Good work. The skipper is buying.": ["İyi iş. İçkiler komutandan.", "Gute Arbeit. Der Skipper gibt einen aus."], "Tough break. Get back up there.": ["Şanssızlık. Tekrar havalan.", "Pech gehabt. Wieder rauf mit dir."], "A sound piece of work. Well done.": ["Sağlam bir iş çıkardınız. Tebrikler.", "Saubere Arbeit. Gut gemacht."], "Bad luck. We shall try again tomorrow.": ["Talihsizlik. Yarın yeniden deneyeceğiz.", "Pech. Wir versuchen es morgen erneut."], "Task completed. The regiment is satisfied.": ["Görev tamamlandı. Alay memnun.", "Aufgabe erfüllt. Das Regiment ist zufrieden."], "Task not completed. Fly it again.": ["Görev tamamlanmadı. Yeniden uç.", "Aufgabe nicht erfüllt. Noch einmal fliegen."], "Task completed.": ["Görev tamamlandı.", "Aufgabe erfüllt."], "The fighters got you before you got one of them: turn into them early.": ["Sen birini bile düşüremeden avcılar seni düşürdü: onlara erkenden dön.", "Die Jäger hatten dich, bevor du einen von ihnen hattest: früh auf sie eindrehen."], "Most of your rounds missed: close in before you fire.": ["Mermilerinin çoğu boşa gitti: ateş etmeden önce yaklaş.", "Die meisten Schüsse gingen daneben: vor dem Feuern näher heran."], "You stalled more than once: keep your speed up in the turns.": ["Birden çok kez stall oldun: dönüşlerde hızını koru.", "Mehrfach abgerissen: in den Kurven Fahrt halten."], "The type each front was flown with": ["Her cephede kullanılan tip", "Der Typ, der an jeder Front flog"],
   "Balanced": ["Dengeli", "Ausgewogen"], "Gentle": ["Yumuşak", "Sanft"], "Normal": ["Normal", "Normal"], "Sharp": ["Keskin", "Scharf"], "Off": ["Kapalı", "Aus"], "On": ["Açık", "An"], "Fast": ["Hızlı", "Schnell"],
   "US Navy": ["ABD Donanması", "US Navy"], "Royal Air Force": ["Kraliyet Hava Kuvvetleri", "Royal Air Force"], "Desert Air Force": ["Çöl Hava Kuvvetleri", "Desert Air Force"], "Red Air Force": ["Kızıl Hava Kuvvetleri", "Rote Luftflotte"], "US Army Air Forces": ["ABD Ordu Hava Kuvvetleri", "US Army Air Forces"],
   // pause and debrief
@@ -1064,6 +1086,49 @@ const PLANES = [
 const AERO = [[1.42, .0235, .048], [1.36, .0225, .054], [1.40, .0225, .050], [1.44, .0215, .046], [1.50, .0260, .046], [1.52, .0215, .040], [1.42, .0225, .047], [1.40, .0205, .052],
   [1.36, .0185, .052], [1.36, .0205, .054], [1.32, .0215, .060], [1.50, .0205, .042], [1.58, .0240, .038], [1.44, .0210, .050], [1.46, .0225, .048], [1.34, .0205, .056]];
 PLANES.forEach((p, i) => { p.aero = AERO[i]; });
+/* the four sides of the war. Every type and every sortie belongs to one, read off the marking it wears; the briefing, the debrief and the radio take
+   their voice from it. A new side is one line here and a marking on its aircraft. */
+const FACTIONS = {
+  us: { n: 'United States', marks: ['us'], glyph: '★', brief: ['The job', 'Targets', 'Also worth your time', 'What is up there', 'How to fly it', 'Go get them.'], won: 'Good work. The skipper is buying.', lost: 'Tough break. Get back up there.' },
+  raf: { n: 'Royal Air Force', marks: ['raf'], glyph: '', brief: ['Intention', 'Primary objectives', 'Secondary objectives', 'Opposition expected', 'Recommended method', 'Good hunting.'], won: 'A sound piece of work. Well done.', lost: 'Bad luck. We shall try again tomorrow.' },
+  su: { n: 'Soviet Union', marks: ['su'], glyph: '★', brief: ['Task', 'Targets', 'Also', 'Enemy', 'Method', 'Carry it out.'], won: 'Task completed. The regiment is satisfied.', lost: 'Task not completed. Fly it again.' },
+  axis: { n: 'Axis', marks: ['de', 'jp', 'it'], glyph: '✚', note: 'Captured types', brief: ['Order', 'Targets', 'Further targets', 'Enemy', 'Method', 'Carry it out.'], won: 'Task completed.', lost: 'Task not completed. Fly it again.' }
+}, FAC_ORDER = ['us', 'raf', 'su', 'axis'];
+const facOf = mark => FAC_ORDER.find(k => FACTIONS[k].marks.includes(mark)) || 'us';
+PLANES.forEach(p => { p.f = facOf(p.skin.mark); }); MISSIONS.forEach(m => { m.f = facOf(m.player.mark); });
+const facNow = () => (CAR.plane >= 0 ? PLANES[CAR.plane].f : M.f);
+/* the orders for each sortie, in the order of MISSIONS: why it is flown, what else is worth a pass, who is up there and how to go about it.
+   The main targets are read off the sortie itself, so a new sortie needs only these four lines. */
+const ORDERS = [
+  { why: 'The fleet sails through this strait tonight. While those radars are up, the enemy sees it coming.', second: ['Enemy tanks above the beaches', 'Infantry camps behind the line'], foe: 'Light fighters in pairs. They out-turn you.', tip: 'Guns for the radars. Keep both bombs for the tanks.' },
+  { why: 'The coastal guns close the Channel to our convoys. With them silenced, the commandos can hold the shore.', second: ['Panzers pinning down the commandos', 'E-boats in the Channel'], foe: 'Fast fighters above the coast.', tip: 'Rockets for the batteries; cannon will do for the radar post.' },
+  { why: 'The garrison lives on that fuel and those two ships. Cut them off and it cannot fight on.', second: ['Enemy armour facing Eighth Army'], foe: 'Agile fighters over the islands.', tip: 'Bomb the freighters from low level. Watch your speed in the climb: she will stall.' },
+  { why: 'The ships at anchor cover the enemy retreat. Break them and the coast is ours.', second: ['Tanks dug in on the slope'], foe: 'Veteran fighters.', tip: 'Aim at the red lead ring. Rockets for the battery, bombs for the cruiser.' },
+  { why: 'The enemy fighter force on this coast is to be worn down before the next operation.', second: [], foe: 'Fighters, three at a time.', tip: 'Stay with your wingman and keep your speed. Do not turn with three at once.' },
+  { why: 'Lose the carrier and there is no deck to come home to.', second: ['The escorting fighters'], foe: 'Bombers with fighter cover, from the north.', tip: 'Bombers first. Hit them from above before they reach the ships.' },
+  { why: 'The depot is now too well protected for fighter-bombers. The bombers can finish it, if they arrive.', second: ['Fighters that break away'], foe: 'Fighters going for the bombers.', tip: 'Stay close to the bombers. Do not chase a fighter that runs.' }
+];
+const KIND_N = { radar: 'Radar station', battery: 'Gun battery', depot: 'Fuel depot', freighter: 'Freighter', cruiser: 'Cruiser' };
+const mainGoals = m => (m.mode === 'dogfight' ? ['Shoot down eight fighters'] : m.mode === 'defend' ? ['Stop three bomber raids', 'Keep the carrier afloat'] : m.mode === 'escort' ? ['Bring two of the three bombers to the depot'] : m.targets.map(t => KIND_N[t.kind] + ' · ' + t.name));
+const flakWord = m => (m.mode === 'dogfight' || m.mode === 'defend' ? 'Flak: none' : m.foe.flak >= 9 ? 'Flak: heavy' : m.foe.flak >= 7.5 ? 'Flak: medium' : 'Flak: light');
+function briefHtml() {
+  const f = FACTIONS[M.f], h = f.brief, b = ORDERS[mIdx] || ORDERS[0], ul = a => '<ul>' + a.map(t => '<li>' + t + '</li>').join('') + '</ul>';
+  return '<div class="side"><i class="fmark ' + M.f + '">' + f.glyph + '</i><span>' + f.n + '</span></div><h3>' + h[0] + '</h3><p>' + b.why + '</p><h3>' + h[1] + '</h3>' + ul(mainGoals(M)) + (b.second.length ? '<h3>' + h[2] + '</h3>' + ul(b.second) : '') +
+    '<h3>' + h[3] + '</h3><p>' + b.foe + '</p><p>' + flakWord(M) + '</p><h3>' + h[4] + '</h3><p>' + b.tip + '</p><p class="sign">' + h[5] + '</p>';
+}
+/* the sortie on a square of paper: the islands, the targets by name and the way home */
+function briefMap() {
+  const c = $('m-map'), g = c.getContext('2d'), W = c.width, pts = M.islands.map(q => [q.x, q.z, q.r]).concat([[PAD.x, PAD.z, 60]], M.targets.filter(t => t.at).map(t => [t.at[0], t.at[1], 60]));
+  let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (const q of pts) { x0 = Math.min(x0, q[0] - q[2]); x1 = Math.max(x1, q[0] + q[2]); z0 = Math.min(z0, q[1] - q[2]); z1 = Math.max(z1, q[1] + q[2]); }
+  const k = (W - 56) / Math.max(x1 - x0, z1 - z0), ox = W / 2 - (x0 + x1) / 2 * k, oz = W / 2 - (z0 + z1) / 2 * k, X = x => ox + x * k, Z = z => oz + z * k;
+  g.clearRect(0, 0, W, W); g.strokeStyle = 'rgba(41,40,31,.12)'; g.lineWidth = 1; for (let i = 1; i < 4; i++) { g.beginPath(); g.moveTo(i * W / 4, 0); g.lineTo(i * W / 4, W); g.moveTo(0, i * W / 4); g.lineTo(W, i * W / 4); g.stroke(); }
+  for (const q of M.islands) { g.beginPath(); g.arc(X(q.x), Z(q.z), q.r * k, 0, 7); g.fillStyle = 'rgba(71,85,47,.32)'; g.fill(); g.strokeStyle = 'rgba(41,40,31,.5)'; g.lineWidth = 1.5; g.stroke(); }
+  g.font = '700 22px ' + getComputedStyle(document.body).getPropertyValue('--f-hud'); g.textBaseline = 'middle';
+  const tag = (x, y, s, col) => { const w = g.measureText(s).width, left = x + 14 + w > W - 4; g.fillStyle = col; g.fillText(s, left ? x - 14 - w : x + 14, y); };
+  M.targets.forEach(t => { const q = t.at ? { x: t.at[0], z: t.at[1] } : M.islands[t.isl], x = X(q.x), y = Z(q.z); g.strokeStyle = '#a8372b'; g.lineWidth = 3; g.beginPath(); g.moveTo(x - 8, y - 8); g.lineTo(x + 8, y + 8); g.moveTo(x + 8, y - 8); g.lineTo(x - 8, y + 8); g.stroke(); tag(x, y, t.name, '#a8372b'); });
+  const hx = X(PAD.x), hy = Z(PAD.z); g.strokeStyle = '#29281f'; g.lineWidth = 3; g.beginPath(); g.arc(hx, hy, 9, 0, 7); g.stroke(); g.fillStyle = '#29281f'; g.beginPath(); g.arc(hx, hy, 3, 0, 7); g.fill(); tag(hx, hy, tr(PAD.name), '#29281f');
+  g.fillStyle = 'rgba(41,40,31,.6)'; g.fillText('N', W - 26, 34); g.beginPath(); g.moveTo(W - 20, 6); g.lineTo(W - 26, 20); g.lineTo(W - 14, 20); g.fill();
+}
 /* paint goes over whatever type is flown; like the last three types it is opened by stars (sorties and campaign together), never bought */
 const PAINTS = [
   { n: 'Factory finish', star: 0, s: null },
@@ -2182,7 +2247,7 @@ function groundRoll(dt) {
   plane.position.copy(P.pos); plane.rotation.set(P.pitch, P.yaw, P.roll, 'YXZ');
 }
 function touchdown() {
-  const vs = P.vel.y, l = padLocal(P.pos), what = PAD.carrier ? 'deck' : 'runway'; let ly = PAD.yaw, dy = angd(P.yaw, ly);
+  const vs = P.vel.y, l = padLocal(P.pos), what = PAD.carrier ? 'deck' : 'runway'; if (LOG.vs === null && time > 15) LOG.vs = -vs; let ly = PAD.yaw, dy = angd(P.yaw, ly);
   if (!PAD.carrier && Math.abs(dy) > Math.PI / 2) { ly = PAD.yaw + Math.PI; dy = angd(P.yaw, ly); }
   const bad = !P.gear || P.gearK < .9 ? ' came down with the wheels up.' : vs < -12 ? ' hit the ' + what + ' too hard.' : P.speed > 84 ? ' came in far too fast.' : Math.abs(P.roll) > .55 ? ' caught a wingtip on the ' + what + '.' : Math.abs(dy) > .6 ? ' landed across the ' + what + '.' : null;
   if (bad) { crash(M.cs + bad); return; }
@@ -2426,7 +2491,7 @@ function hurtObj(o, dmg) {
   explode(o.aim, 40); explode(_c.copy(o.pos).setY(o.pos.y + 6), 30);
   feed({ radar: 'Radar ', battery: 'Battery ', depot: 'Depot ', freighter: 'Freighter ', cruiser: 'Cruiser ' }[o.kind] + o.name + (o.ship ? ' sunk' : ' destroyed'));
   const name = o.name.charAt(0) + o.name.slice(1).toLowerCase(), left = objs.length - cut;
-  if (left > 0) { radio(name + ' is finished. ' + (left === 1 ? 'One more.' : left + ' to go.') + (cut === 1 ? ' Gunboats are putting out, stay off the deck.' : ' They are throwing everything they have at you.')); wave(M.waves.steps[cut - 1] || M.waves.last); }
+  if (left > 0) { radio(name + ' is finished. ' + (left === 1 ? 'One more.' : left + ' to go.') + (cut === 1 ? ' Gunboats are putting out, stay off the deck.' : ' They are throwing everything they have at you.') + ' ' + facSay('hit')); wave(M.waves.steps[cut - 1] || M.waves.last); }
   else toExtract('That is all of them.', M.waves.last[0]);
   if (o.group.userData.spin) o.group.userData.spin.visible = true;
   updateObjective();
@@ -2576,7 +2641,7 @@ function hitFrom(v) { // v: velocity of the round that just hit us
   else if (Math.abs(r) > .45) call('hitside', (r > 0 ? 'Fire from your left!' : 'Fire from your right!') + ' Break away!', 10);
 }
 function damagePlayer(d) {
-  if (!P.alive) return; P.hp -= d * D.dmg * (1 - .12 * CAR.up.arm) / PM.arm; P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5); sfxHit();
+  if (!P.alive) return; { const lost = d * D.dmg * (1 - .12 * CAR.up.arm) / PM.arm; P.hp -= lost; LOG.dmg += lost; } P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5); sfxHit();
   if (P.hp <= 0) crash(M.cs + ' was shot down.'); else if (P.hp < 35 && !P.hurtCall) { P.hurtCall = true; callT = 0; call('hurt', 'You are hit hard! Break off and climb!', 40); } else if (P.hp > 70) P.hurtCall = false;
 }
 function adviceFor(why) { // one thing to do differently, matched to how she was lost
@@ -2658,7 +2723,7 @@ function updatePlayer(dt) {
     if (input.brake || lc) { P.speed += (tgt - P.speed) * (1 - Math.exp(-(input.brake ? 2 : 1.2) * dt)) - grav * dt - ci * (nA * nA - 1) / (v * v) * .3 * dt; P.thr = need(v); } // throttle closed, or flaps and wheels down: she settles on her approach speed
     else { const want = need(tgt); P.thr = P.thr > 0 ? P.thr + (want - P.thr) * (1 - Math.exp(-2.5 * dt)) : want; P.speed += (P.thr - k0 * v * v - ci * nA * nA / (v * v) - grav) * dt; } // the engine takes a moment to answer the throttle
   }
-  if (fl >= 3) { if (P.speed < vsE && !P.gear) { if (!P.stall) { P.stSide = P.roll >= 0 ? 1 : -1; burst(140, 'lowpass', .6, .3); } P.stall = true; } else if (P.speed > vsE + 13 || P.gear) P.stall = false; }
+  if (fl >= 3) { if (P.speed < vsE && !P.gear) { if (!P.stall) { LOG.stalls++; P.stSide = P.roll >= 0 ? 1 : -1; burst(140, 'lowpass', .6, .3); } P.stall = true; } else if (P.speed > vsE + 13 || P.gear) P.stall = false; }
   P.buf = fl >= 3 && !P.gear ? clamp((vsE + 12 - P.speed) / 12, 0, 1) : 0; if (P.buf > 0) shake = Math.max(shake, .08 + P.buf * .24); // the airframe shakes before she lets go
   P.speed = Math.max(P.speed, 30); $('stall').classList.toggle('on', P.stall); if (P.stall) call('stall', 'Stalling! Nose down!', 12);
   if (fl >= 4) { const load = Math.abs(P.roll) / 1.15 * (P.speed / M.v0) * (1 + Math.abs(input.y) * .4); P.g = clamp(P.g + (load > 1.45 ? dt * .45 : -dt * .7), 0, 1); $('gloc').style.opacity = (Math.max(0, P.g - .25) * 1.25).toFixed(2); }
@@ -2771,7 +2836,7 @@ const PX = 3, CARD = { 0: 'N', 45: 'NE', 90: 'E', 135: 'SE', 180: 'S', 225: 'SW'
 })();
 const hpPips = $('hp-bar').children, marks = [], cmarks = [];
 for (let i = 0; i < 20; i++) { const d = document.createElement('div'); d.className = 'mk'; d.hidden = true; d.innerHTML = '<i></i><b></b><span></span><u><s></s></u>'; $('marks').appendChild(d); marks.push({ d, b: d.children[1], s: d.children[2], f: d.children[3].firstChild }); }
-for (let i = 0; i < 4; i++) { const d = document.createElement('div'); d.className = 'c-mark'; d.hidden = true; $('cmarks').appendChild(d); cmarks.push(d); }
+for (let i = 0; i < 5; i++) { const d = document.createElement('div'); d.className = 'c-mark'; d.hidden = true; $('cmarks').appendChild(d); cmarks.push(d); }
 let W = 1, H = 1, hitMarkT = 0;
 function hitMark() { hitMarkT = .09; }
 function project(v) {
@@ -2809,12 +2874,12 @@ let lsoWas = null;
 function updateHud(dt) {
   const heading = ((-P.yaw * 180 / Math.PI) % 360 + 360) % 360, cw = $('tape').parentElement.clientWidth;
   $('tape').style.transform = 'translateX(' + (cw / 2 - (heading + 180) * PX) + 'px)';
-  const list = phase === 'extract' ? (P.ap || P.gnd ? [homeMark] : [gateMark, homeMark]) : objs.filter(o => o.alive);
+  const list = phase === 'extract' ? (P.ap || P.gnd ? [homeMark] : [gateMark, homeMark]) : (SIDE.mark ? [SIDE.mark] : []).concat(objs.filter(o => o.alive));
   let mi = 0;
   cmarks.forEach((c, i) => {
     const o = list[i]; c.hidden = !o; if (!o) return;
     const brg = Math.atan2(o.aim.x - P.pos.x, -(o.aim.z - P.pos.z)) * 180 / Math.PI, rel = ((brg - heading + 540) % 360) - 180;
-    c.style.transform = 'translateX(' + clamp(rel * PX, -cw / 2 + 10, cw / 2 - 10) + 'px)'; c.textContent = o.name; c.classList.toggle('home', !!o.home);
+    c.style.transform = 'translateX(' + clamp(rel * PX, -cw / 2 + 10, cw / 2 - 10) + 'px)'; c.textContent = o.name; c.classList.toggle('home', !!o.home); c.classList.toggle('pri', !!o.pri);
   });
   const put = (pos, cls, name, d, frac) => { if (mi >= marks.length) return; const m = marks[mi++], p = project(pos); m.d.hidden = false; m.d.className = 'mk ' + cls + (p.edge ? ' edge' : ''); m.d.style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px)'; m.b.textContent = name; m.s.textContent = range(d); if (frac != null) m.f.style.width = (clamp(frac, 0, 1) * 100).toFixed(0) + '%'; };
   for (const o of list) put(o.aim, o.home ? 'h' : 'o', o.name, o.aim.distanceTo(P.pos), o.home ? null : o.hp / o.hp0);
@@ -3261,20 +3326,43 @@ function coachTick(dt) {
   if (v >= 1) { coach.okT = 1.1; el.classList.add('ok'); if (ac && !muted) { const t = ac.currentTime; tone(81, t, .12, .12, 'triangle', 3000); tone(88, t + .1, .2, .12, 'triangle', 3000); } }
 }
 /* side tasks: once in a sortie something comes up beside the orders. Answering it pays; ignoring it costs nothing. */
-const SIDE = { k: '', t: 0, at: 0, used: false, list: [], shown: '' };
-function sideReset() { SIDE.k = ''; SIDE.t = 0; SIDE.at = rand(55, 85); SIDE.used = false; SIDE.list = []; SIDE.shown = ''; $('obj-s').hidden = true; }
-function sideEnd(won, pts, what, word) { if (won) { addScore(pts); feed(what, '+' + Math.round(pts * D.sc * (CAR.night ? 1.2 : 1))); warn(what, true); } radio(word); SIDE.k = ''; SIDE.list = []; }
+const SIDE = { k: '', t: 0, at: 0, n: 0, had: [], list: [], n0: 0, shown: '', mark: null, low: 0, ev: null };
+/* what the debrief wants to know about the flight itself: the damage she took, how often she was stalled, how hard she was put down, what the side task came to */
+const LOG = { dmg: 0, stalls: 0, vs: null, side: 0 };
+/* how each side talks on the radio. One table, one line per side and event; a new side or a new event is a new line here. */
+const RADIO = {
+  us: { convoy: 'gunboats are going for our supply convoy. Go sink them.', ace: 'they sent up one of their aces for you. Knock him down.', armour: 'change of plan. Tanks are rolling on the beach. Hit them now.', wing: 'your wingman has two on his tail. Get them off him.', storm: 'weather is closing in fast. Get under the cloud and stay there.', win: 'Nice work. Back to the main job.', fail: 'Too late for that one. Back to the main job.', hit: 'Good hit. Keep it up.' },
+  raf: { convoy: 'enemy gunboats are closing on a supply convoy. You are to sink them.', ace: 'an enemy ace is airborne and looking for you. Engage and destroy.', armour: 'priority has changed. Enemy armour is advancing on the beach. Attack it at once.', wing: 'your number two reports two bandits astern. Kindly remove them.', storm: 'the weather is deteriorating rapidly. Descend below the cloud base and remain there.', win: 'Well done indeed. Resume your primary task.', fail: 'That opportunity has passed. Resume your primary task.', hit: 'Target destroyed. Good show.' },
+  su: { convoy: 'gunboats near the convoy. Sink them.', ace: 'enemy ace in the air. Destroy him.', armour: 'new order. Tanks on the beach. Strike now.', wing: 'wingman attacked. Help him.', storm: 'storm coming. Go low.', win: 'Done. Continue the task.', fail: 'Too late. Continue the task.', hit: 'Target destroyed. Good.' }
+};
+const facSay = k => (RADIO[M.f] || RADIO.us)[k];
+/* targets that come up over the radio while the sortie is on. need: whether it makes sense for this aircraft and load right now; start: puts it in the
+   world and returns what has to be dealt with; w: how likely next to the others; pri: it goes ahead of the main targets on the HUD and the compass. */
+const EVENTS = [
+  { k: 'convoy', w: 2, t: 150, pts: 400, label: 'Sink the gunboats', won: 'Convoy saved', need: () => true, start: () => { const n0 = enemies.length; spawnBoats(3); return enemies.slice(n0); } },
+  { k: 'ace', w: 2, t: 180, pts: 400, label: 'Shoot down the ace', won: 'Ace shot down', need: () => true, start: () => { const n0 = enemies.length; spawnFighters(1); const e = enemies[enemies.length - 1]; if (!e || enemies.length === n0) return []; e.hp = e.max = e.max * 2.5; e.ace = true; return [e]; } },
+  { k: 'armour', w: 5, t: 150, pts: 450, pri: true, label: 'Stop the tanks', won: 'Armour stopped', need: () => P.bombs + P.rkt > 0 && !!armourSite(),
+    start: () => { const S = armourSite(); SIDE.mark = { aim: new V3(S.cx, groundAt(S.cx, S.cz) + 4, S.cz), name: S.name, pri: true, hp: 1, hp0: 1 }; return gtanks.filter(k => k.S === S && k.foe && !k.soft && k.alive); } },
+  { k: 'wing', w: 2, t: 120, pts: 350, label: 'Clear your wingman', won: 'Wingman clear', need: () => !!wing, start: () => { const n0 = enemies.length; spawnFighters(2, wing.pos); return enemies.slice(n0); } },
+  { k: 'storm', w: 1, t: 70, pts: 250, label: 'Stay under the cloud', won: 'Through the storm', need: () => !CAR.night && !M.mode, start: () => { weatherSet('storm'); SIDE.low = 0; return []; }, end: () => { DUEL.wx = null; weatherSet(''); } }
+];
+function armourSite() { let best = null, bd = 1e9; for (const S of SITES) { if (S.broke || !gtanks.some(k => k.S === S && k.foe && !k.soft && k.alive)) continue; const d = Math.hypot(S.cx - P.pos.x, S.cz - P.pos.z); if (d < bd) { bd = d; best = S; } } return best; }
+function sideReset() { if (SIDE.ev && SIDE.ev.end) SIDE.ev.end(); SIDE.k = ''; SIDE.ev = null; SIDE.t = 0; SIDE.at = rand(55, 85); SIDE.n = 0; SIDE.had = []; SIDE.list = []; SIDE.shown = ''; SIDE.mark = null; $('obj-s').hidden = true; LOG.dmg = 0; LOG.stalls = 0; LOG.vs = null; LOG.side = 0; }
+function sideEnd(won) { const ev = SIDE.ev; if (won) { LOG.side = 1; addScore(ev.pts); feed(ev.won, '+' + Math.round(ev.pts * D.sc * (CAR.night ? 1.2 : 1))); warn(ev.won, true); } else if (!LOG.side) LOG.side = -1; radio(facSay(won ? 'win' : 'fail')); if (ev.end) ev.end(); SIDE.k = ''; SIDE.ev = null; SIDE.list = []; SIDE.mark = null; SIDE.at = time + rand(50, 80); }
+const sideLeft = () => SIDE.list.filter(e => (e.alive !== undefined ? e.alive : !e.dead && !e.falling)).length;
 function sideTick(dt) {
   const el = $('obj-s'); if (DUEL.on || !P.alive || endT > 0) { if (!el.hidden) el.hidden = true; return; }
-  if (!SIDE.k && !SIDE.used && mIdx >= 1 && phase === 'targets' && !P.gnd && time > SIDE.at) { SIDE.used = true; const n0 = enemies.length;
-    if (Math.random() < .5) { spawnBoats(3); SIDE.list = enemies.slice(n0); }
-    if (SIDE.list.length) { SIDE.k = 'convoy'; SIDE.t = 150; warn('Side task'); radio(M.cs + ', gunboats are closing on a supply convoy near you. Sink them before they reach it.'); }
-    else { spawnFighters(1); const e = enemies[enemies.length - 1]; if (e && enemies.length > n0) { e.hp = e.max = e.max * 2.5; e.ace = true; SIDE.list = [e]; SIDE.k = 'ace'; SIDE.t = 180; warn('Side task'); radio(M.cs + ', one of their aces has come up to find you. Bring him down.'); } } }
+  if (!SIDE.k && SIDE.n < 2 && mIdx >= 1 && phase === 'targets' && !P.gnd && time > SIDE.at) {
+    const pool = EVENTS.filter(e => !SIDE.had.includes(e.k) && e.need()); let r = Math.random() * pool.reduce((a, e) => a + e.w, 0), ev = pool[0]; for (const e of pool) { r -= e.w; if (r <= 0) { ev = e; break; } }
+    SIDE.n++; if (!ev) { SIDE.n = 2; return; } SIDE.had.push(ev.k); SIDE.list = ev.start(); SIDE.n0 = SIDE.list.length;
+    if (!SIDE.n0 && ev.k !== 'storm') { SIDE.at = time + 20; return; }
+    SIDE.k = ev.k; SIDE.ev = ev; SIDE.t = ev.t; warn(ev.pri ? 'Priority target' : 'Side task'); radio(M.cs + ', ' + facSay(ev.k)); el.classList.toggle('pri', !!ev.pri);
+  }
   if (!SIDE.k) { if (!el.hidden) el.hidden = true; return; }
-  SIDE.t -= dt; const left = SIDE.list.filter(e => !e.dead && !e.falling).length;
-  if (!left) return sideEnd(true, 400, SIDE.k === 'convoy' ? 'Convoy saved' : 'Ace shot down', SIDE.k === 'convoy' ? 'The convoy is through. Well done.' : 'That was their best man. Well done.');
-  if (SIDE.t <= 0 || phase !== 'targets') return sideEnd(false, 0, '', SIDE.k === 'convoy' ? 'The convoy has taken hits. Carry on with your orders.' : 'Their ace has broken off. Carry on with your orders.');
-  const sec = Math.ceil(SIDE.t), txt = 'Side task · ' + (SIDE.k === 'convoy' ? 'Sink the gunboats' : 'Shoot down the ace') + ' · ' + Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+  SIDE.t -= dt; const ev = SIDE.ev, left = sideLeft();
+  if (SIDE.k === 'storm') { if (P.pos.y < 230) SIDE.low += dt; if (SIDE.t <= 0) return sideEnd(SIDE.low >= ev.t * .6); if (phase !== 'targets') return sideEnd(false); }
+  else { if (SIDE.mark) SIDE.mark.hp = left / Math.max(1, SIDE.n0); if (!left) return sideEnd(true); if (SIDE.t <= 0 || phase !== 'targets') return sideEnd(false); }
+  const sec = Math.ceil(SIDE.t), txt = (ev.pri ? 'Priority' : 'Side task') + ' · ' + ev.label + (SIDE.mark ? ' · ' + SIDE.mark.name : '') + (SIDE.n0 ? ' · ' + left : '') + ' · ' + Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
   if (txt !== SIDE.shown) { SIDE.shown = txt; el.textContent = txt; } el.hidden = false;
 }
 function tgSet(list) { // the radar and the fuel dump of each side, where the match server put them
@@ -3427,7 +3515,7 @@ function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', '
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
-  $('m-no').textContent = 'Mission orders no. ' + (mIdx + 1); $('m-when').textContent = M.theatre + ' · ' + M.year; $('m-title').textContent = M.code; $('m-brief').textContent = M.brief; $('m-stamp').textContent = done.includes(mIdx) ? 'Flown' : 'Restricted';
+  $('m-no').textContent = 'Mission orders no. ' + (mIdx + 1); $('m-when').textContent = M.theatre + ' · ' + M.year; $('m-title').textContent = M.code; $('m-brief').textContent = M.brief; $('m-brf').innerHTML = briefHtml(); briefMap(); $('m-stamp').textContent = done.includes(mIdx) ? 'Flown' : 'Restricted';
   if (touchMode || MOBILE) $('m-keys').innerHTML = '<dt>Aircraft</dt><dd>' + craftName() + '</dd>' + [['Left thumb', KEY.fly[1]], ['FIRE', KEY.gun[1]], ['WEP', KEY.wep[1]]].concat(M.rockets ? [['RKT', KEY.rkt[1]]] : [], M.bombs ? [['BOMB', KEY.bomb[1]]] : [], [['GEAR', KEY.gear[1]], ['SLOW', 'Close the throttle: slower for the approach, tighter in the turn'], ['VIEW', KEY.cam[1]]]).map(r => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('');
   else $('m-keys').innerHTML = '<dt>Aircraft</dt><dd>' + craftName() + '</dd>' + M.keys.map(k => '<dt' + (M.fresh.includes(k) ? ' class="new"' : '') + '>' + KEY[k][0] + '</dt><dd>' + KEY[k][1] + (M.fresh.includes(k) ? ' <span class="new">(new)</span>' : '') + '</dd>').join('') + '<dt>Touch</dt><dd>Left thumb flies; FIRE, WEP' + (M.rockets ? ', RKT' : '') + (M.bombs ? ', BOMB' : '') + ' and GEAR on the right</dd>';
   $('p-cs').textContent = M.cs;
@@ -3455,11 +3543,13 @@ function fillHangar() {
   $('h-list').querySelectorAll('button').forEach(b => { b.onclick = () => { const k = b.dataset.k, l = CAR.up[k]; if (l >= 3 || CAR.rp < COST[l]) return; if (NET.me) { netBuy('buy_upgrade', { p_key: k }); return; } CAR.rp -= COST[l]; CAR.up[k]++; saveCar(); fillHangar(); }; });
   const rows = [['-1', 'Mission standard', 'The type each front was flown with', 0]].concat(PLANES.map((p, i) => ['' + i, p.n, p.by + ' · ' + planeNote(p), p.cost]).filter(r => +r[0] < 12 || !NET.me || srvNew)); // the four newest types are offered to a signed-in pilot only once the server knows them
   $('h-stars').textContent = 'Stars held: ' + starsAll();
-  $('h-planes').innerHTML = rows.map(r => { const i = +r[0], st = i >= 0 && PLANES[i].star, own = planeOk(i), cur = CAR.plane === i; return '<div class="upg"><b>' + r[1] + '</b><span>' + r[2] + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || (!own && (st || CAR.rp < r[3])) ? ' disabled' : '') + '>' + (cur ? 'Flying' : own ? 'Fly' : st ? 'Opens at ' + st + ' stars' : 'Buy · ' + r[3] + ' RP') + '</button></div>'; }).join('');
+  const facHead = k => '<div class="fac"><i class="fmark ' + k + '">' + FACTIONS[k].glyph + '</i><span>' + FACTIONS[k].n + (FACTIONS[k].note ? ' · ' + FACTIONS[k].note : '') + '</span></div>';
+  const rowHtml = r => { const i = +r[0], st = i >= 0 && PLANES[i].star, own = planeOk(i), cur = CAR.plane === i; return '<div class="upg"><b>' + r[1] + '</b><span>' + r[2] + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || (!own && (st || CAR.rp < r[3])) ? ' disabled' : '') + '>' + (cur ? 'Flying' : own ? 'Fly' : st ? 'Opens at ' + st + ' stars' : 'Buy · ' + r[3] + ' RP') + '</button></div>'; };
+  $('h-planes').innerHTML = rowHtml(rows[0]) + FAC_ORDER.map(k => { const g = rows.filter(r => +r[0] >= 0 && PLANES[+r[0]].f === k); return g.length ? facHead(k) + g.map(rowHtml).join('') : ''; }).join('');
   $('h-planes').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i, st = i >= 0 && PLANES[i].star; if (!planeOk(i) && (st || CAR.rp < PLANES[i].cost)) return; LOOK.pi = i; if (NET.me) { netBuy('buy_plane', { p_i: i }); return; } if (!planeOk(i)) { CAR.rp -= PLANES[i].cost; CAR.own.push(i); } CAR.plane = i; planeDirty = true; saveCar(); fillHangar(); }; });
   $('h-paints').innerHTML = PAINTS.map((p, i) => { const own = starsAll() >= p.star, cur = CAR.paint === i, c = painted(LOOK.pi >= 0 ? PLANES[LOOK.pi].skin : M.player, i); return '<div class="upg"><b>' + p.n + '<i class="sw" style="background:linear-gradient(90deg,' + c.top + ' 0 40%,' + c.top2 + ' 40% 70%,' + c.under + ' 70% 88%,' + c.nose + ' 88%)"></i></b><span>' + (i ? 'Goes over whatever type you fly' : 'The colours each type left the works in') + '</span><button class="ghost" type="button" data-i="' + i + '"' + (cur || !own ? ' disabled' : '') + '>' + (cur ? 'Worn' : own ? 'Wear' : 'Opens at ' + p.star + ' stars') + '</button></div>'; }).join('');
   $('h-paints').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i; if (starsAll() < PAINTS[i].star) return; LOOK.pa = i; if (NET.me) { netBuy('set_paint', { p_i: i }); return; } CAR.paint = i; planeDirty = true; saveCar(); fillHangar(); }; });
-  for (const [id, k] of [['h-planes', 'pi'], ['h-paints', 'pa']]) $(id).querySelectorAll('.upg').forEach(d => { const i = +d.querySelector('button').dataset.i; d.classList.add('pick'); d.classList.toggle('look', LOOK[k] === i); d.tabIndex = 0; d.setAttribute('role', 'button'); d.onclick = e => { if (e.target.closest('button')) return; LOOK[k] = i; fillHangar(); const n = $(id).querySelectorAll('.upg')[k === 'pi' ? i + 1 : i]; if (n && e.type === 'keydown') n.focus(); }; d.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === d) { e.preventDefault(); d.onclick(e); } }; });
+  for (const [id, k] of [['h-planes', 'pi'], ['h-paints', 'pa']]) $(id).querySelectorAll('.upg').forEach(d => { const i = +d.querySelector('button').dataset.i; d.classList.add('pick'); d.classList.toggle('look', LOOK[k] === i); d.tabIndex = 0; d.setAttribute('role', 'button'); d.onclick = e => { if (e.target.closest('button')) return; LOOK[k] = i; fillHangar(); const nb = $(id).querySelector('button[data-i="' + i + '"]'), n = nb && nb.closest('.upg'); if (n && e.type === 'keydown') n.focus(); }; d.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === d) { e.preventDefault(); d.onclick(e); } }; });
   lookShow();
   const seg = (id, name, opts, cur, set) => { $(id).innerHTML = opts.map((o, i) => '<label><input type="radio" name="' + name + '" value="' + i + '"' + (i === cur ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $(id).querySelectorAll('input').forEach(el => { el.onchange = () => { set(+el.value); saveCar(); }; }); };
   seg('o-sens', 'sens', ['Gentle', 'Normal', 'Sharp'], CAR.sens, v => { CAR.sens = v; });
@@ -3496,7 +3586,25 @@ function finish() {
   if (rankOf(CAR.xp) > rk0) $('end-lede').textContent += ' Promoted to ' + RANKS[rankOf(CAR.xp)][1] + '.';
   if (fleetHits && !failed) $('end-lede').textContent += ' The fleet took ' + fleetHits + (fleetHits > 1 ? ' bomb hits.' : ' bomb hit.');
   $('st-time').textContent = fmtTime(time); $('st-kills').textContent = kills; $('st-boats').textContent = boatKills; $('st-tanks').textContent = (tankKills + truckKills) + ' / ' + troopKills; $('st-acc').textContent = (shots ? Math.round(hits / shots * 100) : 0) + '%'; $('st-best').textContent = best ? fmtTime(best) : '–';
+  debrief();
   show('s-end'); $('b-again').focus();
+}
+/* the second half of the debrief: every objective by name, what the flight cost, and one line on how it was flown */
+function debrief() {
+  const li = (t, on) => '<li' + (on ? ' class="on"' : '') + '>' + t + '</li>', acc = shots ? hits / shots : 0, dmg = Math.min(100, Math.round(LOG.dmg));
+  let g = M.mode && M.mode !== 'escort' ? li(mainGoals(M)[0] + ' · ' + Math.min(cut, goalN()) + ' / ' + goalN(), cut >= goalN()) : objs.map(o => li((KIND_N[o.kind] || 'Target') + ' · ' + (o.name || ''), !o.alive)).join('');
+  if (M.mode === 'defend') g += li('Keep the carrier afloat', endWon);
+  if (!M.mode) g += li('Secondary · Break the enemy line at a beach', siteBreaks > 0);
+  if (LOG.side) g += li('Secondary · Side task', LOG.side > 0);
+  g += li(PAD.carrier ? 'Land on the carrier' : 'Land at the airstrip', endWon);
+  $('end-goals').innerHTML = g;
+  $('st-dmg').textContent = dmg + '%'; $('st-ord').textContent = Math.max(0, loadR() - P.rkt) + ' / ' + Math.max(0, loadB() - P.bombs); $('st-stall').textContent = LOG.stalls; $('st-land').textContent = endWon && LOG.vs !== null ? LOG.vs.toFixed(1) + ' m/s' : '–';
+  const marks = [shots > 60 && (acc >= .3 ? 'Sharp shooting' : acc < .12 ? 'Wild shooting' : ''), dmg <= 15 ? 'Barely scratched' : dmg >= 70 ? 'Badly shot up' : '', M.flight >= 3 && (LOG.stalls ? (LOG.stalls > 1 ? 'Stalled more than once' : 'Stalled once') : 'Speed well kept'), endWon && LOG.vs !== null && (LOG.vs < 2.2 ? 'Smooth landing' : LOG.vs > 4 ? 'Heavy landing' : '')].filter(Boolean);
+  const pts = (acc >= .3 ? 1 : acc < .12 && shots > 60 ? -1 : 0) + (dmg <= 15 ? 1 : dmg >= 70 ? -1 : 0) - Math.min(2, LOG.stalls) + (endWon && LOG.vs !== null && LOG.vs < 2.2 ? 1 : 0) + (endWon ? 1 : -1);
+  $('end-pilot').textContent = 'Pilot assessment · ' + (pts >= 3 ? 'Exceptional' : pts >= 1 ? 'Sound' : pts >= -1 ? 'Fair' : 'Needs work') + (marks.length ? ' · ' + marks.join(' · ') : '');
+  const f = FACTIONS[M.f]; let why = '';
+  if (!endWon) why = dmg >= 95 && !kills ? ' The fighters got you before you got one of them: turn into them early.' : shots > 150 && acc < .12 ? ' Most of your rounds missed: close in before you fire.' : LOG.stalls > 1 ? ' You stalled more than once: keep your speed up in the turns.' : '';
+  $('end-why').textContent = why.trim(); $('end-why').hidden = !why; $('end-tone').textContent = endWon ? f.won : f.lost;
 }
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
@@ -3844,7 +3952,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { coach, SIDE, LOADS, storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { LOG, FACTIONS, EVENTS, sideTick, radioQ, finish: () => finish(), coach, SIDE, LOADS, storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
