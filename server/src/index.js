@@ -29,6 +29,9 @@ const CH = [null,
 const ROLE = { f: { ld: [0, 4], gun: 1.15, gg: .8, bomb: 1, rkt: 1, arm: 1 }, a: { ld: [2, 14], gun: .95, gg: 1.3, bomb: 1, rkt: 1.25, arm: .9 }, b: { ld: [6, 4], gun: .8, gg: 1, bomb: 1.2, rkt: 1, arm: .8 } }, ROLE0 = { gun: 1, gg: 1, bomb: 1, rkt: 1, arm: 1 };
 /* each role keeps its own experience; level n starts at 100 * (n - 1)^2, ten levels. A level adds 1.5% to a fighter's guns on aircraft, 1% to an attacker's guns and rockets on the ground
    and to a bomber's bombs; levels 4, 7 and 10 each add two rockets to the attacker and a bomb to the bomber */
+/* what a pilot's own skills and fittings add online: the third step of Weapons and heavy or cooled rounds on his guns, the first step of Survivability and
+   an armour plate on what gets through. Read from his record, never from the device; each is held to 15%. */
+const pkOf = p => { const k = p && p.sk || {}, t = p && p.kit || {}; return { g: Math.min(1.15, ((k.gun | 0) >= 3 ? 1.05 : 1) * (t.g === 1 ? .94 : t.g === 2 ? 1.1 : 1)), a: Math.min(1.15, ((k.tough | 0) >= 1 ? 1.05 : 1) * (t.k === 3 ? 1.08 : 1)) }; };
 const lvl = xp => clamp(1 + Math.floor(Math.sqrt(Math.max(0, +xp || 0) / 100)), 1, 10);
 const PI = Math.PI;
 const rnd = (a, b) => a + Math.random() * (b - a);
@@ -175,7 +178,7 @@ export class Match extends DurableObject {
   }
 
   async pilot(tok, dev) {
-    if (this.env.DEV_OPEN === '1' && typeof dev === 'string') { const l = clamp(parseInt(dev.split('-')[1]) || 1, 1, 10); return { id: 'dev-' + dev, name: dev, lv: { f: l, a: l, b: l } }; }
+    if (this.env.DEV_OPEN === '1' && typeof dev === 'string') { const l = clamp(parseInt(dev.split('-')[1]) || 1, 1, 10); return { id: 'dev-' + dev, name: dev, lv: { f: l, a: l, b: l }, sk: dev.includes('skill') ? { gun: 4, tough: 4 } : null, kit: dev.includes('skill') ? { g: 2, k: 3 } : null }; }
     if (typeof tok !== 'string' || tok.length < 20 || tok.length > 4000) return null;
     const r = await fetch(this.env.SUPABASE_URL + '/rest/v1/rpc/my_pilot', { method: 'POST', body: '{}',
       headers: { apikey: this.env.SUPABASE_KEY, Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' } });
@@ -202,7 +205,7 @@ export class Match extends DurableObject {
       const cnt = [0, 0]; for (const x of this.ents.values()) if (!x.bot) cnt[x.team]++;
       const team = this.ch ? 0 : !this.open ? (cnt[0] < SEATS ? 0 : 1) : cnt[0] < cnt[1] ? 0 : cnt[1] < cnt[0] ? 1 : this.sc[1] < this.sc[0] ? 1 : 0;
       const ent = this.make(p.id, String(p.name || 'Pilot').replace(/[<>&]/g, '').slice(0, 16), team, false);
-      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 127) : 0; if (typeof m.r === 'string' && ROLE[m.r]) { this.role(ent, m.r, p.lv && p.lv[m.r] || 1); this.arm(ent); } else if (Array.isArray(m.a) && m.a.length === 2 && m.a.every(Number.isInteger)) { ent.b0 = clamp(m.a[0], 0, 4); ent.r0 = clamp(m.a[1], 0, 10); this.arm(ent); } ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
+      ent.k = Number.isInteger(m.k) ? clamp(m.k, 0, 127) : 0; if (typeof m.r === 'string' && ROLE[m.r]) { this.role(ent, m.r, p.lv && p.lv[m.r] || 1); this.arm(ent); } else if (Array.isArray(m.a) && m.a.length === 2 && m.a.every(Number.isInteger)) { ent.b0 = clamp(m.a[0], 0, 4); ent.r0 = clamp(m.a[1], 0, 10); this.arm(ent); } ent.pk = pkOf(p); ent.conn = conn; ent.uid = p.id; ent.since = Date.now(); ent.fresh = false; conn.ent = ent;
       if (!this.start) { this.start = Date.now(); this.sc = [0, 0]; this.zero(); this.over = 0; }
       this.fill(); this.tell();
       this.send(conn, { t: 'in', id: ent.id, team, goal: this.goal(), seats: SEATS, mode: this.mode, wx: this.wx, rl: ent.rl, lv: ent.lv, am: this.ld(ent), ch: this.ch || undefined, ld: this.R.load, bhp: this.R.bhp, sp: this.mode === 'ship' ? [this.spos(0), this.spos(1)] : undefined, shp: SHIP_HP, shm: this.mode === 'ship' ? [this.smax(0), this.smax(1)] : undefined, zp: this.mode === 'zone' ? ZONES.map((z, i) => [...this.zpos(i), ZR]) : this.land() ? LPTS.map((z, i) => [...this.zpos(i), LR]) : undefined, bz: this.land() ? [this.bpos(0), this.bpos(1)] : undefined, ap: this.isle() && this.ap.p ? [this.ap.own, Math.ceil(this.ap.shut)] : undefined, tg: this.isle() ? this.tg.map(t => [t.team, t.kind, Math.round(t.x), Math.round(t.z), Math.round(t.hp), TG_HP]) : undefined, left: this.left(), sc: this.sc, c: this.c });
@@ -243,12 +246,12 @@ export class Match extends DurableObject {
     const dx = t.p[0] - e.p[0], dy = t.p[1] - e.p[1], dz = t.p[2] - e.p[2], dist = Math.hypot(dx, dy, dz); if (dist > 750) return;
     const q = e.q, fx = -2 * (q[0] * q[2] + q[3] * q[1]), fy = -2 * (q[1] * q[2] - q[3] * q[0]), fz = -(1 - 2 * (q[0] * q[0] + q[1] * q[1]));
     if (dist > 40 && (fx * dx + fy * dy + fz * dz) / dist < .8) return;
-    e.budget -= d; this.hurt(t, (t.bot ? d : d * .5) * this.rk(e).gun, e);
+    e.budget -= d; this.hurt(t, (t.bot ? d : d * .5) * this.rk(e).gun * (e.pk ? e.pk.g : 1), e);
   }
 
   hurt(t, d, by) {
     if (Date.now() < t.safe) return;
-    t.hp -= d * this.rk(t).arm; t.hitAt = Date.now(); t.hitBy = by.id;
+    t.hp -= d * this.rk(t).arm / (t.pk ? t.pk.a : 1); t.hitAt = Date.now(); t.hitBy = by.id;
     if (t.bot) { if (Math.random() < .3) this.evade(t); } else if (t.conn) this.send(t.conn, { t: 'd', hp: Math.max(0, r1(t.hp)), by: by.id });
     if (t.hp <= 0) this.kill(t, by);
   }

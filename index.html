@@ -235,6 +235,26 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .brf p, .brf li { margin: 0; font: 400 15px/1.4 var(--f-type); color: var(--type); } .brf ul { margin: 0; padding-left: 18px; } .brf .sign { margin-top: 10px; font-style: italic; color: var(--type-dim); }
 .more summary { cursor: pointer; font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type-dim); } .more p { margin-top: 8px; }
 @media (max-width: 620px) { .brf { grid-template-columns: 1fr; } .brf canvas { justify-self: center; } }
+.kit { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; align-items: center; } .kit > span { font: 700 12px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; color: var(--type-dim); } .kit .seg input:disabled + span { opacity: .38; text-decoration: line-through; }
+.tree-sheet { width: min(760px, 100%); }
+.pl-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; } .pl-top h1 { margin: 0; } .pl-top .bar { height: 6px; background: rgba(41, 40, 31, .18); margin: 6px 0 4px; } .pl-top .bar i { display: block; height: 100%; background: var(--olive); }
+.pl-face { width: 96px; height: 96px; border-radius: 50%; border: 3px solid var(--type); background: rgba(41, 40, 31, .08) center / cover; display: grid; place-items: center; box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px rgba(41, 40, 31, .4); } .pl-face .fmark { width: 44px; height: 44px; font-size: 26px; } .pl-face.pic .fmark { display: none; }
+.tree { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; } .branch { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 10px 4px 12px; border: 1px solid rgba(41, 40, 31, .3); background: rgba(41, 40, 31, .03); }
+.gslot { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px; align-items: start; padding: 8px 0; border-top: 1px solid rgba(41, 40, 31, .3); } .gslot > span { padding-top: 6px; font: 700 12px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; color: var(--type-dim); }
+.gitems { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.gitem { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 2px 8px; align-items: center; padding: 6px; text-align: left; border: 1px solid rgba(41, 40, 31, .35); background: transparent; color: var(--type); cursor: pointer; font: inherit; }
+.gitem i { grid-row: 1 / span 3; width: 52px; height: 52px; border-radius: 50%; background: center / 118% no-repeat; border: 1px solid rgba(41, 40, 31, .4); } .gitem b { font: 700 13px/1.1 var(--f-hud); letter-spacing: .08em; text-transform: uppercase; } .gitem small { font: 400 12px/1.25 var(--f-type); color: var(--type-dim); } .gitem em { font: 700 11px/1 var(--f-hud); font-style: normal; letter-spacing: .1em; text-transform: uppercase; color: var(--stamp); }
+.gitem.on { background: var(--olive); border-color: var(--olive); color: var(--paper); } .gitem.on small, .gitem.on em { color: var(--paper); } .gitem.lock { opacity: .6; } .gitem:disabled { cursor: default; }
+@media (max-width: 620px) { .gslot { grid-template-columns: 1fr; } }
+.b-pic { width: 76px; height: 76px; border-radius: 50%; margin-bottom: 8px; background: center / 118% no-repeat; border: 2px solid rgba(41, 40, 31, .45); }
+.branch h3 { margin: 0 0 8px; font: 700 13px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type); text-align: center; } .branch small { font: 400 11px/1 var(--f-type); color: var(--type-dim); margin-bottom: 8px; }
+.node { position: relative; width: 58px; height: 58px; margin-top: 18px; border-radius: 50%; border: 2px solid rgba(41, 40, 31, .35); background: var(--paper); color: rgba(41, 40, 31, .4); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.node:first-of-type { margin-top: 0; } .node::before { content: ''; position: absolute; left: 50%; bottom: 100%; width: 2px; height: 18px; margin-left: -1px; background: rgba(41, 40, 31, .3); } .node:first-of-type::before { display: none; }
+.node svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.node.got { background: var(--olive); border-color: var(--olive); color: var(--paper); } .node.got::before, .node.next::before { background: var(--olive); }
+.node.next { border-color: var(--stamp); color: var(--stamp); border-style: dashed; } .node.sel { box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--type); } .node:focus-visible { outline: 2px solid var(--stamp); outline-offset: 3px; }
+.pl-info { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; padding: 12px 14px; border: 1px solid rgba(41, 40, 31, .45); min-height: 76px; } .pl-info b { font: 700 16px/1.1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .pl-info p { grid-column: 1; margin: 0; font: 400 14px/1.4 var(--f-type); } .pl-info button { grid-column: 2; grid-row: 1 / span 2; }
+@media (max-width: 620px) { .tree { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pl-face { width: 72px; height: 72px; } .pl-info { grid-template-columns: 1fr; } .pl-info button { grid-column: 1; grid-row: auto; } }
 .fac { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-bottom: 6px; font: 700 12px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; color: var(--type-dim); }
 .fmark { flex: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font: 700 11px/1 var(--f-hud); font-style: normal; color: #fff; }
 .fmark.us { background: #1f3a63; } .fmark.su { background: #f1ede0; color: #b3261e; box-shadow: inset 0 0 0 1px rgba(41, 40, 31, .35); } .fmark.axis { background: #4b4f52; font-size: 10px; }
@@ -379,6 +399,9 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <h1 id="m-title">Operation Windfall</h1>
       <div class="brf"><div id="m-brf"></div><canvas id="m-map" width="440" height="440" aria-hidden="true"></canvas></div>
       <details class="more"><summary>Full orders</summary><p class="lede" id="m-brief"></p></details>
+      <div class="lab2">Loadout</div>
+      <div class="kit"><span>Guns</span><div class="seg" id="o-kg" role="radiogroup" aria-label="Guns"></div><span>Wings</span><div class="seg" id="o-load" role="radiogroup" aria-label="Ordnance"></div><span>Fitting</span><div class="seg" id="o-kk" role="radiogroup" aria-label="Fitting"></div></div>
+      <p class="note" id="o-load-n"></p>
       <ul class="medals" id="m-stars"></ul>
       <dl class="keys" id="m-keys"></dl>
       <div id="sky-box" hidden>
@@ -395,13 +418,26 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Opposition</div>
       <div class="seg" id="d-pick" role="radiogroup" aria-label="Difficulty"></div>
       <label class="opt" for="o-inv"><input type="checkbox" id="o-inv"> Pilot-style pitch (pull back to climb)</label>
-      <div class="row"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button></div>
+      <div class="row"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button><button class="ghost" id="b-pilot" type="button">Pilot</button></div>
       <div class="stamp" id="m-stamp">Restricted</div>
       <p class="build">Build 17 · verified scores</p>
       <p class="build"><a href="privacy.html" target="_blank" rel="noopener">Privacy and your data</a> · <a href="#" id="b-fb">Send feedback</a></p>
     </div>
   </div>
 
+  <div class="screen" id="s-pilot" hidden>
+    <div class="sheet tree-sheet">
+      <div class="sheet-head"><span>Pilot record</span><span id="pl-lv">Level 1</span></div>
+      <div class="pl-top"><div class="pl-face" id="pl-face"><i class="fmark us" id="pl-mark">★</i></div><div><h1 id="pl-rank">Pilot Officer</h1><p class="lede" id="pl-pts"></p><div class="bar"><i id="pl-bar"></i></div><p class="note" id="pl-next"></p></div></div>
+      <p class="note" id="pl-msg" hidden></p>
+      <div class="tree" id="pl-tree"></div>
+      <div class="pl-info" id="pl-info" aria-live="polite"><b id="pl-n"></b><p id="pl-d"></p><button class="go" id="b-train" type="button">Train</button></div>
+      <div class="lab2">Flying kit</div>
+      <p class="note">One piece on the head, one on the body, one carried. Tap a piece to buy it or put it on.</p>
+      <div id="pl-gear"></div>
+      <div class="row"><button class="go" id="b-pback" type="button">Back</button><button class="ghost" id="b-preset" type="button">Reset skills</button></div>
+    </div>
+  </div>
   <div class="screen" id="s-hangar" hidden>
     <div id="h-look" class="wide-only" aria-live="polite"></div>
     <div class="sheet">
@@ -418,13 +454,15 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div id="h-paints"></div>
       <div class="lab2">Fittings</div>
       <div id="h-list"></div>
+      <div class="lab2">Equipment</div>
+      <p class="note">Bought once, then chosen on the sortie board before each flight.</p>
+      <div id="h-parts"></div>
       <div class="lab2">Stick sensitivity</div><div class="seg" id="o-sens" role="radiogroup" aria-label="Stick sensitivity"></div>
       <div class="lab2">Graphics</div><div class="seg" id="o-q" role="radiogroup" aria-label="Graphics quality"></div>
       <div class="lab2">Frame counter</div><div class="seg" id="o-fps" role="radiogroup" aria-label="Frame counter"></div>
       <div class="lab2">Music</div><div class="seg" id="o-mus" role="radiogroup" aria-label="Music"></div>
       <div class="lab2">Pilot radio</div><div class="seg" id="o-voice" role="radiogroup" aria-label="Pilot radio"></div>
       <div class="lab2">Landing aid</div><div class="seg" id="o-aid" role="radiogroup" aria-label="Landing aid"></div>
-      <div class="lab2">Ordnance</div><div class="seg" id="o-load" role="radiogroup" aria-label="Ordnance"></div><p class="note" id="o-load-n"></p>
       <div class="lab2">Night sortie</div><div class="seg" id="o-night" role="radiogroup" aria-label="Night sortie"></div><p class="note">Fly the sorties after dark: harder to see, and every point is worth a fifth more.</p>
       <p class="lede" style="font-size:13px">A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.</p>
       <div class="row"><button class="go" id="b-hback" type="button">Back</button></div>
@@ -466,6 +504,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Objectives</div>
       <ul class="medals" id="end-goals"></ul>
       <p class="note" id="end-pilot"></p>
+      <p class="note" id="end-kit" hidden></p>
       <p class="note" id="end-next"></p>
       <p class="note" id="end-net" hidden></p>
       <div class="stats">
@@ -808,7 +847,9 @@ const DICT = {
   "Back": ["Geri", "Zurück"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
   "Harder-hitting, cooler-running guns, 12% a step": ["Daha sert vuran, daha serin çalışan toplar, kademe başına %12", "Härter treffende, kühler laufende Waffen, 12 % je Stufe"], "Heavier rocket and bomb warheads, 15% a step": ["Daha ağır roket ve bomba başlıkları, kademe başına %15", "Schwerere Raketen- und Bombenköpfe, 15 % je Stufe"],
-  "Fitted": ["Takıldı", "Eingebaut"], "Fit": ["Tak", "Einbauen"], "Buy": ["Satın al", "Kaufen"], "Fly": ["Uç", "Fliegen"], "Flying": ["Uçuyor", "In Benutzung"], "Mission standard": ["Görev standardı", "Einsatzstandard"], "United States": ["Amerika Birleşik Devletleri", "Vereinigte Staaten"], "Soviet Union": ["Sovyetler Birliği", "Sowjetunion"], "Axis": ["Mihver", "Achse"], "Captured types": ["Ele geçirilen tipler", "Erbeutete Typen"], "In the colours of the side you fly for": ["Uçtuğun tarafın renklerinde", "In den Farben der Seite, für die du fliegst"], "Navy blue-grey": ["Donanma mavi-grisi", "Marine-Blaugrau"], "Summer green": ["Yaz yeşili", "Sommergrün"], "Tropical sand": ["Tropik kum", "Tropensand"], "Atlantic grey": ["Atlantik grisi", "Atlantikgrau"], "Day fighter scheme": ["Gündüz avcı şeması", "Tagjäger-Anstrich"], "Three-tone sea blue": ["Üç tonlu deniz mavisi", "Dreiton-Seeblau"], "Fleet Air Arm": ["Donanma Hava Kolu", "Fleet Air Arm"], "Baltic grey": ["Baltık grisi", "Ostseegrau"], "Maritime green": ["Deniz yeşili", "Seegrün"], "Sky spinner": ["Açık yeşil pervane göbeği", "Spinner in Sky"], "Guards red nose": ["Muhafız kırmızı burnu", "Garde-Rotnase"], "Yellow nose": ["Sarı burun", "Gelbe Nase"],
+  "Fitted": ["Takıldı", "Eingebaut"], "Fit": ["Tak", "Einbauen"], "Buy": ["Satın al", "Kaufen"], "Fly": ["Uç", "Fliegen"], "Flying": ["Uçuyor", "In Benutzung"], "Mission standard": ["Görev standardı", "Einsatzstandard"], "United States": ["Amerika Birleşik Devletleri", "Vereinigte Staaten"], "Soviet Union": ["Sovyetler Birliği", "Sowjetunion"], "Axis": ["Mihver", "Achse"], "Captured types": ["Ele geçirilen tipler", "Erbeutete Typen"],
+  "Flying kit": ["Uçuş teçhizatı", "Fliegerausrüstung"], "One piece on the head, one on the body, one carried. Tap a piece to buy it or put it on.": ["Başa bir parça, gövdeye bir parça, yanında bir parça. Almak ya da giymek için parçaya dokun.", "Ein Teil am Kopf, eines am Körper, eines dabei. Tippe ein Teil an, um es zu kaufen oder anzulegen."], "Head": ["Baş", "Kopf"], "Body": ["Gövde", "Körper"], "Carried": ["Yanında", "Dabei"], "Put on": ["Giy", "Anlegen"], "Wearing": ["Giyili", "Angelegt"], "Flying helmet": ["Uçuş başlığı", "Fliegerhaube"], "A hit shakes you less.": ["İsabet seni daha az sarsar.", "Ein Treffer schüttelt dich weniger durch."], "Goggles": ["Gözlük", "Fliegerbrille"], "Rounds and lead ring reach 5% farther.": ["Mermiler ve önleme halkası %5 daha uzağa ulaşır.", "Geschosse und Vorhaltering reichen 5% weiter."], "Headset": ["Kulaklık", "Kopfhörer"], "Fifteen seconds more for every radio task.": ["Her telsiz görevi için on beş saniye daha.", "Fünfzehn Sekunden mehr für jede Funkaufgabe."], "Oxygen mask": ["Oksijen maskesi", "Sauerstoffmaske"], "You grey out later in a hard turn.": ["Sert dönüşte gözün daha geç kararır.", "In harten Kurven wird dir später schwarz vor Augen."], "Sheepskin jacket": ["Koyun postu ceket", "Lammfelljacke"], "Out of the fight, she mends a quarter faster.": ["Çatışma dışında uçak dörtte bir daha hızlı toparlanır.", "Außerhalb des Gefechts erholt sie sich ein Viertel schneller."], "Life vest": ["Can yeleği", "Schwimmweste"], "4% more requisition from a sortie won.": ["Kazanılan sortiden %4 daha fazla tahsis.", "4% mehr Zuteilung aus einem gewonnenen Einsatz."], "Parachute": ["Paraşüt", "Fallschirm"], "Half as much requisition again from a sortie lost.": ["Kaybedilen sortiden yarım kat daha fazla tahsis.", "Die Hälfte mehr Zuteilung aus einem verlorenen Einsatz."], "Flying gloves": ["Uçuş eldiveni", "Fliegerhandschuhe"], "3% quicker in the roll.": ["Yatışta %3 daha hızlı.", "3% schneller im Rollen."], "Flying boots": ["Uçuş botu", "Fliegerstiefel"], "A tenth more rudder.": ["Onda bir daha fazla dümen.", "Ein Zehntel mehr Seitenruder."], "Map case": ["Harita çantası", "Kartentasche"], "Beaches on the briefing map, and fifteen seconds more for the third star.": ["Kumsallar brifing haritasında, üçüncü yıldız için on beş saniye daha.", "Strände auf der Einsatzkarte und fünfzehn Sekunden mehr für den dritten Stern."], "Survival kit": ["Hayatta kalma çantası", "Notausrüstung"], "She starts to mend two seconds sooner.": ["Uçak iki saniye daha erken toparlanmaya başlar.", "Sie beginnt sich zwei Sekunden früher zu erholen."],
+  "Pilot record": ["Pilot sicili", "Pilotenakte"], "Level": ["Seviye", "Stufe"], "Skill points to spend": ["Harcanacak yetenek puanı", "Verfügbare Fähigkeitspunkte"], "Next level": ["Sonraki seviye", "Nächste Stufe"], "Highest level reached": ["En yüksek seviyeye ulaşıldı", "Höchste Stufe erreicht"], "Train": ["Eğit", "Ausbilden"], "Trained": ["Eğitildi", "Ausgebildet"], "Earlier steps first": ["Önce önceki adımlar", "Erst die früheren Schritte"], "No points left": ["Puan kalmadı", "Keine Punkte übrig"], "Reset skills": ["Yetenekleri sıfırla", "Fähigkeiten zurücksetzen"], "Skills for signed-in pilots open with the next server update.": ["Giriş yapmış pilotlar için yetenekler bir sonraki sunucu güncellemesiyle açılacak.", "Fähigkeiten für angemeldete Piloten kommen mit dem nächsten Server-Update."], "Flight": ["Uçuş", "Flug"], "Weapons": ["Silah", "Waffen"], "Survivability": ["Dayanıklılık", "Standfestigkeit"], "Tactics": ["Taktik", "Taktik"], "Stall warning": ["Stall uyarısı", "Überziehwarnung"], "The stall warning comes on earlier, while there is still speed to save her.": ["Stall uyarısı daha erken gelir, uçağı kurtaracak hız varken.", "Die Überziehwarnung kommt früher, solange noch Fahrt zum Abfangen da ist."], "Energy retention": ["Enerji koruma", "Energieerhalt"], "She loses 8% less speed in a hard turn.": ["Sert dönüşte %8 daha az hız kaybeder.", "Sie verliert in harten Kurven 8% weniger Fahrt."], "Control authority": ["Kumanda etkinliği", "Ruderwirkung"], "6% quicker in the roll and more answer from the stick near the stall.": ["Yatışta %6 daha hızlı; stall yakınında levye daha çok cevap verir.", "6% schneller im Rollen und mehr Ruderwirkung nahe am Abriss."], "Energy management": ["Enerji yönetimi", "Energiemanagement"], "A further 6% less speed lost in the turn, and 3% more turn.": ["Dönüşte %6 daha az hız kaybı ve %3 daha fazla dönüş.", "Weitere 6% weniger Fahrtverlust in der Kurve und 3% mehr Wendigkeit."], "Cool barrels": ["Serin namlular", "Kühle Läufe"], "The guns heat 12% slower.": ["Toplar %12 daha yavaş ısınır.", "Die Waffen erhitzen 12% langsamer."], "Better gunsight": ["Daha iyi nişangâh", "Besseres Visier"], "Rounds carry a tenth farther and the lead ring shows it.": ["Mermiler onda bir daha uzağa gider, önleme halkası da bunu gösterir.", "Geschosse tragen ein Zehntel weiter, und der Vorhaltering zeigt es."], "Tight grouping": ["Sıkı gruplama", "Enge Garbe"], "Every hit lands 5% harder.": ["Her isabet %5 daha sert vurur.", "Jeder Treffer wirkt 5% stärker."], "Sustained fire": ["Sürekli ateş", "Dauerfeuer"], "Hot guns cool a quarter faster.": ["Isınan toplar dörtte bir daha hızlı soğur.", "Heiße Waffen kühlen ein Viertel schneller ab."], "Damage resistance": ["Hasar direnci", "Schadensresistenz"], "She takes 5% less damage.": ["%5 daha az hasar alır.", "Sie nimmt 5% weniger Schaden."], "Longer boost": ["Uzun acil güç", "Längere Notleistung"], "Emergency power lasts a fifth longer.": ["Acil güç beşte bir daha uzun sürer.", "Die Notleistung hält ein Fünftel länger."], "An overheated engine cools a quarter faster.": ["Aşırı ısınan motor dörtte bir daha hızlı soğur.", "Ein überhitzter Motor kühlt ein Viertel schneller ab."], "Flying her home": ["Eve getirmek", "Sie heimbringen"], "A shot-up aircraft keeps more of her speed and turn.": ["Vurulmuş uçak hızını ve dönüşünü daha iyi korur.", "Ein zerschossenes Flugzeug behält mehr Fahrt und Wendigkeit."], "Marked beaches": ["İşaretli kumsallar", "Markierte Strände"], "The beach fronts are drawn on the briefing map.": ["Kumsal cepheleri brifing haritasına çizilir.", "Die Strandfronten werden in die Einsatzkarte eingezeichnet."], "Radio discipline": ["Telsiz disiplini", "Funkdisziplin"], "Twenty seconds more for every task that comes over the radio.": ["Telsizle gelen her görev için yirmi saniye daha.", "Zwanzig Sekunden mehr für jede Aufgabe, die über Funk kommt."], "Requisition": ["Tahsis", "Zuteilung"], "8% more requisition points from every sortie.": ["Her sortiden %8 daha fazla tahsis puanı.", "8% mehr Zuteilungspunkte aus jedem Einsatz."], "Priority work": ["Öncelikli iş", "Vorrangarbeit"], "Radio tasks pay a quarter more.": ["Telsiz görevleri dörtte bir daha fazla kazandırır.", "Funkaufgaben bringen ein Viertel mehr."], "Loadout": ["Yük seçimi", "Ausrüstung"], "Wings": ["Kanatlar", "Flügel"], "Fitting": ["Donanım", "Zurüstung"], "Equipment": ["Ekipman", "Ausstattung"], "Owned": ["Sahipsin", "Im Besitz"], "Pilot level": ["Pilot seviyesi", "Pilotenstufe"], "Bought once, then chosen on the sortie board before each flight.": ["Bir kez alınır, sonra her uçuştan önce sorti panosunda seçilir.", "Einmal gekauft, dann vor jedem Flug auf der Einsatztafel gewählt."], "Clean wing": ["Temiz kanat", "Saubere Fläche"], "Nothing under the wings: 3% faster and a little quicker in the turn.": ["Kanat altı boş: %3 daha hızlı, dönüşte biraz daha çevik.", "Nichts unter den Flächen: 3% schneller und etwas wendiger."], "Cooled barrels": ["Soğutmalı namlular", "Gekühlte Läufe"], "Guns heat a fifth slower and hit 6% softer.": ["Toplar beşte bir daha yavaş ısınır, %6 daha hafif vurur.", "Waffen erhitzen ein Fünftel langsamer und treffen 6% schwächer."], "Heavy rounds": ["Ağır mermi", "Schwere Munition"], "Hits land 10% harder; the guns heat a fifth faster.": ["İsabetler %10 daha sert; toplar beşte bir daha hızlı ısınır.", "Treffer wirken 10% stärker; die Waffen erhitzen ein Fünftel schneller."], "Armour plate": ["Zırh plakası", "Panzerplatte"], "8% less damage, and the weight to go with it.": ["%8 daha az hasar, ağırlığıyla birlikte.", "8% weniger Schaden, samt dem Gewicht dazu."], "Gyro gunsight": ["Jiroskoplu nişangâh", "Kreiselvisier"], "Rounds and lead ring reach a tenth farther.": ["Mermiler ve önleme halkası onda bir daha uzağa ulaşır.", "Geschosse und Vorhaltering reichen ein Zehntel weiter."], "Boost cooler": ["Acil güç soğutucusu", "Ladeluftkühler"], "Emergency power lasts a quarter longer.": ["Acil güç dörtte bir daha uzun sürer.", "Die Notleistung hält ein Viertel länger."], "Lighter and faster.": ["Daha hafif ve hızlı.", "Leichter und schneller."], "Heavier and slower.": ["Daha ağır ve yavaş.", "Schwerer und langsamer."], "Pilot and load": ["Pilot ve yük", "Pilot und Ausrüstung"], "Damage saved": ["Önlenen hasar", "Verhinderter Schaden"], "Requisition bonus": ["Tahsis primi", "Zuteilungsbonus"], "In the colours of the side you fly for": ["Uçtuğun tarafın renklerinde", "In den Farben der Seite, für die du fliegst"], "Navy blue-grey": ["Donanma mavi-grisi", "Marine-Blaugrau"], "Summer green": ["Yaz yeşili", "Sommergrün"], "Tropical sand": ["Tropik kum", "Tropensand"], "Atlantic grey": ["Atlantik grisi", "Atlantikgrau"], "Day fighter scheme": ["Gündüz avcı şeması", "Tagjäger-Anstrich"], "Three-tone sea blue": ["Üç tonlu deniz mavisi", "Dreiton-Seeblau"], "Fleet Air Arm": ["Donanma Hava Kolu", "Fleet Air Arm"], "Baltic grey": ["Baltık grisi", "Ostseegrau"], "Maritime green": ["Deniz yeşili", "Seegrün"], "Sky spinner": ["Açık yeşil pervane göbeği", "Spinner in Sky"], "Guards red nose": ["Muhafız kırmızı burnu", "Garde-Rotnase"], "Yellow nose": ["Sarı burun", "Gelbe Nase"],
   "Priority target": ["Öncelikli hedef", "Vorrangiges Ziel"], "Priority": ["Öncelik", "Vorrang"], "Stop the tanks": ["Tankları durdur", "Die Panzer stoppen"], "Armour stopped": ["Zırhlılar durduruldu", "Panzer gestoppt"], "Clear your wingman": ["Kanat arkadaşını kurtar", "Den Rottenflieger freikämpfen"], "Wingman clear": ["Kanat arkadaşı kurtuldu", "Rottenflieger frei"], "Stay under the cloud": ["Bulutun altında kal", "Unter der Wolke bleiben"], "Through the storm": ["Fırtına atlatıldı", "Durch den Sturm"], "gunboats are going for our supply convoy.": ["hücumbotlar ikmal konvoyumuza gidiyor.", "Kanonenboote gehen auf unseren Versorgungskonvoi."], "Go sink them.": ["Git batır onları.", "Versenk sie."], "they sent up one of their aces for you.": ["senin için as pilotlarından birini kaldırdılar.", "sie haben eines ihrer Asse auf dich angesetzt."], "Knock him down.": ["İndir onu.", "Hol ihn runter."], "change of plan.": ["plan değişti.", "Planänderung."], "Tanks are rolling on the beach.": ["Tanklar kumsalda ilerliyor.", "Panzer rollen auf den Strand."], "Hit them now.": ["Hemen vur.", "Greif sie sofort an."], "your wingman has two on his tail.": ["kanat arkadaşının peşinde iki tane var.", "dein Rottenflieger hat zwei im Nacken."], "Get them off him.": ["Onları üstünden al.", "Hol sie ihm vom Hals."], "weather is closing in fast.": ["hava hızla kapanıyor.", "das Wetter zieht schnell zu."], "Get under the cloud and stay there.": ["Bulutun altına in ve orada kal.", "Geh unter die Wolke und bleib dort."], "Nice work.": ["İyi iş.", "Gute Arbeit."], "Back to the main job.": ["Asıl işe dön.", "Zurück zur Hauptaufgabe."], "Too late for that one.": ["O iş için geç kaldık.", "Dafür ist es zu spät."], "Good hit.": ["İyi isabet.", "Guter Treffer."], "Keep it up.": ["Böyle devam.", "Weiter so."], "enemy gunboats are closing on a supply convoy.": ["düşman hücumbotları bir ikmal konvoyuna yaklaşıyor.", "feindliche Kanonenboote nähern sich einem Versorgungskonvoi."], "You are to sink them.": ["Onları batıracaksınız.", "Sie sind zu versenken."], "an enemy ace is airborne and looking for you.": ["bir düşman ası havada ve sizi arıyor.", "ein feindliches Ass ist in der Luft und sucht Sie."], "Engage and destroy.": ["Angaje olun ve imha edin.", "Angreifen und vernichten."], "priority has changed.": ["öncelik değişti.", "die Priorität hat sich geändert."], "Enemy armour is advancing on the beach.": ["Düşman zırhlıları kumsalda ilerliyor.", "Feindliche Panzer rücken am Strand vor."], "Attack it at once.": ["Derhal taarruz edin.", "Sofort angreifen."], "your number two reports two bandits astern.": ["iki numaranız arkasında iki düşman bildiriyor.", "Ihre Nummer zwei meldet zwei Banditen achteraus."], "Kindly remove them.": ["Lütfen onları uzaklaştırın.", "Entfernen Sie sie bitte."], "the weather is deteriorating rapidly.": ["hava hızla bozuluyor.", "das Wetter verschlechtert sich rasch."], "Descend below the cloud base and remain there.": ["Bulut tabanının altına inin ve orada kalın.", "Unter die Wolkenuntergrenze sinken und dort bleiben."], "Well done indeed.": ["Gerçekten iyi iş.", "Wirklich gut gemacht."], "Resume your primary task.": ["Asıl görevinize dönün.", "Hauptaufgabe wieder aufnehmen."], "That opportunity has passed.": ["O fırsat kaçtı.", "Diese Gelegenheit ist vorbei."], "Target destroyed.": ["Hedef imha edildi.", "Ziel zerstört."], "Good show.": ["Güzel iş.", "Saubere Leistung."], "gunboats near the convoy.": ["konvoyun yanında hücumbotlar.", "Kanonenboote beim Konvoi."], "Sink them.": ["Batır.", "Versenken."], "enemy ace in the air.": ["düşman ası havada.", "feindliches Ass in der Luft."], "Destroy him.": ["İmha et.", "Vernichten."], "new order.": ["yeni emir.", "neuer Befehl."], "Tanks on the beach.": ["Kumsalda tanklar.", "Panzer am Strand."], "Strike now.": ["Şimdi vur.", "Jetzt zuschlagen."], "wingman attacked.": ["kanat arkadaşı saldırı altında.", "Rottenflieger wird angegriffen."], "Help him.": ["Yardım et.", "Hilf ihm."], "storm coming.": ["fırtına geliyor.", "Sturm zieht auf."], "Go low.": ["Alçal.", "Geh tief."], "Done.": ["Tamam.", "Erledigt."], "Continue the task.": ["Göreve devam.", "Aufgabe fortsetzen."], "Too late.": ["Geç kaldın.", "Zu spät."], "Good.": ["İyi.", "Gut."],
   "The job": ["Görev", "Der Auftrag"], "Targets": ["Hedefler", "Ziele"], "Also worth your time": ["Fırsat bulursan", "Auch lohnend"], "What is up there": ["Yukarıda ne var", "Was dort oben wartet"], "How to fly it": ["Nasıl uçulur", "So fliegst du es"], "Go get them.": ["Haydi, göster onlara.", "Hol sie dir."], "Intention": ["Maksat", "Absicht"], "Primary objectives": ["Ana hedefler", "Hauptziele"], "Secondary objectives": ["İkincil hedefler", "Nebenziele"], "Opposition expected": ["Beklenen mukavemet", "Erwarteter Widerstand"], "Recommended method": ["Önerilen usul", "Empfohlenes Vorgehen"], "Task": ["Görev", "Aufgabe"], "Also": ["Ayrıca", "Außerdem"], "Enemy": ["Düşman", "Feind"], "Method": ["Usul", "Vorgehen"], "Carry it out.": ["Yerine getir.", "Ausführen."], "Order": ["Emir", "Befehl"], "Further targets": ["Diğer hedefler", "Weitere Ziele"], "Full orders": ["Emrin tamamı", "Vollständiger Befehl"], "Gun battery": ["Top bataryası", "Geschützbatterie"], "Freighter": ["Yük gemisi", "Frachter"], "Shoot down eight fighters": ["Sekiz avcı düşür", "Acht Jäger abschießen"], "Stop three bomber raids": ["Üç bombardıman akınını durdur", "Drei Bomberangriffe stoppen"], "Keep the carrier afloat": ["Uçak gemisini su üstünde tut", "Den Träger über Wasser halten"], "Bring two of the three bombers to the depot": ["Üç bombardıman uçağından ikisini depoya ulaştır", "Zwei der drei Bomber zum Lager bringen"], "Flak: none": ["Uçaksavar: yok", "Flak: keine"], "Flak: light": ["Uçaksavar: hafif", "Flak: leicht"], "Flak: medium": ["Uçaksavar: orta", "Flak: mittel"], "Flak: heavy": ["Uçaksavar: yoğun", "Flak: schwer"], "The fleet sails through this strait tonight. While those radars are up, the enemy sees it coming.": ["Filo bu gece bu boğazdan geçecek. O radarlar ayakta kaldıkça düşman geldiğini görür.", "Die Flotte läuft heute Nacht durch diese Meerenge. Solange die Radare stehen, sieht der Feind sie kommen."], "Enemy tanks above the beaches": ["Kumsalların üstündeki düşman tankları", "Feindpanzer oberhalb der Strände"], "Infantry camps behind the line": ["Hattın gerisindeki piyade kampları", "Infanterielager hinter der Linie"], "Light fighters in pairs. They out-turn you.": ["İkişerli hafif avcılar. Senden sıkı dönerler.", "Leichte Jäger in Paaren. Sie kurven enger als du."], "Guns for the radars. Keep both bombs for the tanks.": ["Radarlara top. İki bombayı da tanklara sakla.", "Bordwaffen für die Radare. Beide Bomben für die Panzer aufheben."], "The coastal guns close the Channel to our convoys. With them silenced, the commandos can hold the shore.": ["Kıyı topları Manş'ı konvoylarımıza kapatıyor. Susturulurlarsa komandolar kıyıyı tutabilir.", "Die Küstengeschütze sperren den Kanal für unsere Geleitzüge. Sind sie zum Schweigen gebracht, können die Kommandos das Ufer halten."], "Panzers pinning down the commandos": ["Komandoları yere yapıştıran panzerler", "Panzer, die die Kommandos niederhalten"], "E-boats in the Channel": ["Manş'taki hücumbotlar", "Schnellboote im Kanal"], "Fast fighters above the coast.": ["Kıyı üstünde hızlı avcılar.", "Schnelle Jäger über der Küste."], "Rockets for the batteries; cannon will do for the radar post.": ["Bataryalara roket; radar karakoluna top yeter.", "Raketen für die Batterien; für den Radarposten genügt die Kanone."], "The garrison lives on that fuel and those two ships. Cut them off and it cannot fight on.": ["Garnizon o yakıtla ve o iki gemiyle ayakta. Onları kes, savaşamaz.", "Die Garnison lebt von diesem Treibstoff und diesen zwei Schiffen. Ohne sie kann sie nicht weiterkämpfen."], "Enemy armour facing Eighth Army": ["Sekizinci Ordu'nun karşısındaki düşman zırhlıları", "Feindpanzer vor der Achten Armee"], "Agile fighters over the islands.": ["Adaların üstünde çevik avcılar.", "Wendige Jäger über den Inseln."], "Bomb the freighters from low level. Watch your speed in the climb: she will stall.": ["Yük gemilerini alçaktan bombala. Tırmanışta hızına dikkat: stall olur.", "Die Frachter im Tiefflug bombardieren. Im Steigflug auf die Fahrt achten: Sie reißt ab."], "The ships at anchor cover the enemy retreat. Break them and the coast is ours.": ["Demirdeki gemiler düşmanın çekilişini örtüyor. Onları kır, kıyı bizim.", "Die Schiffe vor Anker decken den Rückzug des Feindes. Zerschlage sie, und die Küste gehört uns."], "Tanks dug in on the slope": ["Yamaca gömülü tanklar", "Am Hang eingegrabene Panzer"], "Veteran fighters.": ["Tecrübeli avcılar.", "Erfahrene Jäger."], "Aim at the red lead ring. Rockets for the battery, bombs for the cruiser.": ["Kırmızı önleme halkasına nişan al. Bataryaya roket, kruvazöre bomba.", "Auf den roten Vorhaltering zielen. Raketen für die Batterie, Bomben für den Kreuzer."], "The enemy fighter force on this coast is to be worn down before the next operation.": ["Bu kıyıdaki düşman avcı gücü bir sonraki harekâttan önce yıpratılacak.", "Die feindliche Jagdwaffe an dieser Küste ist vor der nächsten Operation abzunutzen."], "Fighters, three at a time.": ["Avcılar, üçer üçer.", "Jäger, je drei auf einmal."], "Stay with your wingman and keep your speed. Do not turn with three at once.": ["Kanat arkadaşından ayrılma, hızını koru. Üçüyle birden dönüşe girme.", "Beim Rottenflieger bleiben und Fahrt halten. Nicht mit dreien zugleich kurven."], "Lose the carrier and there is no deck to come home to.": ["Gemiyi kaybedersen dönecek güverte kalmaz.", "Geht der Träger verloren, gibt es kein Deck mehr für die Heimkehr."], "The escorting fighters": ["Refakat avcıları", "Die Begleitjäger"], "Bombers with fighter cover, from the north.": ["Avcı korumalı bombardıman uçakları, kuzeyden.", "Bomber mit Jagdschutz, aus Norden."], "Bombers first. Hit them from above before they reach the ships.": ["Önce bombardıman uçakları. Gemilere varmadan yukarıdan vur.", "Zuerst die Bomber. Von oben angreifen, bevor sie die Schiffe erreichen."], "The depot is now too well protected for fighter-bombers. The bombers can finish it, if they arrive.": ["Depo artık avcı-bombardıman uçakları için fazla iyi korunuyor. Bombardıman uçakları bitirebilir, varabilirlerse.", "Das Lager ist für Jagdbomber inzwischen zu gut geschützt. Die Bomber können es erledigen, wenn sie ankommen."], "Fighters that break away": ["Kopup kaçan avcılar", "Jäger, die abdrehen"], "Fighters going for the bombers.": ["Bombardıman uçaklarına saldıran avcılar.", "Jäger, die auf die Bomber gehen."], "Stay close to the bombers. Do not chase a fighter that runs.": ["Bombardıman uçaklarının yanında kal. Kaçan avcının peşine düşme.", "Dicht bei den Bombern bleiben. Keinen fliehenden Jäger verfolgen."], "Objectives": ["Hedefler", "Ziele"], "Damage taken": ["Alınan hasar", "Erlittener Schaden"], "Rockets / bombs used": ["Atılan roket / bomba", "Raketen / Bomben verbraucht"], "Stalls": ["Stall", "Strömungsabrisse"], "Touchdown": ["Teker koyuş", "Aufsetzen"], "Secondary": ["İkincil", "Nebenziel"], "Break the enemy line at a beach": ["Bir kumsalda düşman hattını yar", "Die Feindlinie an einem Strand durchbrechen"], "Pilot assessment": ["Pilot değerlendirmesi", "Pilotenbeurteilung"], "Exceptional": ["Olağanüstü", "Hervorragend"], "Sound": ["Sağlam", "Solide"], "Fair": ["Orta", "Ordentlich"], "Needs work": ["Geliştirilmeli", "Ausbaufähig"], "Sharp shooting": ["Keskin atış", "Scharf geschossen"], "Wild shooting": ["Dağınık atış", "Wild geschossen"], "Barely scratched": ["Neredeyse çiziksiz", "Kaum ein Kratzer"], "Badly shot up": ["Ağır hasarlı", "Schwer zerschossen"], "Stalled more than once": ["Birden çok stall", "Mehrfach abgerissen"], "Stalled once": ["Bir kez stall", "Einmal abgerissen"], "Speed well kept": ["Hız iyi korundu", "Fahrt gut gehalten"], "Smooth landing": ["Yumuşak iniş", "Weiche Landung"], "Heavy landing": ["Sert iniş", "Harte Landung"], "Good work. The skipper is buying.": ["İyi iş. İçkiler komutandan.", "Gute Arbeit. Der Skipper gibt einen aus."], "Tough break. Get back up there.": ["Şanssızlık. Tekrar havalan.", "Pech gehabt. Wieder rauf mit dir."], "A sound piece of work. Well done.": ["Sağlam bir iş çıkardınız. Tebrikler.", "Saubere Arbeit. Gut gemacht."], "Bad luck. We shall try again tomorrow.": ["Talihsizlik. Yarın yeniden deneyeceğiz.", "Pech. Wir versuchen es morgen erneut."], "Task completed. The regiment is satisfied.": ["Görev tamamlandı. Alay memnun.", "Aufgabe erfüllt. Das Regiment ist zufrieden."], "Task not completed. Fly it again.": ["Görev tamamlanmadı. Yeniden uç.", "Aufgabe nicht erfüllt. Noch einmal fliegen."], "Task completed.": ["Görev tamamlandı.", "Aufgabe erfüllt."], "The fighters got you before you got one of them: turn into them early.": ["Sen birini bile düşüremeden avcılar seni düşürdü: onlara erkenden dön.", "Die Jäger hatten dich, bevor du einen von ihnen hattest: früh auf sie eindrehen."], "Most of your rounds missed: close in before you fire.": ["Mermilerinin çoğu boşa gitti: ateş etmeden önce yaklaş.", "Die meisten Schüsse gingen daneben: vor dem Feuern näher heran."], "You stalled more than once: keep your speed up in the turns.": ["Birden çok kez stall oldun: dönüşlerde hızını koru.", "Mehrfach abgerissen: in den Kurven Fahrt halten."], "The type each front was flown with": ["Her cephede kullanılan tip", "Der Typ, der an jeder Front flog"],
   "Balanced": ["Dengeli", "Ausgewogen"], "Gentle": ["Yumuşak", "Sanft"], "Normal": ["Normal", "Normal"], "Sharp": ["Keskin", "Scharf"], "Off": ["Kapalı", "Aus"], "On": ["Açık", "An"], "Fast": ["Hızlı", "Schnell"],
@@ -973,9 +1014,49 @@ const COST = [300, 700, 1200], PAR = [365, 410, 455, 500, 320, 365, 335], SENS =
 const CAR = { xp: 0, rp: 0, up: { eng: 0, arm: 0, gun: 0, ord: 0 }, stars: [0, 0, 0, 0, 0, 0, 0], diff: 1, sens: 1, q: 1, plane: -1, paint: 0, own: [], mus: 1, voice: 1, aid: 1, fps: 0 };
 try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (Array.isArray(j.own)) CAR.own = j.own.filter(n => Number.isInteger(n) && n >= 4 && n < 9); for (const k of ['xp', 'rp', 'diff', 'sens', 'q', 'plane', 'paint', 'mus', 'voice', 'aid', 'fps']) if (typeof j[k] === 'number' && isFinite(j[k])) CAR[k] = j[k]; if (j.up) for (const k in CAR.up) CAR.up[k] = clamp(j.up[k] | 0, 0, 3); if (Array.isArray(j.stars)) for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = (j.stars[i] | 0) & 7; } } catch (e) {}
 CAR.diff = clamp(CAR.diff | 0, 0, 2); CAR.sens = clamp(CAR.sens | 0, 0, 2); CAR.q = CAR.q ? 1 : 0; CAR.mus = CAR.mus ? 1 : 0; CAR.voice = CAR.voice ? 1 : 0; CAR.aid = CAR.aid ? 1 : 0; CAR.fps = CAR.fps ? 1 : 0; CAR.paint = clamp(CAR.paint | 0, 0, 6); CAR.plane = Number.isInteger(CAR.plane) && (CAR.plane < 4 || CAR.plane > 8 || CAR.own.includes(CAR.plane)) ? clamp(CAR.plane, -1, 11) : -1;
-CAR.load = clamp(CAR.load | 0, 0, 2); CAR.night = CAR.night ? 1 : 0;
-const LOADS = [['Standard', 'As issued for the sortie.', 1, 1, 0], ['Rockets', 'Half as many rockets again, half the bombs.', 1.5, .5, 0], ['Bombs', 'Two more bombs, half the rockets.', .5, 1, 2]]; // name, note, rockets x, bombs x, bombs +
-const loadR = () => Math.round(M.rockets * LOADS[CAR.load][2]), loadB = () => (M.bombs ? Math.max(1, Math.round(M.bombs * LOADS[CAR.load][3])) + LOADS[CAR.load][4] : 0);
+CAR.load = clamp(CAR.load | 0, 0, 3); CAR.night = CAR.night ? 1 : 0;
+/* the pilot himself: sixteen levels read off the experience already earned, a skill point at each, spent in four branches of four steps taken in order.
+   SKILLS is the whole tree; a new step is one more line in a branch and one more term in pkSet. */
+const PLV = [0, 600, 1500, 2700, 4200, 6000, 8200, 10800, 13800, 17200, 21000, 25500, 30500, 36000, 42000, 48000];
+const pilotLv = xp => { let n = 1; while (n < PLV.length && xp >= PLV[n]) n++; return n; };
+const SKILLS = {
+  fly: { n: 'Flight', steps: [['Stall warning', 'The stall warning comes on earlier, while there is still speed to save her.'], ['Energy retention', 'She loses 8% less speed in a hard turn.'], ['Control authority', '6% quicker in the roll and more answer from the stick near the stall.'], ['Energy management', 'A further 6% less speed lost in the turn, and 3% more turn.']] },
+  gun: { n: 'Weapons', steps: [['Cool barrels', 'The guns heat 12% slower.'], ['Better gunsight', 'Rounds carry a tenth farther and the lead ring shows it.'], ['Tight grouping', 'Every hit lands 5% harder.'], ['Sustained fire', 'Hot guns cool a quarter faster.']] },
+  tough: { n: 'Survivability', steps: [['Damage resistance', 'She takes 5% less damage.'], ['Longer boost', 'Emergency power lasts a fifth longer.'], ['Engine cooling', 'An overheated engine cools a quarter faster.'], ['Flying her home', 'A shot-up aircraft keeps more of her speed and turn.']] },
+  tac: { n: 'Tactics', steps: [['Marked beaches', 'The beach fronts are drawn on the briefing map.'], ['Radio discipline', 'Twenty seconds more for every task that comes over the radio.'], ['Requisition', '8% more requisition points from every sortie.'], ['Priority work', 'Radio tasks pay a quarter more.']] }
+}, SK_ORDER = ['fly', 'tough', 'gun', 'tac'];
+CAR.sk = { fly: 0, gun: 0, tough: 0, tac: 0 }; CAR.parts = []; CAR.kg = 0; CAR.kk = 0;
+try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (j.sk) for (const k in CAR.sk) CAR.sk[k] = clamp(j.sk[k] | 0, 0, 4); if (Array.isArray(j.parts)) CAR.parts = j.parts.filter(n => Number.isInteger(n) && n >= 1 && n <= 5); CAR.kg = j.kg | 0; CAR.kk = j.kk | 0; } } catch (e) {}
+const skSpent = () => SK_ORDER.reduce((a, k) => a + CAR.sk[k], 0), skFree = () => Math.max(0, pilotLv(CAR.xp) - skSpent());
+/* what can be bolted on: slot g is the guns, slot k the one special fitting. rp buys it, lv is the pilot level it asks for, star opens it without paying; wt is weight, each point 1.5% of speed and 1% of turn. */
+const PARTS = [null,
+  { slot: 'g', n: 'Cooled barrels', note: 'Guns heat a fifth slower and hit 6% softer.', rp: 300, lv: 1, wt: 0 },
+  { slot: 'g', n: 'Heavy rounds', note: 'Hits land 10% harder; the guns heat a fifth faster.', rp: 500, lv: 4, wt: 1 },
+  { slot: 'k', n: 'Armour plate', note: '8% less damage, and the weight to go with it.', rp: 600, lv: 3, wt: 2 },
+  { slot: 'k', n: 'Gyro gunsight', note: 'Rounds and lead ring reach a tenth farther.', star: 25, wt: 0 },
+  { slot: 'k', n: 'Boost cooler', note: 'Emergency power lasts a quarter longer.', star: 40, wt: 1 }];
+const LOADW = [0, 1, 1, -2];
+/* what the pilot wears: one piece on the head, one on the body, one carried. The flying helmet is issued; the rest is bought once with requisition points. */
+const GEAR = [null,
+  { slot: 'h', pic: 'helmet', n: 'Flying helmet', note: 'A hit shakes you less.', rp: 0 },
+  { slot: 'h', pic: 'goggles', n: 'Goggles', note: 'Rounds and lead ring reach 5% farther.', rp: 250 },
+  { slot: 'h', pic: 'headset', n: 'Headset', note: 'Fifteen seconds more for every radio task.', rp: 300 },
+  { slot: 'h', pic: 'mask', n: 'Oxygen mask', note: 'You grey out later in a hard turn.', rp: 350 },
+  { slot: 'b', pic: 'jacket', n: 'Sheepskin jacket', note: 'Out of the fight, she mends a quarter faster.', rp: 300 },
+  { slot: 'b', pic: 'vest', n: 'Life vest', note: '4% more requisition from a sortie won.', rp: 350 },
+  { slot: 'b', pic: 'parachute', n: 'Parachute', note: 'Half as much requisition again from a sortie lost.', rp: 450 },
+  { slot: 'k', pic: 'gloves', n: 'Flying gloves', note: '3% quicker in the roll.', rp: 200 },
+  { slot: 'k', pic: 'boots', n: 'Flying boots', note: 'A tenth more rudder.', rp: 200 },
+  { slot: 'k', pic: 'mapcase', n: 'Map case', note: 'Beaches on the briefing map, and fifteen seconds more for the third star.', rp: 300 },
+  { slot: 'k', pic: 'kit', n: 'Survival kit', note: 'She starts to mend two seconds sooner.', rp: 400 }];
+const GEAR_SLOT = { h: 'Head', b: 'Body', k: 'Carried' };
+CAR.gear = [1]; CAR.wear = { h: 1, b: 0, k: 0 };
+try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (Array.isArray(j.gear)) CAR.gear = [1].concat(j.gear.filter(n => Number.isInteger(n) && n >= 2 && n <= 11)); if (j.wear) for (const k in CAR.wear) CAR.wear[k] = j.wear[k] | 0; } } catch (e) {}
+const gearOk = i => !!GEAR[i] && (i === 1 || CAR.gear.includes(i)), worn = slot => { const i = CAR.wear[slot] | 0; return GEAR[i] && GEAR[i].slot === slot && gearOk(i) ? i : 0; };
+const parNow = () => PAR[mIdx] + (worn('k') === 10 ? 15 : 0);
+const PK = { shake: 1, g: 1, rest: 6, heal: 1, rud: 1, rpW: 1, rpL: 1, warn: 0, ind: 1, roll: 1, auth: 0, turn: 1, spd: 1, heat: 1, gcool: 1, rng: 1, gun: 1, arm: 1, wep: 1, cool: 1, dk: .82, evT: 0, evP: 1, rp: 1, wt: 0 };
+const LOADS = [['Standard', 'As issued for the sortie.', 1, 1, 0], ['Rockets', 'Half as many rockets again, half the bombs.', 1.5, .5, 0], ['Bombs', 'Two more bombs, half the rockets.', .5, 1, 2], ['Clean wing', 'Nothing under the wings: 3% faster and a little quicker in the turn.', 0, 0, 0]]; // name, note, rockets x, bombs x, bombs +
+const loadR = () => Math.round(M.rockets * LOADS[CAR.load][2]), loadB = () => (M.bombs && LOADS[CAR.load][3] ? Math.max(1, Math.round(M.bombs * LOADS[CAR.load][3])) + LOADS[CAR.load][4] : 0);
 const saveCar = () => { try { localStorage.setItem('windfall-career', JSON.stringify(CAR)); } catch (e) {} };
 let D = DIFFS[CAR.diff], score = 0, bomberKills = 0, fleetHits = 0, siteBreaks = 0, tipI = 0;
 const addScore = n => { score += Math.round(n * D.sc * (CAR.night && !DUEL.on ? 1.2 : 1)); }; // a night sortie pays a fifth more
@@ -1097,6 +1178,22 @@ const FACTIONS = {
 const facOf = mark => FAC_ORDER.find(k => FACTIONS[k].marks.includes(mark)) || 'us';
 PLANES.forEach(p => { p.f = facOf(p.skin.mark); }); MISSIONS.forEach(m => { m.f = facOf(m.player.mark); });
 const facNow = () => (CAR.plane >= 0 ? PLANES[CAR.plane].f : M.f);
+const partOk = i => !!PARTS[i] && (PARTS[i].star ? starsAll() >= PARTS[i].star : CAR.parts.includes(i));
+const kitG = () => (PARTS[CAR.kg] && PARTS[CAR.kg].slot === 'g' && partOk(CAR.kg) ? CAR.kg : 0), kitK = () => (PARTS[CAR.kk] && PARTS[CAR.kk].slot === 'k' && partOk(CAR.kk) ? CAR.kk : 0);
+/* everything the pilot's skills and the fittings do, worked out once before a flight. Online the match server owns guns and plate, so those two stay at one here. */
+function pkSet() {
+  const k = CAR.sk, g = kitG(), q = kitK(), on = DUEL.on, wt = (g ? PARTS[g].wt : 0) + (q ? PARTS[q].wt : 0) + (on ? 0 : LOADW[CAR.load] || 0);
+  PK.warn = k.fly >= 1 ? 1 : 0; PK.ind = (k.fly >= 2 ? .92 : 1) * (k.fly >= 4 ? .94 : 1); PK.roll = k.fly >= 3 ? 1.06 : 1; PK.auth = k.fly >= 3 ? .1 : 0;
+  PK.wt = wt; PK.spd = 1 - .015 * wt; PK.turn = (1 - .01 * wt) * (k.fly >= 4 ? 1.03 : 1);
+  PK.heat = (k.gun >= 1 ? .88 : 1) * (g === 1 ? .8 : g === 2 ? 1.2 : 1); PK.gcool = k.gun >= 4 ? 1.25 : 1; PK.rng = (k.gun >= 2 ? 1.1 : 1) * (q === 4 ? 1.1 : 1);
+  PK.gun = on ? 1 : Math.min(1.15, (k.gun >= 3 ? 1.05 : 1) * (g === 1 ? .94 : g === 2 ? 1.1 : 1)); PK.arm = on ? 1 : Math.min(1.15, (k.tough >= 1 ? 1.05 : 1) * (q === 3 ? 1.08 : 1));
+  PK.wep = (k.tough >= 2 ? 1.2 : 1) * (q === 5 ? 1.25 : 1); PK.cool = k.tough >= 3 ? 1.25 : 1; PK.dk = k.tough >= 4 ? .9 : .82;
+  PK.evT = k.tac >= 2 ? 20 : 0; PK.rp = k.tac >= 3 ? 1.08 : 1; PK.evP = k.tac >= 4 ? 1.25 : 1;
+  const wh = worn('h'), wb = worn('b'), wk = worn('k');
+  PK.shake = wh === 1 ? .6 : 1; if (wh === 2) PK.rng *= 1.05; if (wh === 3) PK.evT += 15; PK.g = wh === 4 ? 1.12 : 1;
+  PK.heal = wb === 5 ? 1.25 : 1; PK.rpW = wb === 6 ? 1.04 : 1; PK.rpL = wb === 7 ? 1.5 : 1;
+  if (wk === 8) PK.roll *= 1.03; PK.rud = wk === 9 ? 1.1 : 1; PK.rest = wk === 11 ? 4 : 6;
+}
 /* the orders for each sortie, in the order of MISSIONS: why it is flown, what else is worth a pass, who is up there and how to go about it.
    The main targets are read off the sortie itself, so a new sortie needs only these four lines. */
 const ORDERS = [
@@ -1126,6 +1223,7 @@ function briefMap() {
   g.font = '700 22px ' + getComputedStyle(document.body).getPropertyValue('--f-hud'); g.textBaseline = 'middle';
   const tag = (x, y, s, col) => { const w = g.measureText(s).width, left = x + 14 + w > W - 4; g.fillStyle = col; g.fillText(s, left ? x - 14 - w : x + 14, y); };
   M.targets.forEach(t => { const q = t.at ? { x: t.at[0], z: t.at[1] } : M.islands[t.isl], x = X(q.x), y = Z(q.z); g.strokeStyle = '#a8372b'; g.lineWidth = 3; g.beginPath(); g.moveTo(x - 8, y - 8); g.lineTo(x + 8, y + 8); g.moveTo(x + 8, y - 8); g.lineTo(x - 8, y + 8); g.stroke(); tag(x, y, t.name, '#a8372b'); });
+  if (CAR.sk.tac >= 1 || worn('k') === 10) for (const S of SITES) { const x = X(S.cx), y = Z(S.cz); g.fillStyle = '#b07a1e'; g.fillRect(x - 6, y - 6, 12, 12); }
   const hx = X(PAD.x), hy = Z(PAD.z); g.strokeStyle = '#29281f'; g.lineWidth = 3; g.beginPath(); g.arc(hx, hy, 9, 0, 7); g.stroke(); g.fillStyle = '#29281f'; g.beginPath(); g.arc(hx, hy, 3, 0, 7); g.fill(); tag(hx, hy, tr(PAD.name), '#29281f');
   g.fillStyle = 'rgba(41,40,31,.6)'; g.fillText('N', W - 26, 34); g.beginPath(); g.moveTo(W - 20, 6); g.lineTo(W - 26, 20); g.lineTo(W - 14, 20); g.fill();
 }
@@ -2303,6 +2401,7 @@ function loadMission(i) {
   reset();
 }
 function reset() {
+  pkSet();
   for (const e of enemies) world.remove(e.mesh); enemies = [];
   for (const b of bullets) { b.on = false; b.m.visible = false; }
   fxT.fill(0); fxD.fill(0); fxGeo.instanceCount = 0;
@@ -2647,7 +2746,7 @@ function hitFrom(v) { // v: velocity of the round that just hit us
   else if (Math.abs(r) > .45) call('hitside', (r > 0 ? 'Fire from your left!' : 'Fire from your right!') + ' Break away!', 10);
 }
 function damagePlayer(d) {
-  if (!P.alive) return; { const lost = d * D.dmg * (1 - .12 * CAR.up.arm) / PM.arm; P.hp -= lost; LOG.dmg += lost; } P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5); sfxHit();
+  if (!P.alive) return; { const raw = d * D.dmg * (1 - .12 * CAR.up.arm) / PM.arm, lost = raw / PK.arm; P.hp -= lost; LOG.dmg += lost; LOG.saved += raw - lost; } P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5 * PK.shake); sfxHit();
   if (P.hp <= 0) crash(M.cs + ' was shot down.'); else if (P.hp < 35 && !P.hurtCall) { P.hurtCall = true; callT = 0; call('hurt', 'You are hit hard! Break off and climb!', 40); } else if (P.hp > 70) P.hurtCall = false;
 }
 function adviceFor(why) { // one thing to do differently, matched to how she was lost
@@ -2696,23 +2795,23 @@ function updateOrd(dt) {
 }
 function updatePlayer(dt) {
   if (!P.alive) return;
-  if (P.gnd) { groundRoll(dt); gearTick(dt); P.thr = 0; P.wep = Math.max(0, (P.wep || 0) - dt / 20); if (P.wep < .45) P.wepHot = false; P.buf = 0; return; }
+  if (P.gnd) { groundRoll(dt); gearTick(dt); P.thr = 0; P.wep = Math.max(0, (P.wep || 0) - dt * PK.cool / 20); if (P.wep < .45) P.wepHot = false; P.buf = 0; return; }
   P.airT += dt; if (!P.autoUp && P.airT > 2.5) { P.autoUp = true; P.gear = false; feed('Undercarriage up'); } gearTick(dt);
   const fl = M.flight, ys = invertY ? -1 : 1, auth = P.stall ? .3 : 1;
   const bst = input.boost && !P.wepHot; // war emergency power runs the engine hot: about fourteen seconds of it, then she has to cool
-  if (bst) { P.wep = Math.min(1, (P.wep || 0) + dt / 14); if (P.wep >= 1) { P.wepHot = true; warn('Engine overheating'); call('wephot', 'Engine is overheating! Throttle back!', 20); burst(1800, 'bandpass', .3, .25); } }
-  else { P.wep = Math.max(0, (P.wep || 0) - dt / 20); if (P.wepHot && P.wep < .45) P.wepHot = false; }
+  if (bst) { P.wep = Math.min(1, (P.wep || 0) + dt / (14 * PK.wep)); if (P.wep >= 1) { P.wepHot = true; warn('Engine overheating'); call('wephot', 'Engine is overheating! Throttle back!', 20); burst(1800, 'bandpass', .3, .25); } }
+  else { P.wep = Math.max(0, (P.wep || 0) - dt * PK.cool / 20); if (P.wepHot && P.wep < .45) P.wepHot = false; }
   if (bst && P.wep > .75) shake = Math.max(shake, (P.wep - .75) * .5); if (P.wepHot) { P.wepS = (P.wepS || 0) - dt; if (P.wepS <= 0) { P.wepS = .09; spawnFx(_c.copy(P.pos).addScaledVector(P.fwd, 3), rand(1.6, 2.6), 'rtrail'); } }
   const sens = SENS[CAR.sens], lc = P.gear && P.autoUp; // wheels down: gentler controls for the approach
   // the airframe: every type turns best near its own corner speed, stalls sooner the harder it is pulled, and flies worse when shot up
   const A = PM.aero || AERO[[0, 1, 2, 3, 1, 0, 2][mIdx] || 0], NMAX = 2.1, vs = 47 * Math.sqrt(1.42 / A[0]), vc = vs * Math.sqrt(NMAX); // stall speed from the lift of the wing; corner speed is where that lift first reaches the most the airframe is pulled to
-  const dmgK = .82 + .18 * clamp(P.hp / 60, 0, 1), fT = v => (v < vc ? v / (vs * vs) : NMAX / vc * Math.pow(vc / v, .8)); // turn rate: held back by lift below the corner speed, by the load limit above it
+  const dmgK = PK.dk + (1 - PK.dk) * clamp(P.hp / 60, 0, 1), fT = v => (v < vc ? v / (vs * vs) : NMAX / vc * Math.pow(vc / v, .8)); // turn rate: held back by lift below the corner speed, by the load limit above it
   const ld = 1 + Math.abs(input.y) * .35 + Math.abs(P.roll) * .22, vsE = vs * (1 + (Math.sqrt(ld) - 1) * (fl >= 4 ? 1 : .5)); // stall speed, and what the load makes of it
-  const mush = fl >= 3 && !P.gear ? clamp((P.speed - vsE * .92) / (vsE * .3), .4, 1) : 1; P.vc = vc;
-  P.roll += (-input.x * (lc ? .5 : 1.15) * auth * (.6 + .4 * mush) + (P.stall ? (P.stSide || 1) * .75 : 0) - P.roll) * (1 - Math.exp(-4.5 * sens * dt));
+  const mush = fl >= 3 && !P.gear ? clamp((P.speed - vsE * .92) / (vsE * .3), .4 + PK.auth, 1) : 1; P.vc = vc;
+  P.roll += (-input.x * (lc ? .5 : 1.15) * auth * (.6 + .4 * mush) + (P.stall ? (P.stSide || 1) * .75 : 0) - P.roll) * (1 - Math.exp(-4.5 * sens * PK.roll * dt));
   const tk = fT(Math.max(P.speed, 30)) / fT(M.v0), turnK = (fl >= 3 ? tk : fl === 2 ? .5 + .5 * tk : 1) * dmgK * mush;
-  P.yaw += (P.roll * .78 * turnK * PM.turn * rk().turn - input.rud * .34) * dt;
-  P.pitch += input.y * ys * (lc ? .5 : .95) * sens * PM.turn * rk().turn * auth * dmgK * mush * dt; if (input.y === 0) P.pitch -= P.pitch * .35 * dt;
+  P.yaw += (P.roll * .78 * turnK * PM.turn * PK.turn * rk().turn - input.rud * .34 * PK.rud) * dt;
+  P.pitch += input.y * ys * (lc ? .5 : .95) * sens * PM.turn * PK.turn * rk().turn * auth * dmgK * mush * dt; if (input.y === 0) P.pitch -= P.pitch * .35 * dt;
   if (P.pos.y > 640) P.pitch -= dt * 1.1;
   if (P.stall) P.pitch -= dt * .9;
   if (phase === 'extract' || (ISLE && DUEL.on && P.gear && P.autoUp)) landAid(dt); else P.ap = null; // in the island campaign the approach aid helps once the pilot has put the wheels down himself
@@ -2721,9 +2820,9 @@ function updatePlayer(dt) {
     const want = Math.atan2(P.pos.x, P.pos.z); let df = want - P.yaw; df = Math.atan2(Math.sin(df), Math.cos(df)); P.yaw += Math.sign(df) * Math.min(Math.abs(df), .9 * dt);
     boundsT -= dt; if (boundsT <= 0) { boundsT = 8; radio(M.cs + ', you are leaving the operations area. Turning you back.'); }
   }
-  const tgt = (bst ? M.vmax * (1 + .04 * CAR.up.eng) * PM.spd * rk().spd : input.brake ? (lc ? 42 : 50) : lc ? 52 : M.v0 * PM.spd * rk().spd) * (input.brake || lc ? 1 : dmgK); // throttle closed: 50 clean, 42 with the wheels down
+  const tgt = (bst ? M.vmax * (1 + .04 * CAR.up.eng) * PM.spd * PK.spd * rk().spd : input.brake ? (lc ? 42 : 50) : lc ? 52 : M.v0 * PM.spd * PK.spd * rk().spd) * (input.brake || lc ? 1 : dmgK); // throttle closed: 50 clean, 42 with the wheels down
   { // thrust against drag. Drag is what she carries at no lift, growing with the square of the speed, plus what the lift costs, growing with the square of the load and falling with the speed.
-    const k0 = .005 * A[1] / .0235, ci = 16 * (fl >= 3 ? 1 : fl === 2 ? .5 : .25) * (A[2] / .048) * 4637 / (NMAX * NMAX), v = Math.max(P.speed, 30), need = u => k0 * u * u + ci / (u * u); // thrust that holds a speed in level flight
+    const k0 = .005 * A[1] / .0235, ci = 16 * PK.ind * (fl >= 3 ? 1 : fl === 2 ? .5 : .25) * (A[2] / .048) * 4637 / (NMAX * NMAX), v = Math.max(P.speed, 30), need = u => k0 * u * u + ci / (u * u); // thrust that holds a speed in level flight
     const dem = clamp(Math.abs(input.y) * .6 + Math.abs(P.roll) / 1.15 * .6, 0, 1), nA = Math.min(1 + dem * (NMAX - 1), Math.max(1, v * v / (vs * vs))); // the load she is actually pulling: no more than the wing can lift at this speed
     const grav = Math.sin(P.pitch) * (fl >= 3 ? 22 : 12) * (lc && !bst ? .4 : 1); // wheels down she does not run away in the descent
     if (input.brake || lc) { P.speed += (tgt - P.speed) * (1 - Math.exp(-(input.brake ? 2 : 1.2) * dt)) - grav * dt - ci * (nA * nA - 1) / (v * v) * .3 * dt; P.thr = need(v); } // throttle closed, or flaps and wheels down: she settles on her approach speed
@@ -2731,8 +2830,8 @@ function updatePlayer(dt) {
   }
   if (fl >= 3) { if (P.speed < vsE && !P.gear) { if (!P.stall) { LOG.stalls++; P.stSide = P.roll >= 0 ? 1 : -1; burst(140, 'lowpass', .6, .3); } P.stall = true; } else if (P.speed > vsE + 13 || P.gear) P.stall = false; }
   P.buf = fl >= 3 && !P.gear ? clamp((vsE + 12 - P.speed) / 12, 0, 1) : 0; if (P.buf > 0) shake = Math.max(shake, .08 + P.buf * .24); // the airframe shakes before she lets go
-  P.speed = Math.max(P.speed, 30); $('stall').classList.toggle('on', P.stall); if (P.stall) call('stall', 'Stalling! Nose down!', 12);
-  if (fl >= 4) { const load = Math.abs(P.roll) / 1.15 * (P.speed / M.v0) * (1 + Math.abs(input.y) * .4); P.g = clamp(P.g + (load > 1.45 ? dt * .45 : -dt * .7), 0, 1); $('gloc').style.opacity = (Math.max(0, P.g - .25) * 1.25).toFixed(2); }
+  P.speed = Math.max(P.speed, 30); $('stall').classList.toggle('on', P.stall || (PK.warn && fl >= 3 && !P.gear && P.speed < vsE + 8)); if (P.stall) call('stall', 'Stalling! Nose down!', 12);
+  if (fl >= 4) { const load = Math.abs(P.roll) / 1.15 * (P.speed / M.v0) * (1 + Math.abs(input.y) * .4); P.g = clamp(P.g + (load > 1.45 * PK.g ? dt * .45 : -dt * .7), 0, 1); $('gloc').style.opacity = (Math.max(0, P.g - .25) * 1.25).toFixed(2); }
   const cp = Math.cos(P.pitch); P.fwd.set(-Math.sin(P.yaw) * cp, Math.sin(P.pitch), -Math.cos(P.yaw) * cp);
   P.vel.copy(P.fwd).multiplyScalar(P.speed); P.pos.addScaledVector(P.vel, dt);
   if (P.gear && CAR.diff < 2) { const q = padLocal(P.pos), h = P.pos.y - PAD.y - 2.75; if (h < 8 && h > -1 && Math.abs(q[0]) <= PAD.hw && Math.abs(q[1]) <= PAD.hl) { const lim = -(7 + h * 2); if (P.vel.y < lim) { P.pos.y += (lim - P.vel.y) * dt; P.vel.y = lim; } } } // ground effect cushions the last few metres, except on Ace
@@ -2746,17 +2845,17 @@ function updatePlayer(dt) {
     else { touchdown(); return; }
   } else if (P.pos.y < ground + 2.5) { if (ground === 0) spawnFx(P.pos, 40, 'splash'); crash(ground > 0 ? M.cs + ' flew into the ground.' : M.cs + ' hit the water.'); return; }
   const low = !P.gear && P.pos.y - ground < 45 && P.pitch < .15; $('pull').classList.toggle('on', low); if (low && P.vel.y < -6) call('pull', 'Pull up! Pull up!', 9);
-  if (time - P.lastHit > 6 && P.hp < 100) P.hp = Math.min(100, P.hp + 7 * dt);
+  if (time - P.lastHit > PK.rest && P.hp < 100) P.hp = Math.min(100, P.hp + 7 * PK.heal * dt);
   if (P.hp < 70) { P.smokeT -= dt; if (P.smokeT <= 0) { const bad = P.hp < 45; P.smokeT = bad ? .06 : .11; spawnFx(_c.copy(P.pos).addScaledVector(P.fwd, -5), bad ? rand(3, 5) : rand(1.8, 2.6), bad ? 'trail' : 'rtrail'); if (P.hp < 25 && Math.random() < .3) spawnFx(_c, 2.6, 'fire'); } } // a thin white leak first, black smoke below 45, flames below 25
   // guns
   target = pickTarget(); P.fireCd -= dt; P.ordCd -= dt; const G = M.gun;
   if (input.fire && !P.hot && P.fireCd <= 0) {
-    P.fireCd = G.cd; P.gun = -P.gun; P.heat += G.heat * (1 - .08 * CAR.up.gun); shots++;
+    P.fireCd = G.cd; P.gun = -P.gun; P.heat += G.heat * (1 - .08 * CAR.up.gun) * PK.heat; shots++;
     _b.set(Math.cos(P.yaw), 0, -Math.sin(P.yaw)); _c.copy(P.pos).addScaledVector(_b, fl === 4 ? 0 : P.gun * 3.2).addScaledVector(P.fwd, fl === 4 ? 8 : 4);
     if (target) { const tp = target.aim || target.pos, d = tp.distanceTo(_c); _a.copy(tp).addScaledVector(target.vel, d / G.speed).sub(_c).normalize(); } else _a.copy(P.fwd);
-    spawnBullet(_c, _a, G.speed, true, G.dmg * (1 + .12 * CAR.up.gun) * PM.gun, 1.7, false, G.size); spawnFx(_c, 2.4 * G.size, 'flash'); sfxGun(G.size > 1.5, P.heat); shake = Math.max(shake, .05 * G.size);
+    spawnBullet(_c, _a, G.speed, true, G.dmg * (1 + .12 * CAR.up.gun) * PM.gun * PK.gun, 1.7 * PK.rng, false, G.size); spawnFx(_c, 2.4 * G.size, 'flash'); sfxGun(G.size > 1.5, P.heat); shake = Math.max(shake, .05 * G.size);
     if (P.heat >= 1) { P.hot = true; P.heat = 1; warn('Guns overheated'); burst(2200, 'bandpass', .22, .3); burst(5200, 'highpass', .9, .1); }
-  } else if (!input.fire || P.hot) { P.heat = Math.max(0, P.heat - .34 * dt); if (P.hot && P.heat < .35) P.hot = false; }
+  } else if (!input.fire || P.hot) { P.heat = Math.max(0, P.heat - .34 * PK.gcool * dt); if (P.hot && P.heat < .35) P.hot = false; }
   if (input.rkt && P.rkt > 0 && P.ordCd <= 0) { P.ordCd = .28; launch(false); }
   if (input.bomb && P.bombs > 0 && P.ordCd <= 0) { P.ordCd = .45; launch(true); }
 }
@@ -2913,7 +3012,7 @@ function updateHud(dt) {
   killMarkT -= dt; cr.className = 'cross' + (killMarkT > 0 ? ' kill' : hitMarkT > 0 ? ' hit' : target ? ' lock' : '');
   // lead ring (manual gunnery) and bomb pipper
   if (leadFoe && P.alive && !P.gnd) { const L = $('lead'), d = leadFoe.pos.distanceTo(P.pos); _e.copy(leadFoe.pos).addScaledVector(leadFoe.vel, d / M.gun.speed); placePip(L, _e, d < 760); // where to shoot: solid once she is in range, lit when the sight is on it
-    if (!L.hidden) { const q = project(_e); L.className = 'pip' + (d < M.gun.speed * 1.7 * .7 ? ' in' : '') + (Math.hypot(q.x - c.x, q.y - c.y) < 16 ? ' on' : ''); } } else $('lead').hidden = true;
+    if (!L.hidden) { const q = project(_e); L.className = 'pip' + (d < M.gun.speed * 1.7 * .7 * PK.rng ? ' in' : '') + (Math.hypot(q.x - c.x, q.y - c.y) < 16 ? ' on' : ''); } } else $('lead').hidden = true;
   if (P.bombs > 0 && P.alive) { _e.copy(P.pos); _d.copy(P.vel); let ok = false; for (let i = 0; i < 90; i++) { _d.y -= 26 * .1; _d.multiplyScalar(1 - .012); _e.addScaledVector(_d, .1); if (_e.y <= Math.max(0, heightAt(_e.x, _e.z))) { ok = true; break; } } placePip($('bpip'), _e, ok); } else $('bpip').hidden = true;
   const hp = Math.max(0, Math.ceil(P.hp)); $('hp-n').textContent = hp; $('hp').classList.toggle('crit', hp <= 35);
   for (let i = 0; i < 10; i++) hpPips[i].className = i < Math.ceil(hp / 10) ? '' : 'off';
@@ -3087,7 +3186,7 @@ function duelSpawn() { // air start on the team's side of the field, nose toward
   P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
-function duelArm() { const L = DUEL.load || [1, 1], A = DUEL.am; P.rkt = A ? A[1] : Math.floor(M.rockets * L[1]); P.bombs = A ? A[0] : Math.floor(M.bombs * L[0]); P.ordCd = 0; plane.userData.rkt.forEach((r, i) => r.visible = i < P.rkt); plane.userData.bombs.forEach((r, i) => r.visible = i < P.bombs); } // a chapter may send its pilots up with less
+function duelArm() { pkSet(); const L = DUEL.load || [1, 1], A = DUEL.am; P.rkt = A ? A[1] : Math.floor(M.rockets * L[1]); P.bombs = A ? A[0] : Math.floor(M.bombs * L[0]); P.ordCd = 0; plane.userData.rkt.forEach((r, i) => r.visible = i < P.rkt); plane.userData.bombs.forEach((r, i) => r.visible = i < P.bombs); } // a chapter may send its pilots up with less
 function duelClose() { const ws = DUEL.ws; DUEL.ws = null; if (ws) try { ws.close(); } catch (e) {} zonesSet(null); shipsSet(null); landClear(); weatherSet(!DUEL.on && CAR.night ? 'night' : null); } // a night sortie keeps its sky when the shared sky is joined
 /* weather for a match: the server picks it, so both sides fly through the same sky */
 const WX = {
@@ -3334,7 +3433,7 @@ function coachTick(dt) {
 /* side tasks: once in a sortie something comes up beside the orders. Answering it pays; ignoring it costs nothing. */
 const SIDE = { k: '', t: 0, at: 0, n: 0, had: [], list: [], n0: 0, shown: '', mark: null, low: 0, ev: null };
 /* what the debrief wants to know about the flight itself: the damage she took, how often she was stalled, how hard she was put down, what the side task came to */
-const LOG = { dmg: 0, stalls: 0, vs: null, side: 0 };
+const LOG = { dmg: 0, stalls: 0, vs: null, side: 0, saved: 0, bonus: 0 };
 /* how each side talks on the radio. One table, one line per side and event; a new side or a new event is a new line here. */
 const RADIO = {
   us: { convoy: 'gunboats are going for our supply convoy. Go sink them.', ace: 'they sent up one of their aces for you. Knock him down.', armour: 'change of plan. Tanks are rolling on the beach. Hit them now.', wing: 'your wingman has two on his tail. Get them off him.', storm: 'weather is closing in fast. Get under the cloud and stay there.', win: 'Nice work. Back to the main job.', fail: 'Too late for that one. Back to the main job.', hit: 'Good hit. Keep it up.' },
@@ -3353,8 +3452,8 @@ const EVENTS = [
   { k: 'storm', w: 1, t: 70, pts: 250, label: 'Stay under the cloud', won: 'Through the storm', need: () => !CAR.night && !M.mode, start: () => { weatherSet('storm'); SIDE.low = 0; return []; }, end: () => { DUEL.wx = null; weatherSet(''); } }
 ];
 function armourSite() { let best = null, bd = 1e9; for (const S of SITES) { if (S.broke || !gtanks.some(k => k.S === S && k.foe && !k.soft && k.alive)) continue; const d = Math.hypot(S.cx - P.pos.x, S.cz - P.pos.z); if (d < bd) { bd = d; best = S; } } return best; }
-function sideReset() { if (SIDE.ev && SIDE.ev.end) SIDE.ev.end(); SIDE.k = ''; SIDE.ev = null; SIDE.t = 0; SIDE.at = rand(55, 85); SIDE.n = 0; SIDE.had = []; SIDE.list = []; SIDE.shown = ''; SIDE.mark = null; $('obj-s').hidden = true; LOG.dmg = 0; LOG.stalls = 0; LOG.vs = null; LOG.side = 0; }
-function sideEnd(won) { const ev = SIDE.ev; if (won) { LOG.side = 1; addScore(ev.pts); feed(ev.won, '+' + Math.round(ev.pts * D.sc * (CAR.night ? 1.2 : 1))); warn(ev.won, true); } else if (!LOG.side) LOG.side = -1; radio(facSay(won ? 'win' : 'fail')); if (ev.end) ev.end(); SIDE.k = ''; SIDE.ev = null; SIDE.list = []; SIDE.mark = null; SIDE.at = time + rand(50, 80); }
+function sideReset() { if (SIDE.ev && SIDE.ev.end) SIDE.ev.end(); SIDE.k = ''; SIDE.ev = null; SIDE.t = 0; SIDE.at = rand(55, 85); SIDE.n = 0; SIDE.had = []; SIDE.list = []; SIDE.shown = ''; SIDE.mark = null; $('obj-s').hidden = true; LOG.dmg = 0; LOG.stalls = 0; LOG.vs = null; LOG.side = 0; LOG.saved = 0; LOG.bonus = 0; }
+function sideEnd(won) { const ev = SIDE.ev; if (won) { LOG.side = 1; addScore(ev.pts * PK.evP); feed(ev.won, '+' + Math.round(ev.pts * PK.evP * D.sc * (CAR.night ? 1.2 : 1))); warn(ev.won, true); } else if (!LOG.side) LOG.side = -1; radio(facSay(won ? 'win' : 'fail')); if (ev.end) ev.end(); SIDE.k = ''; SIDE.ev = null; SIDE.list = []; SIDE.mark = null; SIDE.at = time + rand(50, 80); }
 const sideLeft = () => SIDE.list.filter(e => (e.alive !== undefined ? e.alive : !e.dead && !e.falling)).length;
 function sideTick(dt) {
   const el = $('obj-s'); if (DUEL.on || !P.alive || endT > 0) { if (!el.hidden) el.hidden = true; return; }
@@ -3362,11 +3461,11 @@ function sideTick(dt) {
     const pool = EVENTS.filter(e => !SIDE.had.includes(e.k) && e.need()); let r = Math.random() * pool.reduce((a, e) => a + e.w, 0), ev = pool[0]; for (const e of pool) { r -= e.w; if (r <= 0) { ev = e; break; } }
     SIDE.n++; if (!ev) { SIDE.n = 2; return; } SIDE.had.push(ev.k); SIDE.list = ev.start(); SIDE.n0 = SIDE.list.length;
     if (!SIDE.n0 && ev.k !== 'storm') { SIDE.at = time + 20; return; }
-    SIDE.k = ev.k; SIDE.ev = ev; SIDE.t = ev.t; warn(ev.pri ? 'Priority target' : 'Side task'); radio(M.cs + ', ' + facSay(ev.k)); el.classList.toggle('pri', !!ev.pri);
+    SIDE.k = ev.k; SIDE.ev = ev; SIDE.t = ev.t + PK.evT; warn(ev.pri ? 'Priority target' : 'Side task'); radio(M.cs + ', ' + facSay(ev.k)); el.classList.toggle('pri', !!ev.pri);
   }
   if (!SIDE.k) { if (!el.hidden) el.hidden = true; return; }
   SIDE.t -= dt; const ev = SIDE.ev, left = sideLeft();
-  if (SIDE.k === 'storm') { if (P.pos.y < 230) SIDE.low += dt; if (SIDE.t <= 0) return sideEnd(SIDE.low >= ev.t * .6); if (phase !== 'targets') return sideEnd(false); }
+  if (SIDE.k === 'storm') { if (P.pos.y < 230) SIDE.low += dt; if (SIDE.t <= 0) return sideEnd(SIDE.low >= (ev.t + PK.evT) * .6); if (phase !== 'targets') return sideEnd(false); }
   else { if (SIDE.mark) SIDE.mark.hp = left / Math.max(1, SIDE.n0); if (!left) return sideEnd(true); if (SIDE.t <= 0 || phase !== 'targets') return sideEnd(false); }
   const sec = Math.ceil(SIDE.t), txt = (ev.pri ? 'Priority' : 'Side task') + ' · ' + ev.label + (SIDE.mark ? ' · ' + SIDE.mark.name : '') + (SIDE.n0 ? ' · ' + left : '') + ' · ' + Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
   if (txt !== SIDE.shown) { SIDE.shown = txt; el.textContent = txt; } el.hidden = false;
@@ -3443,7 +3542,7 @@ function duelMsg(m) {
   } else if (m.t === 'full') { DUEL.full = true;
   } else if (m.t === 'no') { DUEL.on = false; board(); netMsg('The match server did not accept this pilot.');
   } else if (m.t === 'd') { // rounds landed on us
-    if (!P.alive) return; const q = NET.peers.get(m.by); if (/^ship/.test(m.by)) { _e.set(P.pos.x + rand(-9, 9), P.pos.y + rand(-6, 6), P.pos.z + rand(-9, 9)); spawnFx(_e, 6, 'smoke'); spawnFx(_e, 3, 'flash'); } DUEL.lastBy = String(m.by || ''); DUEL.lastByT = time; P.hp = clamp(+m.hp || 0, 0, 100); P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5); sfxHit();
+    if (!P.alive) return; const q = NET.peers.get(m.by); if (/^ship/.test(m.by)) { _e.set(P.pos.x + rand(-9, 9), P.pos.y + rand(-6, 6), P.pos.z + rand(-9, 9)); spawnFx(_e, 6, 'smoke'); spawnFx(_e, 3, 'flash'); } DUEL.lastBy = String(m.by || ''); DUEL.lastByT = time; P.hp = clamp(+m.hp || 0, 0, 100); P.lastHit = time; hitFlash = 1; shake = Math.max(shake, .5 * PK.shake); sfxHit();
     if (q) { const r = sideOf(q.pos); call(r[0] < -.5 ? 'hitback' : 'hitside', r[0] < -.5 ? 'Taking hits from behind! Turn hard!' : (r[1] < 0 ? 'Fire from your left!' : 'Fire from your right!') + ' Break away!', 9); }
   } else if (m.t === 'k') {
     if (DUEL.over) return; duelScore(m.sc); updateObjective();
@@ -3517,11 +3616,11 @@ function duelSend() { // hits ride along with the position beat
 }
 
 /* ------------------------------------------------------------------ flow */
-function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp', 's-log', 's-fb']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
+function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp', 's-log', 's-fb', 's-pilot']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
-  $('m-no').textContent = 'Mission orders no. ' + (mIdx + 1); $('m-when').textContent = M.theatre + ' · ' + M.year; $('m-title').textContent = M.code; $('m-brief').textContent = M.brief; $('m-brf').innerHTML = briefHtml(); briefMap(); $('m-stamp').textContent = done.includes(mIdx) ? 'Flown' : 'Restricted';
+  $('m-no').textContent = 'Mission orders no. ' + (mIdx + 1); $('m-when').textContent = M.theatre + ' · ' + M.year; $('m-title').textContent = M.code; $('m-brief').textContent = M.brief; $('m-brf').innerHTML = briefHtml(); briefMap(); fillKit(); $('m-stamp').textContent = done.includes(mIdx) ? 'Flown' : 'Restricted';
   if (touchMode || MOBILE) $('m-keys').innerHTML = '<dt>Aircraft</dt><dd>' + craftName() + '</dd>' + [['Left thumb', KEY.fly[1]], ['FIRE', KEY.gun[1]], ['WEP', KEY.wep[1]]].concat(M.rockets ? [['RKT', KEY.rkt[1]]] : [], M.bombs ? [['BOMB', KEY.bomb[1]]] : [], [['GEAR', KEY.gear[1]], ['SLOW', 'Close the throttle: slower for the approach, tighter in the turn'], ['VIEW', KEY.cam[1]]]).map(r => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('');
   else $('m-keys').innerHTML = '<dt>Aircraft</dt><dd>' + craftName() + '</dd>' + M.keys.map(k => '<dt' + (M.fresh.includes(k) ? ' class="new"' : '') + '>' + KEY[k][0] + '</dt><dd>' + KEY[k][1] + (M.fresh.includes(k) ? ' <span class="new">(new)</span>' : '') + '</dd>').join('') + '<dt>Touch</dt><dd>Left thumb flies; FIRE, WEP' + (M.rockets ? ', RKT' : '') + (M.bombs ? ', BOMB' : '') + ' and GEAR on the right</dd>';
   $('p-cs').textContent = M.cs;
@@ -3530,7 +3629,7 @@ function fillBoard() {
   $('d-pick').innerHTML = DIFFS.map((d, i) => '<label><input type="radio" name="diff" value="' + i + '"' + (i === CAR.diff ? ' checked' : '') + '><span>' + d.n + '<small>' + d.note + '</small></span></label>').join('');
   $('d-pick').querySelectorAll('input').forEach(el => { el.onchange = () => { CAR.diff = +el.value; D = DIFFS[CAR.diff]; saveCar(); }; });
 }
-function starLines(b) { return ['Complete the sortie', 'Break the enemy line at a beach by knocking out its tanks', 'Be home inside ' + fmtTime(PAR[mIdx])].map((t, i) => '<li' + (b >> i & 1 ? ' class="on"' : '') + '>' + t + '</li>').join(''); }
+function starLines(b) { return ['Complete the sortie', 'Break the enemy line at a beach by knocking out its tanks', 'Be home inside ' + fmtTime(parNow())].map((t, i) => '<li' + (b >> i & 1 ? ' class="on"' : '') + '>' + t + '</li>').join(''); }
 let planeDirty = false;
 /* after a sortie or a match: what the stars just opened, and how far the next thing is */
 function starLine(before) {
@@ -3562,10 +3661,65 @@ function fillHangar() {
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
   seg('o-voice', 'voice', ['Off', 'On'], CAR.voice, v => { CAR.voice = v; if (!v) hush(); else { voxWarm(); setTimeout(() => say('Check your six!'), 900); } });
   seg('o-aid', 'aid', ['Off', 'On'], CAR.aid, v => { CAR.aid = v; });
-  seg('o-load', 'load', LOADS.map(l => l[0]), CAR.load, v => { CAR.load = v; $('o-load-n').textContent = LOADS[v][1]; if (state === 'menu' && !DUEL.on) { P.rkt = loadR(); P.bombs = loadB(); } }); $('o-load-n').textContent = LOADS[CAR.load][1];
+  fillParts();
   seg('o-night', 'night', ['Off', 'On'], CAR.night, v => { CAR.night = v; if (!DUEL.on) { DUEL.wx = null; weatherSet(v ? 'night' : ''); } });
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
   seg('o-fps', 'fps', ['Off', 'On'], CAR.fps, v => { CAR.fps = v; $('fps').hidden = !v; });
+}
+/* one small drawing for every step of the tree, in the order of SKILLS */
+const SK_ICON = {
+  fly: ['<path d="M12 3 2.5 20h19Z"/><path d="M12 10v5M12 17.6v.4"/>', '<path d="M4 16a8 8 0 0 1 16 0"/><path d="M12 16l4-6"/><path d="M7 19h10"/>', '<path d="M12 3v18M4 9h16M8 20h8"/>', '<path d="M3 17c5 0 6-10 12-10"/><path d="M13 5l3 2-2 3"/><path d="M17 15l4 2-4 2z"/>'],
+  gun: ['<path d="M9 3v10a3 3 0 1 0 6 0V3"/><path d="M12 9v6"/><path d="M18 5c1 1 1 2 0 3s-1 2 0 3"/>', '<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/><circle cx="12" cy="12" r="1"/>', '<path d="M3 12h9M3 7l8 3M3 17l8-3"/><path d="M14 9l6 3-6 3z"/>', '<path d="M4 6h5v5H4zM9 9h5v5H9zM14 12h5v5h-5z"/>'],
+  tough: ['<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/>', '<path d="M13 2 5 13h6l-1 9 8-12h-6z"/>', '<circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>', '<path d="M3 12l6-2 3-6 2 6h7l-7 3-2 6-2-6z"/>'],
+  tac: ['<path d="M12 21s-6-6-6-11a6 6 0 0 1 12 0c0 5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>', '<path d="M12 21V11"/><path d="M8 8a5.5 5.5 0 0 1 8 0M5 5a10 10 0 0 1 14 0"/><circle cx="12" cy="11" r="1"/>', '<path d="M4 7h16v12H4z"/><path d="M4 11h16M9 7V4h6v3"/>', '<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6L3.4 9.3l6-.7z"/>']
+};
+const PL = { from: 's-menu', sel: null, face: '' }, SK_PIC = { fly: 'helmet', tough: 'vest', gun: 'goggles', tac: 'mapcase' }; // the piece of kit that stands for each branch
+let srvPilot = false;
+const pilotOff = () => !!NET.me && !srvPilot; // a signed-in pilot keeps his skills with the competition server, once it knows them
+function pilotErr(e) { const el = $('pl-msg'); el.hidden = false; el.textContent = netErr(e); }
+function pilotCall(fn, args, local) { $('pl-msg').hidden = true; $('h-msg').hidden = true; if (pilotOff()) return; if (NET.me) { if (NET.busy) return; NET.busy = true; rpc(fn, args).then(p => { adopt(p); }).catch(e => { pilotErr(e); $('h-msg').hidden = false; $('h-msg').textContent = netErr(e); }).then(() => { NET.busy = false; pkSet(); fillPilot(); if (!$('s-hangar').hidden) fillHangar(); fillKit(); }); return; } local(); saveCar(); pkSet(); fillPilot(); if (!$('s-hangar').hidden) fillHangar(); fillKit(); }
+function fillPilot() {
+  const lv = pilotLv(CAR.xp), free = skFree(), r = rankOf(CAR.xp), nx = PLV[lv], f = facNow();
+  $('pl-lv').textContent = 'Level · ' + lv; $('pl-rank').textContent = RANKS[r][1]; $('pl-pts').textContent = 'Skill points to spend · ' + free;
+  $('pl-bar').style.width = (nx ? (CAR.xp - PLV[lv - 1]) / (nx - PLV[lv - 1]) * 100 : 100).toFixed(0) + '%'; $('pl-next').textContent = nx ? 'Next level · ' + nx + ' XP' : 'Highest level reached';
+  $('pl-mark').className = 'fmark ' + f; $('pl-mark').textContent = FACTIONS[f].glyph;
+  if (PL.face !== f) { PL.face = f; const el = $('pl-face'), im = new Image(), src = 'img/pilot-' + f + '.webp'; el.classList.remove('pic'); el.style.backgroundImage = ''; im.onload = () => { if (PL.face === f) { el.style.backgroundImage = 'url(' + src + ')'; el.classList.add('pic'); } }; im.src = src; } // the portrait of the side, where there is one
+  $('pl-msg').hidden = !pilotOff(); if (pilotOff()) $('pl-msg').textContent = 'Skills for signed-in pilots open with the next server update.';
+  $('pl-tree').innerHTML = SK_ORDER.map(k => { const B = SKILLS[k], have = CAR.sk[k]; return '<div class="branch"><i class="b-pic" style="background-image:url(img/gear/' + SK_PIC[k] + '.webp)"></i><h3>' + B.n + '</h3><small>' + have + ' / ' + B.steps.length + '</small>' + B.steps.map((st, i) => '<button type="button" class="node' + (i < have ? ' got' : i === have ? ' next' : '') + (PL.sel === k + i ? ' sel' : '') + '" data-k="' + k + '" data-i="' + i + '" aria-label="' + st[0] + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + SK_ICON[k][i] + '</svg></button>').join('') + '</div>'; }).join('');
+  $('pl-tree').querySelectorAll('.node').forEach(b => { b.onclick = () => { PL.sel = b.dataset.k + b.dataset.i; fillPilot(); const n = $('pl-tree').querySelector('.node.sel'); if (n) n.focus(); }; });
+  if (!PL.sel) { const k = SK_ORDER.find(q => CAR.sk[q] < SKILLS[q].steps.length) || 'fly'; PL.sel = k + Math.min(CAR.sk[k], SKILLS[k].steps.length - 1); return fillPilot(); }
+  const k = PL.sel.slice(0, -1), i = +PL.sel.slice(-1), st = SKILLS[k].steps[i], have = CAR.sk[k], btn = $('b-train');
+  $('pl-n').textContent = SKILLS[k].n + ' · ' + (i + 1) + ' · ' + st[0]; $('pl-d').textContent = st[1];
+  btn.textContent = i < have ? 'Trained' : i > have ? 'Earlier steps first' : free ? 'Train' : 'No points left'; btn.disabled = i !== have || !free || pilotOff();
+  btn.onclick = () => { if (i !== CAR.sk[k] || !skFree()) return; pilotCall('skill_up', { p_key: k }, () => { CAR.sk[k]++; }); };
+  $('b-preset').disabled = !skSpent() || pilotOff(); fillGear();
+}
+function fillGear() {
+  $('pl-gear').innerHTML = ['h', 'b', 'k'].map(sl => '<div class="gslot"><span>' + GEAR_SLOT[sl] + '</span><div class="gitems">' + GEAR.map((q, i) => { if (!q || q.slot !== sl) return ''; const own = gearOk(i), on = worn(sl) === i, poor = !own && CAR.rp < q.rp;
+    return '<button type="button" class="gitem' + (on ? ' on' : '') + (poor ? ' lock' : '') + '" data-i="' + i + '"' + (poor || pilotOff() ? ' disabled' : '') + '><i style="background-image:url(img/gear/' + q.pic + '.webp)"></i><b>' + q.n + '</b><small>' + q.note + '</small><em>' + (on ? 'Wearing' : own ? 'Put on' : 'Buy · ' + q.rp + ' RP') + '</em></button>'; }).join('') + '</div></div>').join('');
+  $('pl-gear').querySelectorAll('.gitem').forEach(b => { b.onclick = () => { const i = +b.dataset.i, q = GEAR[i], sl = q.slot;
+    if (!gearOk(i)) { if (CAR.rp < q.rp) return; return pilotCall('buy_gear', { p_i: i }, () => { CAR.rp -= q.rp; CAR.gear.push(i); CAR.wear[sl] = i; }); }
+    const w = Object.assign({}, CAR.wear); w[sl] = worn(sl) === i ? 0 : i; pilotCall('set_wear', { p_h: w.h, p_b: w.b, p_k: w.k }, () => { CAR.wear = w; }); }; });
+}
+function pilotOpen(from) { PL.from = from; PL.sel = null; fillPilot(); show('s-pilot'); $('s-pilot').scrollTop = 0; $('b-pback').focus({ preventScroll: true }); }
+function fillParts() {
+  const lv = pilotLv(CAR.xp);
+  $('h-parts').innerHTML = PARTS.map((q, i) => { if (!q) return ''; const own = partOk(i), lock = !q.star && lv < q.lv; return '<div class="upg"><b>' + q.n + '</b><span>' + (q.slot === 'g' ? 'Guns' : 'Fitting') + ' · ' + q.note + '</span><button class="ghost" type="button" data-i="' + i + '"' + (own || q.star || lock || CAR.rp < q.rp || pilotOff() ? ' disabled' : '') + '>' + (own ? 'Owned' : q.star ? 'Opens at ' + q.star + ' stars' : lock ? 'Pilot level · ' + q.lv : 'Buy · ' + q.rp + ' RP') + '</button></div>'; }).join('');
+  $('h-parts').querySelectorAll('button').forEach(b => { b.onclick = () => { const i = +b.dataset.i, q = PARTS[i]; if (partOk(i) || q.star || pilotLv(CAR.xp) < q.lv || CAR.rp < q.rp) return; pilotCall('buy_part', { p_i: i }, () => { CAR.rp -= q.rp; CAR.parts.push(i); }); }; });
+}
+/* the three choices before a flight: guns, what hangs under the wings, and the one special fitting */
+function fillKit() {
+  const seg = (id, name, opts, cur, set) => { $(id).innerHTML = opts.map(o => '<label><input type="radio" name="' + name + '" value="' + o[0] + '"' + (o[0] === cur ? ' checked' : '') + (o[2] ? ' disabled' : '') + '><span>' + o[1] + '</span></label>').join(''); $(id).querySelectorAll('input').forEach(el => { el.onchange = () => { set(+el.value); }; }); };
+  const opt = slot => [[0, slot === 'g' ? 'Standard' : 'None', false]].concat(PARTS.map((q, i) => (q && q.slot === slot ? [i, q.n, !partOk(i)] : null)).filter(Boolean));
+  const setKit = () => { if (NET.me && !pilotOff()) { rpc('set_kit', { p_g: CAR.kg, p_k: CAR.kk }).catch(() => {}); } saveCar(); pkSet(); kitNote(); };
+  seg('o-kg', 'kg', opt('g'), kitG(), v => { CAR.kg = v; setKit(); }); seg('o-kk', 'kk', opt('k'), kitK(), v => { CAR.kk = v; setKit(); });
+  seg('o-load', 'load', LOADS.map((l, i) => [i, l[0], false]), CAR.load, v => { CAR.load = v; saveCar(); pkSet(); kitNote(); if (state === 'menu' && !DUEL.on) { P.rkt = loadR(); P.bombs = loadB(); } });
+  kitNote();
+}
+function kitNote() {
+  pkSet(); const g = kitG(), q = kitK(), bits = [LOADS[CAR.load][1]]; if (g) bits.push(PARTS[g].note); if (q) bits.push(PARTS[q].note);
+  const sp = Math.round((PK.spd - 1) * 100); if (sp) bits.push(sp > 0 ? 'Lighter and faster.' : 'Heavier and slower.');
+  $('o-load-n').textContent = bits.join(' ');
 }
 function board() { DUEL.on = false; if (isleWorld) { ISLE = false; loadMission(mIdx); } hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); dailyLoad(); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
 function startGame() { if (DUEL.on) return duelStart(); initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); skyJoin(); netStart(); }
@@ -3585,9 +3739,9 @@ function finish() {
   }
   let got = 0;
   const st0 = starsAll();
-  if (endWon) { addScore(1000); score += Math.round(Math.max(0, PAR[mIdx] + 120 - time) * 4 * D.sc); got = 1 | (siteBreaks > 0 ? 2 : 0) | (time <= PAR[mIdx] ? 4 : 0); CAR.stars[mIdx] |= got; }
+  if (endWon) { addScore(1000); score += Math.round(Math.max(0, parNow() + 120 - time) * 4 * D.sc); got = 1 | (siteBreaks > 0 ? 2 : 0) | (time <= parNow() ? 4 : 0); CAR.stars[mIdx] |= got; }
   score = Math.max(0, score - fleetHits * 300);
-  const rk0 = rankOf(CAR.xp), earned = Math.round(score / (endWon ? 10 : 25)); CAR.xp += score; CAR.rp += earned; saveCar(); netScore(got);
+  const rk0 = rankOf(CAR.xp), base = Math.round(score / (endWon ? 10 : 25)), earned = Math.round(base * PK.rp * (endWon ? PK.rpW : PK.rpL)); LOG.bonus = earned - base; CAR.xp += score; CAR.rp += earned; saveCar(); netScore(got);
   $('end-stars').innerHTML = starLines(got); $('end-next').textContent = starLine(st0); $('st-score').textContent = score; $('st-bomb').textContent = bomberKills; $('st-rp').textContent = earned + ' RP';
   if (rankOf(CAR.xp) > rk0) $('end-lede').textContent += ' Promoted to ' + RANKS[rankOf(CAR.xp)][1] + '.';
   if (fleetHits && !failed) $('end-lede').textContent += ' The fleet took ' + fleetHits + (fleetHits > 1 ? ' bomb hits.' : ' bomb hit.');
@@ -3608,10 +3762,14 @@ function debrief() {
   const marks = [shots > 60 && (acc >= .3 ? 'Sharp shooting' : acc < .12 ? 'Wild shooting' : ''), dmg <= 15 ? 'Barely scratched' : dmg >= 70 ? 'Badly shot up' : '', M.flight >= 3 && (LOG.stalls ? (LOG.stalls > 1 ? 'Stalled more than once' : 'Stalled once') : 'Speed well kept'), endWon && LOG.vs !== null && (LOG.vs < 2.2 ? 'Smooth landing' : LOG.vs > 4 ? 'Heavy landing' : '')].filter(Boolean);
   const pts = (acc >= .3 ? 1 : acc < .12 && shots > 60 ? -1 : 0) + (dmg <= 15 ? 1 : dmg >= 70 ? -1 : 0) - Math.min(2, LOG.stalls) + (endWon && LOG.vs !== null && LOG.vs < 2.2 ? 1 : 0) + (endWon ? 1 : -1);
   $('end-pilot').textContent = 'Pilot assessment · ' + (pts >= 3 ? 'Exceptional' : pts >= 1 ? 'Sound' : pts >= -1 ? 'Fair' : 'Needs work') + (marks.length ? ' · ' + marks.join(' · ') : '');
+  const kit = [kitG() && PARTS[kitG()].n, kitK() && PARTS[kitK()].n, worn('h') && GEAR[worn('h')].n, worn('b') && GEAR[worn('b')].n, worn('k') && GEAR[worn('k')].n, LOG.saved >= 1 && 'Damage saved · ' + Math.round(LOG.saved), LOG.bonus > 0 && 'Requisition bonus · +' + LOG.bonus + ' RP'].filter(Boolean);
+  $('end-kit').hidden = !kit.length; $('end-kit').textContent = 'Pilot and load · ' + kit.join(' · ');
   const f = FACTIONS[M.f]; let why = '';
   if (!endWon) why = dmg >= 95 && !kills ? ' The fighters got you before you got one of them: turn into them early.' : shots > 150 && acc < .12 ? ' Most of your rounds missed: close in before you fire.' : LOG.stalls > 1 ? ' You stalled more than once: keep your speed up in the turns.' : '';
   $('end-why').textContent = why.trim(); $('end-why').hidden = !why; $('end-tone').textContent = endWon ? f.won : f.lost;
 }
+$('b-pilot').onclick = () => pilotOpen('s-menu'); $('b-pback').onclick = () => { show(PL.from); fillBoard(); };
+$('b-preset').onclick = () => { if (!skSpent()) return; pilotCall('skill_reset', {}, () => { for (const k in CAR.sk) CAR.sk[k] = 0; }); };
 $('b-hangar').onclick = () => { $('h-msg').hidden = true; LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
@@ -3752,6 +3910,7 @@ function netUi() { $('comp').hidden = !NET.sb; $('comp-out').hidden = !!NET.me; 
 function adopt(p) { // the server's copy of the pilot replaces the device's
   if (!p || !p.id) return false; NET.me = p; CAR.xp = p.xp | 0; CAR.rp = p.rp | 0; for (const k in CAR.up) CAR.up[k] = clamp((p.up || {})[k] | 0, 0, 3);
   CAR.own = (p.own || []).filter(n => n >= 4 && n < PLANES.length); CAR.plane = Number.isInteger(p.plane) ? clamp(p.plane, -1, PLANES.length - 1) : -1; if (Number.isInteger(p.paint)) CAR.paint = clamp(p.paint, 0, PAINTS.length - 1); for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = ((p.stars || [])[i] | 0) & 7;
+  srvPilot = !!p.sk; if (srvPilot) { for (const k in CAR.sk) CAR.sk[k] = clamp(p.sk[k] | 0, 0, 4); CAR.parts = (p.parts || []).filter(n => n >= 1 && n <= 5); CAR.kg = (p.kit || {}).g | 0; CAR.kk = (p.kit || {}).k | 0; CAR.gear = [1].concat((p.gear || []).filter(n => n >= 2 && n <= 11)); for (const k in CAR.wear) CAR.wear[k] = (p.wear || {})[k] | 0; }
   saveCar(); netUi(); lobbySync(); dailyLoad(); return true;
 }
 async function netInit() {
@@ -3958,7 +4117,7 @@ $('n-link').onkeydown = e => e.stopPropagation(); $('n-link').onkeyup = e => e.s
 $('n-room').value = NET.room; $('n-room').oninput = e => { NET.room = e.target.value.slice(0, 12); try { localStorage.setItem('windfall-room', NET.room); } catch (er) {} lobbySync(); }; $('n-room').onkeydown = e => e.stopPropagation(); $('n-room').onkeyup = e => e.stopPropagation();
 netInit();
 loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
-window.__game = { LOG, FACTIONS, EVENTS, sideTick, radioQ, finish: () => finish(), coach, SIDE, LOADS, storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
+window.__game = { GEAR, NET, LOG, FACTIONS, PK, pkSet, CAR, pilotOpen, fillPilot, PARTS, EVENTS, sideTick, radioQ, finish: () => finish(), coach, SIDE, LOADS, storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 })();
 </script>
