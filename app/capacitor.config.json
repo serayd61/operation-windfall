@@ -2,14 +2,14 @@
   "appId": "com.operationwindfall.app",
   "appName": "Operation Windfall",
   "webDir": "www",
-  "backgroundColor": "#0c1210",
+  "backgroundColor": "#040d1c",
   "android": {
-    "backgroundColor": "#0c1210",
+    "backgroundColor": "#040d1c",
     "allowMixedContent": false,
     "webContentsDebuggingEnabled": false
   },
   "ios": {
-    "backgroundColor": "#0c1210",
+    "backgroundColor": "#040d1c",
     "contentInset": "never",
     "scrollEnabled": false,
     "allowsLinkPreview": false,

@@ -615,7 +615,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 <script src="vendor/three.min.js"></script>
 <script src="vendor/supabase.js"></script>
 <script>
-(() => {
+const __boot = () => {
 'use strict';
 const $ = id => document.getElementById(id);
 const app = $('app'), canvas = $('view');
@@ -4147,8 +4147,10 @@ loadMission(startAt); fillBoard(); show('s-menu'); $('fps').hidden = !CAR.fps;
 window.__game = { GEAR, NET, LOG, FACTIONS, PK, pkSet, CAR, pilotOpen, fillPilot, PARTS, EVENTS, sideTick, radioQ, finish: () => finish(), coach, SIDE, LOADS, storyTick, duelDone, logOpen, STORY, CAMP, VOX, chat, say, LAND, launch, landGun, weatherSet, dailyShow, duelStartMode: m => duelStart(m), DUEL, duelStart, duelMsg, duelHit, tr, setLang, pickVoice, call, sideOf, hitFrom, scanThreats, get radioQ() { return radioQ; }, startGame, NET, skyGot, skyJoin, netJoin, netClaim, fillRank, rpc, P, keys, MOBILE, perf: () => ({ RS, resCap, detail, fpsNow }), setDetail, tuneWith(f) { fpsNow = f; tune(); }, PAD, padLocal, approach, gateMark, input, get objs() { return objs; }, get enemies() { return enemies; }, get tanks() { return gtanks; }, get sites() { return SITES; }, get men() { return men; }, hurtTank, blast, groundAt, camera, renderer, scene, get state() { return state; }, get M() { return M; }, loadMission(i) { loadMission(i); fillBoard(); }, step(n) { for (let i = 0; i < n; i++) tick(1 / 60, performance.now()); }, CAR, get wing() { return wing; }, get pals() { return pals; }, PLANES, get PM() { return PM; }, get plane() { return plane; }, audio: () => ({ ac: !!ac, st: ac && ac.state, mus: !!musGain, step: musStep }), finishNow(won) { endWon = won; finish(); }, stats: () => ({ score, bomberKills, fleetHits, siteBreaks, time, kills, boatKills, shots, hits, cut, phase, rkt: P.rkt, bombs: P.bombs }) };
 requestAnimationFrame(frame);
 /* the logo holds the screen until the first frames are out, and for at least a second so it is seen */
-setTimeout(() => requestAnimationFrame(() => { const b = $('boot'); if (b) { b.classList.add('out'); setTimeout(() => b.remove(), 500); } }), Math.max(0, 1100 - performance.now()));
-})();
+setTimeout(() => requestAnimationFrame(() => { const b = $('boot'); if (b) { b.classList.add('out'); setTimeout(() => b.remove(), 500); } }), 700);
+};
+/* building the world holds the page for seconds on a phone, so the logo is painted first and the game starts after it */
+{ const im = document.querySelector('#boot img'); let gone = false; const go = () => { if (gone) return; gone = true; requestAnimationFrame(() => setTimeout(__boot, 30)); }; if (!im || im.complete) go(); else { im.onload = im.onerror = go; setTimeout(go, 700); } }
 </script>
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;margin:0;padding:24px;font:16px system-ui;color:#f3eede;background:#0c1210;text-align:center">Operation Windfall needs JavaScript and WebGL to run.</p></noscript>
 <script>
