@@ -94,9 +94,12 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 .cross svg { position: absolute; left: -34px; top: -34px; width: 68px; height: 68px; overflow: visible; filter: drop-shadow(0 0 2px rgba(0, 0, 0, .8)); transition: transform .06s; }
 .cross.lock { color: var(--threat); }
 .cross.hit { color: #fff; } .cross.hit svg { transform: scale(1.15); }
+.cross .hm { display: none; stroke-width: 2.4; } .cross.hit .hm, .cross.kill .hm { display: inline; } .cross.kill { color: var(--threat); } .cross.kill svg { transform: scale(1.35); } .cross.kill .hm { stroke-width: 3.4; }
 .pip { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
 .pip::before { content: ''; position: absolute; border-radius: 50%; box-shadow: 0 0 3px rgba(0, 0, 0, .8); }
-#lead::before { left: -9px; top: -9px; width: 18px; height: 18px; border: 2px solid var(--threat); }
+#lead::before { left: -13px; top: -13px; width: 26px; height: 26px; border: 2px dashed var(--threat); opacity: .6; }
+#lead::after { content: ''; position: absolute; left: -2.5px; top: -2.5px; width: 5px; height: 5px; border-radius: 50%; background: var(--threat); box-shadow: 0 0 3px rgba(0, 0, 0, .8); }
+#lead.in::before { border-style: solid; opacity: 1; } #lead.on::before { background: rgba(255, 90, 68, .28); box-shadow: 0 0 0 2px rgba(255, 255, 255, .85), 0 0 3px rgba(0, 0, 0, .8); }
 #bpip::before { left: -13px; top: -13px; width: 26px; height: 26px; border: 2px dashed var(--go); }
 #bpip::after { content: 'BOMB'; position: absolute; left: 18px; top: -6px; font: 700 12px/1 var(--f-hud); letter-spacing: .14em; color: var(--go); }
 
@@ -155,6 +158,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 .heat-bar { height: 7px; margin: 7px 0 3px; box-shadow: inset 0 0 0 1px var(--hud-dim); background: rgba(12, 18, 16, .4); }
 .heat-bar i { display: block; height: 100%; width: 0; background: var(--sight); }
 .heat.hot .heat-bar i { background: var(--threat); } .heat.hot .k { color: var(--threat); }
+.heat.warm .heat-bar i { background: #ffc86a; animation: blink .35s steps(1) infinite; } .heat.wep { width: 96px; } .touch .heat.wep { width: 60px; } .t-btn.hot { border-color: var(--threat); color: var(--threat); opacity: .55; }
 .touch .arms { right: auto; left: 50%; transform: translateX(-50%); bottom: calc(8px + var(--sab)); gap: 12px; }
 .touch .heat { width: 90px; } .touch .arm b { font-size: 20px; }
 .touch .radio { bottom: auto; top: calc(76px + var(--sat)); }
@@ -309,7 +313,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="tbox" id="tbox" hidden><i></i><i></i><i></i><i></i></div>
     <div class="tgt" id="tgt" hidden><div class="k" id="tg-type">Target</div><div class="tg-name" id="tg-name"></div><div class="tg-bar"><i id="tg-fill"></i></div><div class="tg-row"><span>Integrity</span><b id="tg-hp"></b></div><div class="tg-row"><span>Range</span><b id="tg-rng"></b></div><div class="tg-row"><span id="tg-xk">Bearing</span><b id="tg-xv"></b></div><div class="tg-row tg-x"><span>Armour</span><b id="tg-arm"></b></div><div class="tg-row tg-x"><span>Use</span><b id="tg-use"></b></div></div>
     <div class="pip" id="lead" hidden></div><div class="pip" id="bpip" hidden></div>
-    <div class="cross" id="cross"><svg viewBox="-34 -34 68 68" fill="none" stroke="currentColor" stroke-width="1.6"><circle r="24"/><circle r="1.6" fill="currentColor" stroke="none"/><path d="M0 -33V-27M0 27V33M-33 0H-27M27 0H33M-9 0H-4M4 0H9M0 4V9"/></svg></div>
+    <div class="cross" id="cross"><svg viewBox="-34 -34 68 68" fill="none" stroke="currentColor" stroke-width="1.6"><circle r="24"/><circle r="1.6" fill="currentColor" stroke="none"/><path d="M0 -33V-27M0 27V33M-33 0H-27M27 0H33M-9 0H-4M4 0H9M0 4V9"/><path class="hm" d="M-15 -15L-7 -7M15 -15L7 -7M-15 15L-7 7M15 15L7 7"/></svg></div>
     <div class="feed" id="feed"></div>
     <div class="pilots" id="pilots" hidden></div>
     <div class="radio" id="radio"><b id="radio-from">Homeplate</b><p id="radio-text"></p></div>
@@ -321,6 +325,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="arms">
       <div class="arm" id="a-bomb"><div class="k">Bombs</div><b id="bomb-n">0</b></div>
       <div class="arm" id="a-rkt"><div class="k">Rockets</div><b id="rkt-n">0</b></div>
+      <div class="arm heat wep" id="wep"><div class="k" id="wep-k">WEP</div><div class="heat-bar"><i id="wep-fill"></i></div></div>
       <div class="arm heat" id="heat"><div class="k" id="gun-k">.50 cal</div><div class="heat-bar"><i id="heat-fill"></i></div></div>
     </div>
   </div>
@@ -545,7 +550,8 @@ const DICT = {
   "Target": ["Hedef", "Ziel"], "Integrity": ["Sağlamlık", "Zustand"], "Range": ["Mesafe", "Entfernung"], "Bearing": ["Kerteriz", "Peilung"], "Altitude": ["İrtifa", "Höhe"], "Armour": ["Zırh", "Panzerung"], "Use": ["Silah", "Waffe"],
   "Airframe": ["Gövde", "Zelle"], "Airspeed": ["Hız", "Fahrt"], "Bombs": ["Bomba", "Bomben"], "Rockets": ["Roket", "Raketen"], "Guns cooling": ["Namlular soğuyor", "Rohre kühlen ab"],
   "GEAR": ["TEKER", "FAHRW."],
-  "NO RADAR": ["RADAR YOK", "KEIN RADAR"], "MAP": ["HARİTA", "KARTE"], "Island map": ["Ada haritası", "Inselkarte"], "Ours": ["Bizim", "Unser"], "Theirs": ["Onların", "Gegner"], "Nobody's": ["Sahipsiz", "Niemand"],
+  "NO RADAR": ["RADAR YOK", "KEIN RADAR"], "Engine overheating": ["Motor aşırı ısınıyor", "Motor überhitzt"], "Engine cooling": ["Motor soğuyor", "Motor kühlt"], "Guns overheated": ["Namlular aşırı ısındı", "Waffen überhitzt"],
+  "Engine is overheating!": ["Motor aşırı ısınıyor!", "Der Motor überhitzt!"], "Throttle back!": ["Gazı kes!", "Gas zurück!"], "MAP": ["HARİTA", "KARTE"], "Island map": ["Ada haritası", "Inselkarte"], "Ours": ["Bizim", "Unser"], "Theirs": ["Onların", "Gegner"], "Nobody's": ["Sahipsiz", "Niemand"],
   "Airstrip: land on it and stand still for three seconds to take it. It rearms and repairs you, and your side takes off from it.": ["Pist: üstüne in ve üç saniye dur, pist sizin olur. Mühimmatını doldurur, uçağını onarır ve takımın buradan kalkar.", "Piste: Lande darauf und bleib drei Sekunden stehen, dann gehört sie euch. Sie rüstet und repariert dich, und eure Seite startet von dort."],
   "A bomb on the runway closes it for thirty seconds.": ["Piste düşen bir bomba onu otuz saniye kapatır.", "Eine Bombe auf die Bahn sperrt sie für dreißig Sekunden."],
   "Radar: bomb theirs and they lose you on their scope. Fuel dump: burn theirs and they wait longer to fly again.": ["Radar: onlarınkini bombalarsan seni ekranlarında göremezler. Yakıt deposu: onlarınkini yakarsan yeniden uçmak için daha uzun beklerler.", "Radar: Zerbombst du ihres, sehen sie dich nicht mehr auf dem Schirm. Treibstofflager: Brennt ihres, warten sie länger auf den nächsten Start."],
@@ -1528,14 +1534,14 @@ function inObj(o, p, m) { const dx = p.x - o.pos.x, dz = p.z - o.pos.z, c = Math
 /* ------------------------------------------------------------------ pools */
 const bullets = [];
 (function () {
-  const geo = new T.BoxGeometry(.34, .34, 10);
-  const mf = new T.MeshBasicMaterial({ color: 0xfff0a0, fog: false, blending: T.AdditiveBlending, depthWrite: false }), me = new T.MeshBasicMaterial({ color: 0xff7040, fog: false, blending: T.AdditiveBlending, depthWrite: false });
+  const geo = new T.BoxGeometry(.3, .3, 17);
+  const mf = new T.MeshBasicMaterial({ color: 0xfff4b8, fog: false, blending: T.AdditiveBlending, depthWrite: false }), me = new T.MeshBasicMaterial({ color: 0xff7040, fog: false, blending: T.AdditiveBlending, depthWrite: false });
   for (let i = 0; i < 260; i++) { const m = new T.Mesh(geo, mf); m.visible = false; scene.add(m); bullets.push({ m, mf, me, on: false, vel: new V3(), life: 0, friendly: true, dmg: 0, flak: false }); }
 })();
 const _a = new V3(), _b = new V3(), _c = new V3(), _d = new V3(), _e = new V3();
 function spawnBullet(pos, dir, speed, friendly, dmg, life, flak, size, wing) {
   for (const b of bullets) if (!b.on) {
-    b.on = true; b.wing = !!wing; b.friendly = friendly; b.dmg = dmg; b.life = life; b.flak = !!flak; b.vel.copy(dir).multiplyScalar(speed);
+    b.on = true; b.near = false; b.wing = !!wing; b.friendly = friendly; b.dmg = dmg; b.life = life; b.flak = !!flak; b.vel.copy(dir).multiplyScalar(speed);
     b.m.material = friendly ? b.mf : b.me; b.m.position.copy(pos); b.m.lookAt(_d.copy(pos).add(dir)); b.m.visible = true; b.m.scale.setScalar(size || (flak ? .7 : 1.05)); return;
   }
 }
@@ -1567,6 +1573,9 @@ function puff(x, y, z, size, kind, vx, vy, vz) {
   const K = FX[kind]; let i = fxH, n = FXN; while (n-- && fxT[i] < fxD[i]) i = (i + 1) % FXN; if (n < 0) return; fxH = (i + 1) % FXN;
   fxT[i] = 0; fxD[i] = K.d * rand(.85, 1.15); fxS[i] = size; fxK[i] = K; fxP[i * 3] = x; fxP[i * 3 + 1] = y; fxP[i * 3 + 2] = z; fxV[i * 3] = vx || 0; fxV[i * 3 + 1] = vy || 0; fxV[i * 3 + 2] = vz || 0;
   fxR[i * 3] = rand(0, 6.28); fxR[i * 3 + 1] = K.glow ? 0 : rand(-.5, .5); fxR[i * 3 + 2] = rand(0, 1);
+}
+function sparks(p, v, n) { // metal struck: bright bits thrown back along the shot
+  for (let i = n || 3; i--;) puff(p.x, p.y, p.z, rand(.5, .9), 'spark', -v.x * .05 + rand(-22, 22), rand(4, 26), -v.z * .05 + rand(-22, 22)); if (Math.random() < .3) puff(p.x, p.y, p.z, rand(.5, .8), 'chunk', rand(-14, 14), rand(6, 20), rand(-14, 14));
 }
 function spawnFx(pos, size, kind) {
   if (kind === 'splash' && size > 11) { // a column of water that climbs and falls back, with spray round its foot
@@ -1921,17 +1930,21 @@ function updateGround(dt) {
 }
 
 /* ------------------------------------------------------------------ audio */
-let ac = null, muted = false, engOsc = null, engOsc2 = null, engGain = null, master = null, noiseBuf = null;
+let ac = null, muted = false, engOsc = null, engOsc2 = null, engOsc3 = null, engGain = null, engLp = null, engLfo = null, windGain = null, windF = null, engThr = 0, passT = 0, killMarkT = 0, master = null, noiseBuf = null;
 function initAudio() {
   if (ac) { if (ac.state === 'suspended') ac.resume(); return; }
   try {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
     ac = new AC(); master = ac.createGain(); master.gain.value = muted ? 0 : 1; master.connect(ac.destination);
     noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
+    const lp = engLp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
     engGain = ac.createGain(); engGain.gain.value = 0; lp.connect(engGain); engGain.connect(master);
     engOsc = ac.createOscillator(); engOsc.type = 'sawtooth'; engOsc.connect(lp); engOsc.start();
     engOsc2 = ac.createOscillator(); engOsc2.type = 'square'; engOsc2.connect(lp); engOsc2.start();
+    const g3 = ac.createGain(); g3.gain.value = .45; g3.connect(lp); engOsc3 = ac.createOscillator(); engOsc3.type = 'sawtooth'; engOsc3.connect(g3); engOsc3.start(); // a second bank of cylinders, slightly off
+    const lg = ac.createGain(); lg.gain.value = .014; lg.connect(engGain.gain); engLfo = ac.createOscillator(); engLfo.type = 'sine'; engLfo.frequency.value = 12; engLfo.connect(lg); engLfo.start(); // the beat of the propeller
+    windF = ac.createBiquadFilter(); windF.type = 'bandpass'; windF.frequency.value = 900; windF.Q.value = .6; windGain = ac.createGain(); windGain.gain.value = 0; windF.connect(windGain); windGain.connect(master);
+    const wn = ac.createBufferSource(); wn.buffer = noiseBuf; wn.loop = true; wn.connect(windF); wn.start();
     musGain = ac.createGain(); musGain.gain.value = 0; musGain.connect(master); setInterval(musicTick, 110); setTimeout(voxWarm, 400);
   } catch (e) { ac = null; }
 }
@@ -1985,13 +1998,26 @@ function say(text) {
   } catch (e) {}
 }
 function pickVoice() { return null; }
+function engTick(dt) { // the engine follows the throttle, the slipstream follows the speed
+  if (!engGain) return; const on = state === 'play' && P.alive, t = ac.currentTime, wep = on && input.boost && !P.wepHot && !P.gnd;
+  const thr = !on ? 0 : P.gnd === 2 ? .22 : input.brake ? .3 : wep ? 1 : .62; engThr += (thr - engThr) * (1 - Math.exp(-2.6 * dt));
+  const f = 36 + engThr * 48 + (on ? P.speed * .2 : 0);
+  engOsc.frequency.setTargetAtTime(f, t, .05); engOsc2.frequency.setTargetAtTime(f * .502, t, .05); engOsc3.frequency.setTargetAtTime(f * 1.507 + (on && P.wepHot ? Math.sin(t * 31) * 5 : 0), t, .05);
+  engLfo.frequency.setTargetAtTime(7 + engThr * 13, t, .1); engLp.frequency.setTargetAtTime(280 + engThr * 560, t, .1);
+  engGain.gain.setTargetAtTime(on ? .028 + engThr * .055 : 0, t, .08);
+  windGain.gain.setTargetAtTime(on && !P.gnd ? Math.pow(clamp((P.speed - 40) / 110, 0, 1), 1.6) * .1 + (P.buf || 0) * .1 : 0, t, .12); windF.frequency.setTargetAtTime(500 + (on ? P.speed * 9 : 0) - (P.buf || 0) * 300, t, .12);
+}
+function whistle(dur) { // a bomb on its way down
+  if (!ac || muted) return; const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime; o.type = 'sine'; o.frequency.setValueAtTime(1700, t); o.frequency.exponentialRampToValueAtTime(620, t + dur);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.05, t + .25); g.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
+}
 function burst(freq, type, dur, vol) {
   if (!ac || muted || vol < .01) return;
   const s = ac.createBufferSource(); s.buffer = noiseBuf; const f = ac.createBiquadFilter(); f.type = type; f.frequency.value = freq;
   const g = ac.createGain(); g.gain.setValueAtTime(vol, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + dur);
   s.connect(f); f.connect(g); g.connect(master); s.start(ac.currentTime, Math.random() * .5, dur + .05);
 }
-const sfxGun = big => { burst(big ? 500 : 900, 'bandpass', big ? .14 : .09, big ? .26 : .16); burst(170, 'lowpass', .09, big ? .34 : .2); };
+const sfxGun = (big, heat) => { const k = 1 + (heat || 0) * .4; burst((big ? 500 : 900) * k, 'bandpass', big ? .14 : .09, big ? .26 : .16); burst(170, 'lowpass', .09, big ? .34 : .2); }; // the note climbs as the barrels heat
 const sfxBoom = (size, pos) => burst(230, 'lowpass', 1.3, clamp(size / 28, .2, .8) * clamp(1 - pos.distanceTo(P.pos) / 1600, .15, 1));
 const sfxHit = () => burst(650, 'lowpass', .16, .4);
 function setMuted(m) { muted = m; if (m) hush(); if (master) master.gain.value = m ? 0 : 1; $('b-mute').style.opacity = m ? .45 : 1; try { localStorage.setItem('windfall-mute', m ? '1' : '0'); } catch (e) {} }
@@ -2058,7 +2084,7 @@ function groundRoll(dt) {
       }
       else if (phase === 'extract') { P.gnd = 3; if (!endT) { endT = 1.6; endWon = true; } }
       else { // turned round on the spot: rearmed and patched up
-        P.rkt = M.rockets; P.bombs = M.bombs; P.hp = 100; P.heat = 0; P.hot = false; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true);
+        P.rkt = M.rockets; P.bombs = M.bombs; P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true);
         spotPlane(); feed('Rearmed and repaired'); radio(M.cs + ', you are turned round and rearmed. Off you go again.');
       }
     }
@@ -2124,7 +2150,7 @@ function reset() {
   fxT.fill(0); fxD.fill(0); fxGeo.instanceCount = 0;
   for (const o of ord) { o.on = false; o.g.visible = false; }
   for (const o of objs) { o.hp = o.hp0; o.alive = true; o.top.visible = true; o.top.rotation.set(0, 0, 0); o.top.scale.set(1, 1, 1); o.top.position.set(0, 0, 0); o.group.position.y = o.pos.y; o.group.rotation.z = 0; o.group.visible = true; o.fireCd = 2; o.sink = 0; o.boomT = 0; }
-  P.told = false; P.told0 = false; P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.rkt = M.rockets; P.bombs = M.bombs; P.stall = false; P.g = 0; P.ordCd = 0;
+  P.told = false; P.told0 = false; P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.rkt = M.rockets; P.bombs = M.bombs; P.stall = false; P.g = 0; P.ordCd = 0;
   plane.visible = true; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true); beacon.visible = false;
   spotPlane(); setGate(1);
   downs = 0; failed = false; flakCall = -99; modeT = M.mode === 'escort' ? 12 : 6; waveI = 0; waveLive = false; resetPals();
@@ -2245,6 +2271,7 @@ function updateEnemies(dt) {
         if (e.pos.y < gy + 2 || e.fallT <= 0) { explode(e.pos, 20); if (gy === 0 && e.pos.y < 4) spawnFx(e.pos, 30, 'splash'); world.remove(e.mesh); e.dead = true; }
         continue;
       }
+      { const hf = e.max ? e.hp / e.max : 1; if (hf < .66) { e.smokeT -= dt; if (e.smokeT <= 0) { const bad = hf < .33; e.smokeT = bad ? .06 : .12; spawnFx(e.pos, bad ? rand(4, 6) : rand(2.4, 3.4), bad ? 'trail' : 'rtrail'); if (bad && Math.random() < .25) spawnFx(e.pos, 3.4, 'fire'); } } } // hit aircraft show it: a white leak, then black smoke and flame
       if (e.kind === 'bomber') { // straight for the fleet, with a tail gunner
         if (!e.dropped) { _a.set(SHIP.x - e.pos.x, 0, SHIP.z - e.pos.z); const hd = _a.length(); e.dir.lerp(_a.normalize(), Math.min(1, .4 * dt)).normalize();
           if (hd < 140) { e.dropped = true; fleetHits++; for (let i = 0; i < 4; i++) explode(_c.set(SHIP.x + rand(-70, 70), rand(4, 14), SHIP.z + rand(-90, 90)), rand(18, 30)); feed('Fleet hit by bombers'); radio('The ' + M.homeName.toLowerCase() + ' has taken a bomb hit. Do not let another one through.'); } }
@@ -2488,7 +2515,7 @@ function launch(bomb) {
     o.on = true; o.bomb = bomb; o.life = bomb ? 20 : 4.2; o.trailT = 0; o.r.visible = !bomb; o.b.visible = bomb; o.g.visible = true;
     const list = bomb ? plane.userData.bombs : plane.userData.rkt, idx = bomb ? --P.bombs : --P.rkt, pyl = list[idx] || list[idx % (list.length || 1)]; if (list[idx]) pyl.visible = false; /* rewards can carry more than the racks show */
     plane.updateMatrixWorld(); if (pyl) o.g.position.copy(pyl.position).applyMatrix4(plane.matrixWorld); else o.g.position.set(0, -1, 0).applyMatrix4(plane.matrixWorld);
-    if (bomb) { o.vel.copy(P.vel); burst(300, 'lowpass', .2, .2); }
+    if (bomb) { o.vel.copy(P.vel); burst(300, 'lowpass', .2, .2); whistle(clamp(Math.sqrt(Math.max(1, P.pos.y - Math.max(0, heightAt(P.pos.x, P.pos.z))) / 5), 1, 4.5)); }
     else { if (target) { const tp = target.aim || target.pos, d = tp.distanceTo(o.g.position); o.dir.copy(tp).addScaledVector(target.vel, d / 330).sub(o.g.position).normalize(); } else o.dir.copy(P.fwd); o.speed = P.speed + 50; burst(1100, 'bandpass', .6, .3); burst(300, 'lowpass', .5, .3); }
     return;
   }
@@ -2511,11 +2538,15 @@ function updateOrd(dt) {
 }
 function updatePlayer(dt) {
   if (!P.alive) return;
-  if (P.gnd) { groundRoll(dt); gearTick(dt); return; }
+  if (P.gnd) { groundRoll(dt); gearTick(dt); P.wep = Math.max(0, (P.wep || 0) - dt / 20); if (P.wep < .45) P.wepHot = false; P.buf = 0; return; }
   P.airT += dt; if (!P.autoUp && P.airT > 2.5) { P.autoUp = true; P.gear = false; feed('Undercarriage up'); } gearTick(dt);
   const fl = M.flight, ys = invertY ? -1 : 1, auth = P.stall ? .3 : 1;
+  const bst = input.boost && !P.wepHot; // war emergency power runs the engine hot: about fourteen seconds of it, then she has to cool
+  if (bst) { P.wep = Math.min(1, (P.wep || 0) + dt / 14); if (P.wep >= 1) { P.wepHot = true; warn('Engine overheating'); call('wephot', 'Engine is overheating! Throttle back!', 20); burst(1800, 'bandpass', .3, .25); } }
+  else { P.wep = Math.max(0, (P.wep || 0) - dt / 20); if (P.wepHot && P.wep < .45) P.wepHot = false; }
+  if (bst && P.wep > .75) shake = Math.max(shake, (P.wep - .75) * .5); if (P.wepHot) { P.wepS = (P.wepS || 0) - dt; if (P.wepS <= 0) { P.wepS = .09; spawnFx(_c.copy(P.pos).addScaledVector(P.fwd, 3), rand(1.6, 2.6), 'rtrail'); } }
   const sens = SENS[CAR.sens], lc = P.gear && P.autoUp; // wheels down: gentler controls for the approach
-  P.roll += (-input.x * (lc ? .5 : 1.15) * auth - P.roll) * (1 - Math.exp(-4.5 * sens * dt));
+  P.roll += (-input.x * (lc ? .5 : 1.15) * auth + (P.stall ? (P.stSide || 1) * .75 : 0) - P.roll) * (1 - Math.exp(-4.5 * sens * dt));
   const turnK = fl >= 2 ? Math.pow(M.v0 / Math.max(P.speed, 45), .7) : 1;
   P.yaw += (P.roll * .78 * turnK * PM.turn * rk().turn - input.rud * .34) * dt;
   P.pitch += input.y * ys * (lc ? .5 : .95) * sens * PM.turn * rk().turn * auth * dt; if (input.y === 0) P.pitch -= P.pitch * .35 * dt;
@@ -2527,9 +2558,10 @@ function updatePlayer(dt) {
     const want = Math.atan2(P.pos.x, P.pos.z); let df = want - P.yaw; df = Math.atan2(Math.sin(df), Math.cos(df)); P.yaw += Math.sign(df) * Math.min(Math.abs(df), .9 * dt);
     boundsT -= dt; if (boundsT <= 0) { boundsT = 8; radio(M.cs + ', you are leaving the operations area. Turning you back.'); }
   }
-  const tgt = input.boost ? M.vmax * (1 + .04 * CAR.up.eng) * PM.spd * rk().spd : input.brake ? (lc ? 42 : 50) : lc ? 52 : M.v0 * PM.spd * rk().spd; // throttle closed: 50 clean, 42 with the wheels down
-  P.speed += (tgt - P.speed) * (1 - Math.exp(-(input.brake ? 2 : 1.2) * dt)) - Math.sin(P.pitch) * (fl >= 3 ? 20 : 9) * (lc && !input.boost ? .4 : 1) * dt; // wheels down she does not run away in the descent
-  if (fl >= 3) { P.speed -= (Math.abs(P.roll) * 5 + Math.abs(input.y) * 4) * dt * (input.boost ? .4 : 1); if (P.speed < 47 && !P.gear) P.stall = true; else if (P.speed > 60 || P.gear) P.stall = false; }
+  const tgt = bst ? M.vmax * (1 + .04 * CAR.up.eng) * PM.spd * rk().spd : input.brake ? (lc ? 42 : 50) : lc ? 52 : M.v0 * PM.spd * rk().spd; // throttle closed: 50 clean, 42 with the wheels down
+  P.speed += (tgt - P.speed) * (1 - Math.exp(-(input.brake ? 2 : 1.2) * dt)) - Math.sin(P.pitch) * (fl >= 3 ? 22 : 12) * (lc && !bst ? .4 : 1) * dt; // wheels down she does not run away in the descent
+  if (fl >= 3) { P.speed -= (Math.abs(P.roll) * 5 + Math.abs(input.y) * 4) * dt * (bst ? .4 : 1); if (P.speed < 47 && !P.gear) { if (!P.stall) { P.stSide = P.roll >= 0 ? 1 : -1; burst(140, 'lowpass', .6, .3); } P.stall = true; } else if (P.speed > 60 || P.gear) P.stall = false; }
+  P.buf = fl >= 3 && !P.gear ? clamp((59 - P.speed) / 12, 0, 1) : 0; if (P.buf > 0) shake = Math.max(shake, .08 + P.buf * .24); // the airframe shakes before she lets go
   P.speed = Math.max(P.speed, 30); $('stall').classList.toggle('on', P.stall); if (P.stall) call('stall', 'Stalling! Nose down!', 12);
   if (fl >= 4) { const load = Math.abs(P.roll) / 1.15 * (P.speed / M.v0) * (1 + Math.abs(input.y) * .4); P.g = clamp(P.g + (load > 1.45 ? dt * .45 : -dt * .7), 0, 1); $('gloc').style.opacity = (Math.max(0, P.g - .25) * 1.25).toFixed(2); }
   const cp = Math.cos(P.pitch); P.fwd.set(-Math.sin(P.yaw) * cp, Math.sin(P.pitch), -Math.cos(P.yaw) * cp);
@@ -2546,15 +2578,15 @@ function updatePlayer(dt) {
   } else if (P.pos.y < ground + 2.5) { if (ground === 0) spawnFx(P.pos, 40, 'splash'); crash(ground > 0 ? M.cs + ' flew into the ground.' : M.cs + ' hit the water.'); return; }
   const low = !P.gear && P.pos.y - ground < 45 && P.pitch < .15; $('pull').classList.toggle('on', low); if (low && P.vel.y < -6) call('pull', 'Pull up! Pull up!', 9);
   if (time - P.lastHit > 6 && P.hp < 100) P.hp = Math.min(100, P.hp + 7 * dt);
-  if (P.hp < 45) { P.smokeT -= dt; if (P.smokeT <= 0) { P.smokeT = .06; spawnFx(_c.copy(P.pos).addScaledVector(P.fwd, -5), rand(3, 5), 'trail'); } }
+  if (P.hp < 70) { P.smokeT -= dt; if (P.smokeT <= 0) { const bad = P.hp < 45; P.smokeT = bad ? .06 : .11; spawnFx(_c.copy(P.pos).addScaledVector(P.fwd, -5), bad ? rand(3, 5) : rand(1.8, 2.6), bad ? 'trail' : 'rtrail'); if (P.hp < 25 && Math.random() < .3) spawnFx(_c, 2.6, 'fire'); } } // a thin white leak first, black smoke below 45, flames below 25
   // guns
   target = pickTarget(); P.fireCd -= dt; P.ordCd -= dt; const G = M.gun;
   if (input.fire && !P.hot && P.fireCd <= 0) {
     P.fireCd = G.cd; P.gun = -P.gun; P.heat += G.heat * (1 - .08 * CAR.up.gun); shots++;
     _b.set(Math.cos(P.yaw), 0, -Math.sin(P.yaw)); _c.copy(P.pos).addScaledVector(_b, fl === 4 ? 0 : P.gun * 3.2).addScaledVector(P.fwd, fl === 4 ? 8 : 4);
     if (target) { const tp = target.aim || target.pos, d = tp.distanceTo(_c); _a.copy(tp).addScaledVector(target.vel, d / G.speed).sub(_c).normalize(); } else _a.copy(P.fwd);
-    spawnBullet(_c, _a, G.speed, true, G.dmg * (1 + .12 * CAR.up.gun) * PM.gun, 1.7, false, G.size); spawnFx(_c, 2.4 * G.size, 'flash'); sfxGun(G.size > 1.5);
-    if (P.heat >= 1) { P.hot = true; P.heat = 1; }
+    spawnBullet(_c, _a, G.speed, true, G.dmg * (1 + .12 * CAR.up.gun) * PM.gun, 1.7, false, G.size); spawnFx(_c, 2.4 * G.size, 'flash'); sfxGun(G.size > 1.5, P.heat); shake = Math.max(shake, .05 * G.size);
+    if (P.heat >= 1) { P.hot = true; P.heat = 1; warn('Guns overheated'); burst(2200, 'bandpass', .22, .3); burst(5200, 'highpass', .9, .1); }
   } else if (!input.fire || P.hot) { P.heat = Math.max(0, P.heat - .34 * dt); if (P.hot && P.heat < .35) P.hot = false; }
   if (input.rkt && P.rkt > 0 && P.ordCd <= 0) { P.ordCd = .28; launch(false); }
   if (input.bomb && P.bombs > 0 && P.ordCd <= 0) { P.ordCd = .45; launch(true); }
@@ -2570,12 +2602,12 @@ function updateBullets(dt) {
     } else if (p.y < 0) { off = true; if (b.friendly) spawnFx(p, 7, 'splash'); }
     else if (p.y < 210) { const gh = heightAt(p.x, p.z); if (gh > p.y) { off = true; if (b.friendly) { spawnFx(p, 5, 'trail'); if (LAND.on && !b.wing && landGun(p, b.dmg, 90)) { hits++; hitMark(); } if (!b.wing && hitMen(p.x, p.z, 4.6)) hits++; } } else if (b.friendly && !b.wing && p.y - gh < 3.6 && hitMen(p.x, p.z, 3.2)) { off = true; hits++; } }
     if (!off && b.friendly) {
-      for (const e of enemies) { if (e.dead || e.falling) continue; if ((e.aim || e.pos).distanceToSquared(p) < e.r * e.r) { e.hp -= b.dmg; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 5, 'flash'); if (e.hp <= 0) { e.byWing = b.wing; downEnemy(e); } break; } }
-      if (!off && DUEL.on && !b.wing) for (const [id, q] of NET.peers) if (q.alive && q.team !== DUEL.team && q.pos.distanceToSquared(p) < 110) { off = true; hits++; hitMark(); spawnFx(p, 5, 'flash'); duelHit(id, b.dmg); break; }
+      for (const e of enemies) { if (e.dead || e.falling) continue; if ((e.aim || e.pos).distanceToSquared(p) < e.r * e.r) { e.hp -= b.dmg; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 5, 'flash'); sparks(p, b.vel); if (e.hp <= 0) { e.byWing = b.wing; if (!b.wing) killMarkT = .45; downEnemy(e); } break; } }
+      if (!off && DUEL.on && !b.wing) for (const [id, q] of NET.peers) if (q.alive && q.team !== DUEL.team && q.pos.distanceToSquared(p) < 110) { off = true; hits++; hitMark(); spawnFx(p, 5, 'flash'); sparks(p, b.vel); duelHit(id, b.dmg); break; }
       if (!off && LAND.on && !b.wing && p.y < 320 && landGun(p, b.dmg, 60)) { off = true; hits++; hitMark(); spawnFx(p, 5, 'flash'); }
-      if (!off && p.y < 260) for (const k of gtanks) if (k.foe && k.alive && k.S.near < 1900 && k.aim.distanceToSquared(p) < 42) { off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); hurtTank(k, b.dmg * (k.soft ? 1 : M.front.armour)); break; }
-      if (!off) for (const o of objs) if (o.alive && inObj(o, p, 1)) { const armour = o.kind === 'battery' || o.kind === 'cruiser' ? .35 : o.kind === 'radar' ? 1 : .6; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); hurtObj(o, b.dmg * armour); break; }
-    } else if (!off && P.alive && p.distanceToSquared(P.pos) < 49) { off = true; damagePlayer(b.dmg); hitFrom(b.vel); }
+      if (!off && p.y < 260) for (const k of gtanks) if (k.foe && k.alive && k.S.near < 1900 && k.aim.distanceToSquared(p) < 42) { off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); sparks(p, b.vel, 2); hurtTank(k, b.dmg * (k.soft ? 1 : M.front.armour)); break; }
+      if (!off) for (const o of objs) if (o.alive && inObj(o, p, 1)) { const armour = o.kind === 'battery' || o.kind === 'cruiser' ? .35 : o.kind === 'radar' ? 1 : .6; off = true; if (!b.wing) { hits++; hitMark(); } spawnFx(p, 6, 'flash'); sparks(p, b.vel, 2); hurtObj(o, b.dmg * armour); break; }
+    } else if (!off && P.alive) { const d2 = p.distanceToSquared(P.pos); if (d2 < 49) { off = true; damagePlayer(b.dmg); hitFrom(b.vel); } else if (d2 < 1300 && !b.near && !b.flak) { b.near = true; if (time - passT > .07) { passT = time; burst(rand(2600, 3800), 'bandpass', .06, .13); } } } // a round going past the canopy
     if (off) { b.on = false; b.m.visible = false; }
   }
 }
@@ -2709,14 +2741,16 @@ function updateHud(dt) {
   if (lso !== lsoWas) { lsoWas = lso; $('lso').hidden = !lso; $('lso').innerHTML = lso; }
   const c = project(_b.copy(P.pos).addScaledVector(P.fwd, 600)), cr = $('cross');
   cr.style.transform = 'translate(' + c.x.toFixed(1) + 'px,' + c.y.toFixed(1) + 'px)'; hitMarkT -= dt;
-  cr.className = 'cross' + (hitMarkT > 0 ? ' hit' : target ? ' lock' : '');
+  killMarkT -= dt; cr.className = 'cross' + (killMarkT > 0 ? ' kill' : hitMarkT > 0 ? ' hit' : target ? ' lock' : '');
   // lead ring (manual gunnery) and bomb pipper
-  if (M.flight >= 4 && leadFoe && P.alive) { const d = leadFoe.pos.distanceTo(P.pos); placePip($('lead'), _e.copy(leadFoe.pos).addScaledVector(leadFoe.vel, d / M.gun.speed), d < 760); } else $('lead').hidden = true;
+  if (leadFoe && P.alive && !P.gnd) { const L = $('lead'), d = leadFoe.pos.distanceTo(P.pos); _e.copy(leadFoe.pos).addScaledVector(leadFoe.vel, d / M.gun.speed); placePip(L, _e, d < 760); // where to shoot: solid once she is in range, lit when the sight is on it
+    if (!L.hidden) { const q = project(_e); L.className = 'pip' + (d < M.gun.speed * 1.7 * .7 ? ' in' : '') + (Math.hypot(q.x - c.x, q.y - c.y) < 16 ? ' on' : ''); } } else $('lead').hidden = true;
   if (P.bombs > 0 && P.alive) { _e.copy(P.pos); _d.copy(P.vel); let ok = false; for (let i = 0; i < 90; i++) { _d.y -= 26 * .1; _d.multiplyScalar(1 - .012); _e.addScaledVector(_d, .1); if (_e.y <= Math.max(0, heightAt(_e.x, _e.z))) { ok = true; break; } } placePip($('bpip'), _e, ok); } else $('bpip').hidden = true;
   const hp = Math.max(0, Math.ceil(P.hp)); $('hp-n').textContent = hp; $('hp').classList.toggle('crit', hp <= 35);
   for (let i = 0; i < 10; i++) hpPips[i].className = i < Math.ceil(hp / 10) ? '' : 'off';
   $('spd').textContent = Math.round(P.speed * 2.237); $('alt').textContent = Math.max(0, Math.round(P.pos.y * 3.281 / 10) * 10);
-  $('heat-fill').style.width = (P.heat * 100).toFixed(0) + '%'; $('heat').classList.toggle('hot', P.hot); $('gun-k').textContent = P.hot ? 'Guns cooling' : M.gun.name;
+  $('heat-fill').style.width = (P.heat * 100).toFixed(0) + '%'; $('heat').classList.toggle('hot', P.hot); $('heat').classList.toggle('warm', !P.hot && P.heat > .75); $('gun-k').textContent = P.hot ? 'Guns cooling' : M.gun.name;
+  { const w = P.wep || 0; $('wep-fill').style.width = (w * 100).toFixed(0) + '%'; $('wep').classList.toggle('hot', !!P.wepHot); $('wep').classList.toggle('warm', !P.wepHot && w > .75); const k = P.wepHot ? 'Engine cooling' : 'WEP'; if ($('wep-k').textContent !== tr(k)) $('wep-k').textContent = k; $('t-boost').classList.toggle('hot', !!P.wepHot); }
   $('rkt-n').textContent = P.rkt; $('a-rkt').classList.toggle('out', !P.rkt); $('bomb-n').textContent = P.bombs; $('a-bomb').classList.toggle('out', !P.bombs);
   hitFlash = Math.max(0, hitFlash - dt * 1.8); $('vig').style.opacity = Math.max(hitFlash, P.hp < 35 && P.alive ? .35 : 0).toFixed(2);
 }
@@ -2881,7 +2915,7 @@ const duelIdx = () => MISSIONS.findIndex(m => m.mode === 'dogfight');
 function duelSpawn() { // air start on the team's side of the field, nose toward the middle
   const side = DUEL.team ? 1 : -1, lc = dLand() ? landC() : null, ik = DUEL.mode === 'isle' ? 1.5 : 1; if (lc) P.pos.set(lc[0] + side * (1300 * ik + rand(0, 300)), 480 + rand(-60, 60), lc[1] + 700 * ik + rand(-250, 250)); else P.pos.set(PAD.x + side * (1500 + rand(0, 300)), 480 + rand(-60, 60), PAD.z - 1900 + rand(-250, 250));
   P.yaw = side > 0 ? Math.PI / 2 : -Math.PI / 2; P.pitch = 0; P.roll = 0; P.speed = 82; P.gnd = 0; P.gear = false; P.gearK = 0; P.rollT = 0; P.rot = 0; P.airT = 5; P.autoUp = true; P.ap = null; P.stall = false;
-  P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
+  P.fwd.set(-Math.sin(P.yaw), 0, -Math.cos(P.yaw)); P.vel.copy(P.fwd).multiplyScalar(P.speed); P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; P.alive = true; P.lastHit = -99; P.told = true; P.told0 = true; P.hurtCall = false; duelArm();
   plane.visible = true; plane.position.copy(P.pos); plane.rotation.set(0, P.yaw, 0, 'YXZ'); gearTick(0); snapCam = true;
 }
 function duelArm() { const L = DUEL.load || [1, 1], A = DUEL.am; P.rkt = A ? A[1] : Math.floor(M.rockets * L[1]); P.bombs = A ? A[0] : Math.floor(M.bombs * L[0]); P.ordCd = 0; plane.userData.rkt.forEach((r, i) => r.visible = i < P.rkt); plane.userData.bombs.forEach((r, i) => r.visible = i < P.bombs); } // a chapter may send its pilots up with less
@@ -3193,7 +3227,7 @@ function duelMsg(m) {
     updateObjective();
   } else if (m.t === 'ld') { // the server's word on the landing: taken and turned round, or not
     if (!P.alive || P.gnd !== 2 || !P.ldT) return; P.ldT = 0;
-    if (m.ok) { duelArm(); P.hp = 100; P.heat = 0; P.hot = false; feed('Rearmed and repaired'); } else feed('The strip is closed');
+    if (m.ok) { duelArm(); P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; feed('Rearmed and repaired'); } else feed('The strip is closed');
     isleSpot();
   } else if (m.t === 'r') { if (!P.alive && !DUEL.over) { duelSpawn(); if (DUEL.mode === 'isle' && DUEL.ap.own === DUEL.team && !DUEL.ap.shut) { isleSpot(); warn('Taking off from the strip', true); } else warn('Back in the fight', true); }
   } else if (m.t === 'end') {
@@ -3422,10 +3456,10 @@ function tick(dt, now) {
     updatePlayer(dt); updateEnemies(dt); updateObjs(dt); if (!(DUEL.on && DUEL.mates)) updateWing(dt); updateRaid(dt); updateMode(dt); homeFlak(dt); updatePals(dt); updateBullets(dt); updateOrd(dt); updateGround(dt); updateFx(dt); scanThreats(dt); tickRadio(dt); chatTick(dt); skyTick(dt);
     beacon.rotation.y += dt * .4; beacon.material.opacity = .15 + Math.sin(now / 300) * .05;
     updateCamera(dt); shipCam(dt); updateHud(dt);
-    if (engGain) { engGain.gain.value = P.alive ? .05 : 0; const f = 44 + P.speed * .6; engOsc.frequency.value = f; engOsc2.frequency.value = f * .502; }
+    engTick(dt);
     if (endT > 0) { endT -= dt; if (endT <= 0) { endT = 0; finish(); } }
   } else {
-    if (engGain) engGain.gain.value = 0;
+    engTick(dt);
     if (state === 'menu') { plane.userData.prop.rotation.z += dt * 40; if (LOOK.mesh) LOOK.mesh.userData.prop.rotation.z += dt * 40; plane.userData.head.rotation.y = Math.sin(clock * .6) * .5; updateCamera(dt); }
     else if (state === 'end') { updateGround(dt); updateFx(dt); updateObjs(dt); }
   }
