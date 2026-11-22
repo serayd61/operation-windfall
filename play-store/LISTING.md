@@ -75,7 +75,7 @@ Keine Werbung. Zum Spielen ist kein Konto nötig; für die Rangliste genügt ein
 Bunlar senin adına verilen yasal beyanlardır; göndermeden önce oku.
 
 - **Uygulama mı oyun mu:** Oyun · **Kategori:** Aksiyon (alternatif: Simülasyon) · **Ücretsiz**
-- **Gizlilik politikası URL'si:** https://operation-windfall.vercel.app/privacy
+- **Gizlilik politikası URL'si:** https://www.operationwindfall.online/privacy
 - **Reklam içeriyor mu:** Hayır
 - **Uygulama erişimi:** Tüm işlevler özel erişim olmadan kullanılabilir (giriş gerekmez)
 - **Hedef kitle:** 13 yaş ve üzeri (çocuklara yönelik değil)

@@ -16,8 +16,8 @@ Uygulama simgesi paketin içindedir; ayrıca yüklenmez.
 
 **Ad (30):** Operation Windfall
 **Kategori:** Oyunlar → Aksiyon (ikincil: Simülasyon) · **Fiyat:** Ücretsiz
-**Gizlilik politikası URL'si:** https://operation-windfall.vercel.app/privacy
-**Destek URL'si:** https://operation-windfall.vercel.app
+**Gizlilik politikası URL'si:** https://www.operationwindfall.online/privacy
+**Destek URL'si:** https://www.operationwindfall.online
 
 ### English (birincil dil)
 **Alt başlık (30):** WWII carrier air combat

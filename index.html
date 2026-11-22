@@ -4138,7 +4138,7 @@ $('b-invite').onclick = () => {
   if (!NET.room.replace(/[^A-Za-z0-9]/g, '')) { NET.room = Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random() * 32 | 0]).join(''); $('n-room').value = NET.room; try { localStorage.setItem('windfall-room', NET.room); } catch (e) {} }
   if (!NET.sky) { NET.sky = 1; const on = $('o-sky').querySelector('input[value="1"]'); if (on) on.checked = true; try { localStorage.setItem('windfall-sky', '1'); } catch (e) {} }
   lobbySync();
-  const url = (window.Capacitor ? 'https://operation-windfall.vercel.app/' : location.origin + location.pathname) + '?sq=' + NET.room.replace(/[^A-Za-z0-9]/g, '').toUpperCase() + '&m=' + mIdx, b = $('b-invite'), box = $('n-link');
+  const url = (window.Capacitor ? 'https://www.operationwindfall.online/' : location.origin + location.pathname) + '?sq=' + NET.room.replace(/[^A-Za-z0-9]/g, '').toUpperCase() + '&m=' + mIdx, b = $('b-invite'), box = $('n-link');
   const shown = () => { box.hidden = false; box.value = url; box.focus(); box.select(); b.textContent = 'Copy this link and send it'; };
   try { navigator.clipboard.writeText(url).then(() => { b.textContent = 'Link copied'; setTimeout(() => { b.textContent = 'Copy invite link'; }, 2200); }, shown); } catch (e) { shown(); }
 };
@@ -4157,7 +4157,7 @@ setTimeout(() => requestAnimationFrame(() => { const b = $('boot'); if (b) { b.c
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;margin:0;padding:24px;font:16px system-ui;color:#f3eede;background:#0c1210;text-align:center">Operation Windfall needs JavaScript and WebGL to run.</p></noscript>
 <script>
 // Inside the Android app the files ship with the app: no service worker, and links that leave the game go to the website.
-if (window.Capacitor) document.querySelectorAll('a[href="privacy.html"]').forEach(a => { a.href = 'https://operation-windfall.vercel.app/privacy'; });
+if (window.Capacitor) document.querySelectorAll('a[href="privacy.html"]').forEach(a => { a.href = 'https://www.operationwindfall.online/privacy'; });
 if ('serviceWorker' in navigator && location.protocol === 'https:' && !window.Capacitor) addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 </script>
 </body>
