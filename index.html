@@ -70,6 +70,7 @@ body { background: var(--ink); color: var(--hud); overflow: hidden; font-family:
 .obj { position: absolute; top: calc(14px + var(--sat)); left: var(--gl); max-width: min(250px, 38vw); padding-left: 10px; border-left: 2px solid var(--sight); }
 .obj-s.pri { color: #ff9c84; border-left-color: #ff7a5c; }
 .obj-s { margin-top: 8px; padding: 4px 8px; font: 700 12px/1.35 var(--f-hud); letter-spacing: .06em; color: #ffc86a; background: var(--ink-plate); border-left: 2px solid #ffc86a; }
+.obj-h { margin-top: 7px; font: 600 12px/1.35 var(--f-hud); letter-spacing: .04em; color: var(--hud); text-shadow: 0 0 4px #000; }
 .obj-t { font: 700 20px/1.1 var(--f-hud); letter-spacing: .05em; text-transform: uppercase; margin: 6px 0 8px; }
 .pips { display: flex; gap: 5px; align-items: center; }
 .pips i { width: 10px; height: 10px; border: 1.5px solid var(--hud); transform: rotate(45deg); margin: 0 2px; }
@@ -117,6 +118,9 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 .mk.edge i { left: -6px; top: -6px; width: 12px; height: 12px; }
 .mk.e.edge i { background: var(--threat); } .mk.o.edge i { background: var(--sight); } .mk.h.edge i { background: var(--go); }
 .mk.edge b, .mk.edge span { display: none; }
+.mk.home.edge i { left: -9px; top: -9px; width: 18px; height: 18px; animation: homeP .7s ease-in-out infinite alternate; } @keyframes homeP { to { box-shadow: 0 0 0 5px rgba(159, 224, 160, .35); } }
+.mk.home.edge b, .mk.home.edge span { display: block; text-shadow: 0 0 4px #000; } .mk.home.edge.r b, .mk.home.edge.r span { left: auto; right: 20px; }
+@media (prefers-reduced-motion: reduce) { .mk.home.edge i { animation: none; } }
 .mk u { display: none; position: absolute; left: 18px; top: 18px; width: 46px; height: 4px; box-shadow: inset 0 0 0 1px var(--hud-dim); text-decoration: none; }
 .mk.o u { display: block; } .mk.edge u { display: none; } .mk u s { display: block; height: 100%; background: var(--sight); text-decoration: none; }
 .tbox { position: absolute; left: 0; top: 0; will-change: transform; }
@@ -185,10 +189,12 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 @media (max-height: 460px) { .tmap { padding: 8px; gap: 10px; } .tmap canvas { width: min(84vh, 46vw); height: min(84vh, 46vw); } .tmap-l { font-size: 11px; line-height: 1.35; gap: 5px; } }
 .coach { position: absolute; left: 50%; top: calc(74px + var(--sat)); transform: translateX(-50%); width: min(430px, max(250px, calc(100vw - 400px))); padding: 7px 34px 8px 12px; z-index: 3; background: rgba(14, 20, 18, .82); border: 1px solid var(--hud-dim); border-left: 3px solid #ffc86a; color: var(--hud); pointer-events: auto; text-shadow: none; }
 .coach .k { color: #ffc86a; } .coach p { margin: 3px 0 5px; font: 700 14px/1.35 var(--f-hud); letter-spacing: .03em; } .coach .bar { height: 3px; background: rgba(243, 238, 222, .18); } .coach .bar i { display: block; height: 100%; width: 0; background: #ffc86a; transition: width .2s; }
-.coach button { position: absolute; right: 2px; top: 2px; width: 30px; height: 30px; border: 0; background: none; color: var(--hud); font: 700 16px/1 var(--f-hud); opacity: .7; cursor: pointer; }
+#coach-x { position: absolute; right: 0; top: 0; width: 38px; height: 38px; border: 0; background: none; color: var(--hud); font: 700 16px/1 var(--f-hud); opacity: .7; cursor: pointer; }
 .coach.ok { border-left-color: #9fe0a0; } .coach.ok .k, .coach.ok p { color: #9fe0a0; } .coach.ok .bar i { background: #9fe0a0; width: 100% !important; }
 .touch .coach { top: 34%; width: min(430px, 92vw); }
-@media (max-height: 460px) { .coach, .touch .coach { top: calc(42px + var(--sat)); width: min(380px, 60vw); padding: 5px 30px 6px 10px; } .coach p { font-size: 12px; margin: 2px 0 4px; } }
+@media (max-height: 460px) { .coach, .touch .coach { top: calc(42px + var(--sat)); width: min(420px, 58vw); padding: 6px 36px 7px 10px; } .coach p { font-size: 14px; line-height: 1.3; margin: 2px 0 4px; } }
+.coach-q { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 7px; font: 700 13px/1.2 var(--f-hud); letter-spacing: .04em; } .coach-q span { flex: 1 1 auto; }
+.coach-q button { padding: 7px 12px; border: 1px solid var(--hud-dim); background: none; color: var(--hud); font: 700 13px/1 var(--f-hud); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; } #coach-y { border-color: #ffc86a; color: #ffc86a; }
 .lso { position: absolute; left: 50%; top: 27%; transform: translateX(-50%); max-width: 92%; padding: 6px 12px; text-align: center; font: 700 13px/1.5 var(--f-hud); letter-spacing: .14em; color: var(--hud); background: var(--ink-plate); border: 1px solid var(--hud-dim); }
 .lso b { color: var(--threat); } .lso i { font-style: normal; color: #9fe0a0; }
 #t-bomb { right: calc(98px + env(safe-area-inset-right, 0px)); bottom: calc(122px + var(--sab)); width: 62px; height: 62px; }
@@ -271,6 +277,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .sheet-top { position: sticky; top: calc(-16px - var(--sat)); z-index: 3; display: flex; gap: 10px; align-items: stretch; margin: -12px -24px 0; padding: calc(24px + var(--sat)) 24px 8px; background: var(--paper); border-bottom: 1.5px solid var(--type); }
 .sheet-top .ghost { flex: none; } .sheet-top .seg { flex: 1 1 auto; min-width: 0; } .sheet-top .seg span { padding-inline: 6px; letter-spacing: .06em; }
 .h-tab { display: contents; }
+.tipbox { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border: 1.5px dashed var(--type); } .tipbox p { margin: 0; flex: 1 1 auto; } .tipbox .ghost { flex: none; }
+.ctl { display: grid; grid-template-columns: minmax(92px, auto) 1fr; gap: 8px 12px; align-items: center; } .ctl b { padding: 6px 8px; border: 1.5px solid var(--type); text-align: center; font: 700 13px/1.1 var(--f-hud); letter-spacing: .08em; } .ctl span { font: 400 14px/1.35 var(--f-type); }
 @media (max-width: 480px) { .sheet-top { margin-inline: -18px; padding-inline: 18px; } .sheet-top .seg span { font-size: 12px; } }
 .lab2 { font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type-dim); margin-bottom: -6px; }
 .upg { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(41, 40, 31, .3); }
@@ -350,12 +358,12 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
   <div id="hud">
     <div id="fps" hidden></div>
     <div class="compass"><div class="tape-wrap"><div class="tape" id="tape"></div></div><div class="needle"></div><div class="c-marks" id="cmarks"></div></div>
-    <div class="obj"><div class="k">Objective</div><div class="obj-t" id="obj-t">Destroy the targets</div><div class="pips" id="pips"></div><div class="obj-s" id="obj-s" hidden></div></div>
+    <div class="obj"><div class="k">Objective</div><div class="obj-t" id="obj-t">Destroy the targets</div><div class="pips" id="pips"></div><div class="obj-h" id="obj-h" hidden></div><div class="obj-s" id="obj-s" hidden></div></div>
     <div class="top-btns"><button class="ibtn" id="b-map" type="button" aria-label="Map" hidden>MAP</button><button class="ibtn" id="b-cam" type="button" aria-label="Change camera view">VIEW</button><button class="ibtn" id="b-mute" type="button" aria-label="Toggle sound">SND</button><button class="ibtn" id="b-pause" type="button" aria-label="Pause">II</button></div>
     <canvas class="radar" id="radar" width="248" height="248" aria-hidden="true"></canvas>
     <div class="warn" id="warn">Bandits inbound</div>
     <div class="cues"><div class="cue" id="pull">PULL UP</div><div class="cue" id="stall">STALL</div><div class="cue" id="six">CHECK SIX</div></div>
-    <div class="coach" id="coach" hidden><div class="k" id="coach-k">Flying lesson</div><p id="coach-t"></p><div class="bar"><i id="coach-b"></i></div><button id="coach-x" type="button" aria-label="Close the lesson">×</button></div>
+    <div class="coach" id="coach" hidden><div class="k" id="coach-k">Flying lesson</div><p id="coach-t"></p><div class="bar"><i id="coach-b"></i></div><button id="coach-x" type="button" aria-label="Close the lesson">×</button><div class="coach-q" id="coach-q" hidden><span>Skip the flying lesson?</span><button id="coach-y" type="button">Skip</button><button id="coach-n" type="button">Keep</button></div></div>
     <div class="lso" id="lso" hidden></div>
     <div class="tmap" id="tmap" hidden><canvas id="tmap-c" width="560" height="560"></canvas><div class="tmap-l"><b>Island map</b>
       <div class="key"><span><i style="background:#9fe0a0"></i>Ours</span><span><i style="background:#ff5a44"></i>Theirs</span><span><i style="background:#f3eede"></i>Nobody's</span></div>
@@ -448,6 +456,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="sheet tree-sheet">
       <div class="sheet-head"><span>Pilot record</span><span id="pl-lv">Level 1</span></div>
       <div class="pl-top"><div class="pl-face" id="pl-face"><i class="fmark us" id="pl-mark">★</i></div><div><h1 id="pl-rank">Pilot Officer</h1><p class="lede" id="pl-pts"></p><div class="bar"><i id="pl-bar"></i></div><p class="note" id="pl-next"></p></div></div>
+      <div class="tipbox" id="pl-intro" hidden><p class="note">Every level gives one skill point. Tap a step to read it and train it; each branch goes in order.</p><button class="ghost" id="b-plintro" type="button">Got it</button></div>
       <p class="note" id="pl-msg" hidden></p>
       <div class="tree" id="pl-tree"></div>
       <div class="pl-info" id="pl-info" aria-live="polite"><b id="pl-n"></b><p id="pl-d"></p><button class="go" id="b-train" type="button">Train</button></div>
@@ -462,6 +471,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="sheet">
       <div class="sheet-head"><span>Hangar and settings</span><span id="h-rp">0 RP</span></div>
       <div class="sheet-top"><button class="ghost" id="b-hback2" type="button">Back</button><div class="seg" id="h-tabs" role="radiogroup" aria-label="Hangar and settings"></div></div>
+      <div class="tipbox" id="h-intro" hidden><p class="note">New here? Aircraft is what you fly, Equipment is what your points buy, Settings holds the controls and the flying lesson.</p><button class="ghost" id="b-hintro" type="button">Got it</button></div>
       <p class="note" id="h-msg" hidden></p>
       <div class="h-tab" data-t="0">
       <h1>Aircraft park</h1>
@@ -491,10 +501,23 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Music</div><div class="seg" id="o-mus" role="radiogroup" aria-label="Music"></div>
       <div class="lab2">Pilot radio</div><div class="seg" id="o-voice" role="radiogroup" aria-label="Pilot radio"></div>
       <div class="lab2">Landing aid</div><div class="seg" id="o-aid" role="radiogroup" aria-label="Landing aid"></div>
+      <div class="lab2">Flying lesson</div><div class="seg" id="o-coach" role="radiogroup" aria-label="Flying lesson"></div><p class="note">Switch it on to fly the first lessons again.</p>
+      <div class="row"><button class="ghost" id="b-ctl-show" type="button">Show the controls</button></div>
       <div class="lab2">Night sortie</div><div class="seg" id="o-night" role="radiogroup" aria-label="Night sortie"></div><p class="note">Fly the sorties after dark: harder to see, and every point is worth a fifth more.</p>
       <p class="lede" style="font-size:13px">A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.</p>
       </div>
       <div class="row"><button class="go" id="b-hback" type="button">Back</button></div>
+    </div>
+  </div>
+
+  <div class="screen" id="s-ctl" hidden>
+    <div class="sheet">
+      <div class="sheet-head"><span>Before you fly</span><span></span></div>
+      <h1>Controls</h1>
+      <p class="lede">The flying lesson walks you through these in the air, one at a time.</p>
+      <div class="ctl" id="ctl-list"></div>
+      <p class="note">Amber markers are targets, red are the enemy, green is home.</p>
+      <div class="row"><button class="go" id="b-ctl" type="button">Take off</button></div>
     </div>
   </div>
 
@@ -873,6 +896,7 @@ const DICT = {
   "Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.": ["Her sorti tahsis puanı kazandırır. Bunları yeni uçaklara ve donanıma harca; ikisi de bütün sortilerde geçerlidir. Silah yükü her sortinin verdiği gibi kalır.", "Jeder Einsatz bringt Zuteilungspunkte. Gib sie für neue Flugzeuge und Ausrüstung aus; beides gilt für alle Einsätze. Die Waffenlast bleibt, wie der Einsatz sie vorgibt."],
   "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Opened": ["Açıldı", "Freigeschaltet"], "Next to open": ["Sıradaki açılış", "Nächste Freischaltung"], "1 star to go": ["1 yıldız kaldı", "noch 1 Stern"], "Every type and paint is open": ["Bütün tipler ve boyalar açık", "Alle Typen und Anstriche sind frei"], "Preview": ["Önizleme", "Vorschau"], "Tap a line to see that type or paint on the apron before you choose it.": ["Seçmeden önce bir tipi ya da boyayı pistte görmek için satırına dokun.", "Tippe auf eine Zeile, um Typ oder Anstrich vor der Wahl auf dem Vorfeld zu sehen."], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
   "A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.": ["Oyun kolu da çalışır: sol çubuk uçurur, A ya da sağ tetik ateş, B roket, X bomba, sağ omuz acil güç, sol tetik hava freni, sol omuz iniş takımı, Y bakış, Start duraklat.", "Ein Gamepad geht auch: linker Stick fliegt, A oder rechter Trigger feuert, B Raketen, X Bomben, rechte Schultertaste Notleistung, linker Trigger Luftbremse, linke Schultertaste Fahrwerk, Y Sicht, Start Pause."],
+  "Skip the flying lesson?": ["Uçuş dersi atlansın mı?", "Flugstunde überspringen?"], "Skip": ["Atla", "Überspringen"], "Keep": ["Devam", "Weiter"], "Got it": ["Anladım", "Verstanden"], "Switch it on to fly the first lessons again.": ["İlk dersleri yeniden uçmak için aç.", "Einschalten, um die ersten Flugstunden noch einmal zu fliegen."], "Show the controls": ["Kontrolleri göster", "Steuerung zeigen"], "Before you fly": ["Uçmadan önce", "Vor dem Flug"], "Controls": ["Kontroller", "Steuerung"], "The flying lesson walks you through these in the air, one at a time.": ["Uçuş dersi bunları havada tek tek gösterir.", "Die Flugstunde zeigt sie dir in der Luft, eins nach dem anderen."], "LEFT THUMB": ["SOL BAŞPARMAK", "LINKER DAUMEN"], "SPACE": ["BOŞLUK", "LEERTASTE"], "Slide anywhere on the left side to steer: up lifts the nose, left and right bank.": ["Yönlendirmek için sol tarafta parmağını kaydır: yukarı burnu kaldırır, sola ve sağa yatırır.", "Zum Steuern links über den Bildschirm wischen: nach oben hebt die Nase, links und rechts neigt die Maschine."], "Slide anywhere on the left side to steer: down lifts the nose, left and right bank.": ["Yönlendirmek için sol tarafta parmağını kaydır: aşağı burnu kaldırır, sola ve sağa yatırır.", "Zum Steuern links über den Bildschirm wischen: nach unten hebt die Nase, links und rechts neigt die Maschine."], "Hold to fire the guns.": ["Topları ateşlemek için basılı tut.", "Halten, um die Bordwaffen abzufeuern."], "Emergency power. It overheats, so use it in bursts.": ["Acil güç. Aşırı ısınır, kısa kısa kullan.", "Notleistung. Sie überhitzt, also nur stoßweise nutzen."], "Throttle back: tighter turns, and slow enough to land.": ["Gazı kıs: daha dar dönüş ve iniş için yeterince yavaş.", "Gas wegnehmen: engere Kurven und langsam genug zum Landen."], "Wheels down before you land.": ["İnmeden önce tekerlekleri indir.", "Vor der Landung das Fahrwerk ausfahren."], "Bombs and rockets, on sorties that carry them.": ["Bomba ve roketler, taşıyan sortilerde.", "Bomben und Raketen, wenn der Einsatz sie mitführt."], "Lift and lower the nose.": ["Burnu kaldır ve indir.", "Nase heben und senken."], "Bank left and right.": ["Sola ve sağa yat.", "Nach links und rechts neigen."], "Change the view.": ["Bakışı değiştir.", "Sicht wechseln."], "Pause the sortie.": ["Sortiyi duraklat.", "Einsatz pausieren."], "Amber markers are targets, red are the enemy, green is home.": ["Kehribar işaretler hedef, kırmızılar düşman, yeşil üs.", "Gelbe Markierungen sind Ziele, rote der Feind, grün ist die Heimat."], "Amber markers are your targets.": ["Kehribar işaretler hedeflerin.", "Gelbe Markierungen sind deine Ziele."], "Green marker is home. Wheels down before you touch.": ["Yeşil işaret üs. Dokunmadan önce tekerlekleri indir.", "Die grüne Markierung ist die Heimat. Fahrwerk raus vor dem Aufsetzen."], "Red markers are the enemy. Get behind one and fire.": ["Kırmızı işaretler düşman. Birinin arkasına geç ve ateş et.", "Rote Markierungen sind der Feind. Setz dich dahinter und feuere."], "Stop the bombers before they get through.": ["Bombardıman uçaklarını geçmeden durdur.", "Halte die Bomber auf, bevor sie durchkommen."], "Keep the fighters off the green bombers.": ["Avcıları yeşil bombardıman uçaklarından uzak tut.", "Halte die Jäger von den grünen Bombern fern."], "Against aircraft, aim at the red ring ahead of them, not at the aircraft itself.": ["Uçaklara karşı uçağın kendisine değil, önündeki kırmızı halkaya nişan al.", "Bei Flugzeugen auf den roten Ring vor ihnen zielen, nicht auf das Flugzeug selbst."], "New here? Aircraft is what you fly, Equipment is what your points buy, Settings holds the controls and the flying lesson.": ["Yeni misin? Uçak, uçtuğun tiptir; Ekipman, puanlarınla aldıkların; Ayarlar'da kontroller ve uçuş dersi var.", "Neu hier? Flugzeug ist, was du fliegst, Ausstattung ist, was deine Punkte kaufen, und unter Einstellungen findest du Steuerung und Flugstunde."], "Every level gives one skill point. Tap a step to read it and train it; each branch goes in order.": ["Her seviye bir yetenek puanı verir. Okumak ve eğitmek için bir adıma dokun; her dal sırayla ilerler.", "Jede Stufe bringt einen Fähigkeitspunkt. Tippe auf einen Schritt, um ihn zu lesen und zu trainieren; jeder Zweig wird der Reihe nach genommen."],
   "Back": ["Geri", "Zurück"], "Settings": ["Ayarlar", "Einstellungen"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
   "Harder-hitting, cooler-running guns, 12% a step": ["Daha sert vuran, daha serin çalışan toplar, kademe başına %12", "Härter treffende, kühler laufende Waffen, 12 % je Stufe"], "Heavier rocket and bomb warheads, 15% a step": ["Daha ağır roket ve bomba başlıkları, kademe başına %15", "Schwerere Raketen- und Bombenköpfe, 15 % je Stufe"],
@@ -1040,10 +1064,10 @@ const RANKS = [[0, 'Pilot Officer'], [2500, 'Flying Officer'], [7000, 'Flight Li
 const DIFFS = [{ n: 'Rookie', note: 'forgiving', dmg: .6, hp: .8, turn: .85, sc: .75 }, { n: 'Veteran', note: 'standard', dmg: 1, hp: 1, turn: 1, sc: 1 }, { n: 'Ace', note: 'score ×1.5', dmg: 1.45, hp: 1.3, turn: 1.15, sc: 1.5 }];
 const UPG = { eng: ['Engine', 'More speed on emergency power, 4% a step'], arm: ['Airframe', 'Armour plate and sealed tanks, 12% less damage a step'], gun: ['Guns', 'Harder-hitting, cooler-running guns, 12% a step'], ord: ['Ordnance', 'Heavier rocket and bomb warheads, 15% a step'] };
 const COST = [300, 700, 1200], PAR = [365, 410, 455, 500, 320, 365, 335], SENS = [.72, 1, 1.3];
-const CAR = { xp: 0, rp: 0, up: { eng: 0, arm: 0, gun: 0, ord: 0 }, stars: [0, 0, 0, 0, 0, 0, 0], diff: 1, sens: 1, q: 1, plane: -1, paint: 0, own: [], mus: 1, voice: 1, aid: 1, fps: 0 };
-try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (Array.isArray(j.own)) CAR.own = j.own.filter(n => Number.isInteger(n) && n >= 4 && n < 9); for (const k of ['xp', 'rp', 'diff', 'sens', 'q', 'plane', 'paint', 'mus', 'voice', 'aid', 'fps']) if (typeof j[k] === 'number' && isFinite(j[k])) CAR[k] = j[k]; if (j.up) for (const k in CAR.up) CAR.up[k] = clamp(j.up[k] | 0, 0, 3); if (Array.isArray(j.stars)) for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = (j.stars[i] | 0) & 7; } } catch (e) {}
+const CAR = { xp: 0, rp: 0, up: { eng: 0, arm: 0, gun: 0, ord: 0 }, stars: [0, 0, 0, 0, 0, 0, 0], diff: 1, sens: 1, q: 1, plane: -1, paint: 0, own: [], mus: 1, voice: 1, aid: 1, fps: 0, coach: 1, ctl: 0, sh: 0, sp: 0 };
+try { const j = JSON.parse(localStorage.getItem('windfall-career') || 'null'); if (j && typeof j === 'object') { if (Array.isArray(j.own)) CAR.own = j.own.filter(n => Number.isInteger(n) && n >= 4 && n < 9); for (const k of ['xp', 'rp', 'diff', 'sens', 'q', 'plane', 'paint', 'mus', 'voice', 'aid', 'fps', 'coach', 'ctl', 'sh', 'sp']) if (typeof j[k] === 'number' && isFinite(j[k])) CAR[k] = j[k]; if (j.up) for (const k in CAR.up) CAR.up[k] = clamp(j.up[k] | 0, 0, 3); if (Array.isArray(j.stars)) for (let i = 0; i < CAR.stars.length; i++) CAR.stars[i] = (j.stars[i] | 0) & 7; } } catch (e) {}
 CAR.diff = clamp(CAR.diff | 0, 0, 2); CAR.sens = clamp(CAR.sens | 0, 0, 2); CAR.q = CAR.q ? 1 : 0; CAR.mus = CAR.mus ? 1 : 0; CAR.voice = CAR.voice ? 1 : 0; CAR.aid = CAR.aid ? 1 : 0; CAR.fps = CAR.fps ? 1 : 0; CAR.paint = clamp(CAR.paint | 0, 0, 6); CAR.plane = Number.isInteger(CAR.plane) && (CAR.plane < 4 || CAR.plane > 8 || CAR.own.includes(CAR.plane)) ? clamp(CAR.plane, -1, 11) : -1;
-CAR.load = clamp(CAR.load | 0, 0, 3); CAR.night = CAR.night ? 1 : 0;
+CAR.load = clamp(CAR.load | 0, 0, 3); CAR.night = CAR.night ? 1 : 0; CAR.coach = clamp(CAR.coach | 0, 0, 2);
 /* the pilot himself: sixteen levels read off the experience already earned, a skill point at each, spent in four branches of four steps taken in order.
    SKILLS is the whole tree; a new step is one more line in a branch and one more term in pkSet. */
 const PLV = [0, 600, 1500, 2700, 4200, 6000, 8200, 10800, 13800, 17200, 21000, 25500, 30500, 36000, 42000, 48000];
@@ -2503,9 +2527,10 @@ function feed(what, note) {
   setTimeout(() => d.classList.add('out'), 3200); setTimeout(() => d.remove(), 4000);
 }
 function updateObjective() {
-  if (DUEL.on) { $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'isle' ? (DUEL.team ? 'Island campaign · you are RED' : 'Island campaign · you are BLUE') : DUEL.mode === 'land' ? (DUEL.team ? 'Island assault · you are RED' : 'Island assault · you are BLUE') : DUEL.mode === 'ship' ? (DUEL.team ? 'Carrier strike · you are RED' : 'Carrier strike · you are BLUE') : DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('') + (DUEL.mode === 'isle' ? ' · ' + tr(DUEL.ap.shut ? 'Strip closed' : 'Strip') + (DUEL.ap.own < 0 ? '\u25cb' : DUEL.ap.own === DUEL.team ? '\u25b2' : '\u25bc') : '')); return; } $('obj-t').removeAttribute('data-tail');
+  if (DUEL.on) { $('obj-h').hidden = true; $('pips').querySelectorAll('i').forEach(p => p.classList.remove('done')); $('obj-n').textContent = DUEL.us + ' : ' + DUEL.them; $('obj-t').textContent = DUEL.mode === 'isle' ? (DUEL.team ? 'Island campaign · you are RED' : 'Island campaign · you are BLUE') : DUEL.mode === 'land' ? (DUEL.team ? 'Island assault · you are RED' : 'Island assault · you are BLUE') : DUEL.mode === 'ship' ? (DUEL.team ? 'Carrier strike · you are RED' : 'Carrier strike · you are BLUE') : DUEL.mode === 'zone' ? (DUEL.team ? 'Zone control · you are RED' : 'Zone control · you are BLUE') : (DUEL.team ? 'Team dogfight · you are RED' : 'Team dogfight · you are BLUE'); $('obj-t').setAttribute('data-tail', ' · ' + Math.floor(DUEL.left / 60) + ':' + ('0' + DUEL.left % 60).slice(-2) + DUEL.zones.map(z => ' · ' + z.name + (z.own < 0 ? '\u25cb' : z.own === DUEL.team ? '\u25b2' : '\u25bc')).join('') + (DUEL.mode === 'isle' ? ' · ' + tr(DUEL.ap.shut ? 'Strip closed' : 'Strip') + (DUEL.ap.own < 0 ? '\u25cb' : DUEL.ap.own === DUEL.team ? '\u25b2' : '\u25bc') : '')); return; } $('obj-t').removeAttribute('data-tail');
   $('pips').querySelectorAll('i').forEach((p, i) => p.classList.toggle('done', i < cut));
   $('obj-n').textContent = cut + ' / ' + goalN();
+  { const h = $('obj-h'), t = done.includes(mIdx) ? '' : phase === 'extract' ? 'Green marker is home. Wheels down before you touch.' : M.mode === 'dogfight' ? 'Red markers are the enemy. Get behind one and fire.' : M.mode === 'defend' ? 'Stop the bombers before they get through.' : M.mode === 'escort' ? 'Keep the fighters off the green bombers.' : 'Amber markers are your targets.'; h.hidden = !t; if (h.dataset.t !== t) { h.dataset.t = t; h.textContent = t; } }
   $('obj-t').textContent = phase === 'extract' ? (PAD.carrier ? 'Land on the carrier' : 'Land at the airstrip') : M.mode === 'dogfight' ? 'Shoot down the fighters' : M.mode === 'defend' ? 'Defend the ' + M.homeName.toLowerCase() : M.mode === 'escort' ? 'Protect the bombers' : cut === objs.length - 1 ? 'Destroy the last target' : 'Destroy the targets';
 }
 
@@ -3015,8 +3040,8 @@ function updateHud(dt) {
     const brg = Math.atan2(o.aim.x - P.pos.x, -(o.aim.z - P.pos.z)) * 180 / Math.PI, rel = ((brg - heading + 540) % 360) - 180;
     c.style.transform = 'translateX(' + clamp(rel * PX, -cw / 2 + 10, cw / 2 - 10) + 'px)'; c.textContent = o.name; c.classList.toggle('home', !!o.home); c.classList.toggle('pri', !!o.pri);
   });
-  const put = (pos, cls, name, d, frac) => { if (mi >= marks.length) return; const m = marks[mi++], p = project(pos); m.d.hidden = false; m.d.className = 'mk ' + cls + (p.edge ? ' edge' : ''); m.d.style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px)'; m.b.textContent = name; m.s.textContent = range(d); if (frac != null) m.f.style.width = (clamp(frac, 0, 1) * 100).toFixed(0) + '%'; };
-  for (const o of list) put(o.aim, o.home ? 'h' : 'o', o.name, o.aim.distanceTo(P.pos), o.home ? null : o.hp / o.hp0);
+  const put = (pos, cls, name, d, frac) => { if (mi >= marks.length) return; const m = marks[mi++], p = project(pos); m.d.hidden = false; m.d.className = 'mk ' + cls + (p.edge ? ' edge' + (p.x > innerWidth / 2 ? ' r' : '') : ''); m.d.style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px)'; m.b.textContent = name; m.s.textContent = range(d); if (frac != null) m.f.style.width = (clamp(frac, 0, 1) * 100).toFixed(0) + '%'; };
+  for (const o of list) put(o.aim, o.home ? 'h home' : 'o', o.name, o.aim.distanceTo(P.pos), o.home ? null : o.hp / o.hp0);
   for (const e of enemies) if (!e.falling) put(e.aim || e.pos, 'e', e.kind === 'fighter' ? 'ENEMY' : e.kind === 'bomber' ? 'BOMBER' : 'GUNBOAT', e.pos.distanceTo(P.pos));
   for (const k of gtanks) if (k.foe && k.alive && k.S.near < 1500) { const d = k.aim.distanceTo(P.pos); if (d < 950) put(k.aim, 'e', k.soft ? 'TRUCK' : 'TANK', d); }
   for (const S of SITES) if (S.camp && S.campLeft > 0 && S.near < 1600) { const d = S.campV.distanceTo(P.pos); if (d < 1300) put(S.campV, 'e', 'TROOPS ' + S.campLeft, d); }
@@ -3433,6 +3458,7 @@ const COACH = {
     { k: ['Follow the amber marker to the nearest target.', 'Follow the amber marker to the nearest target.'], go: c => { let d = 1e9; for (const o of objs) if (o.alive) d = Math.min(d, o.pos.distanceTo(P.pos)); if (c.d0 == null) c.d0 = d; return d < 1000 ? 1 : clamp((c.d0 - d) / Math.max(1, c.d0 - 1000), 0, .95); } },
     { k: ['Dive on the target and hold Space to fire.', 'Dive on the target and hold FIRE.'], go: c => { if (c.h0 == null) c.h0 = hits; return clamp((hits - c.h0) / 6, 0, 1); } },
     { k: ['Fly low over a target and press B when the dashed ring is on it.', 'Fly low over a target and press BOMB when the dashed ring is on it.'], skip: () => P.bombs <= 0, go: c => { if (c.b0 == null) c.b0 = P.bombs; return P.bombs < c.b0 || phase === 'extract' ? 1 : 0; } },
+    { k: ['Against aircraft, aim at the red ring ahead of them, not at the aircraft itself.', 'Against aircraft, aim at the red ring ahead of them, not at the aircraft itself.'], skip: () => !enemies.some(e => e.kind === 'fighter' && !e.falling && !e.dead), go: (c, dt) => { if (c.k0 == null) c.k0 = kills; if (kills > c.k0 || phase === 'extract' || !enemies.some(e => e.kind === 'fighter' && !e.falling && !e.dead)) return 1; if (leadFoe && input.fire) c.t = (c.t || 0) + dt; return clamp((c.t || 0) / 2.5, 0, .95); } },
     { k: ['Destroy the remaining targets. Bandits show red on the radar.', 'Destroy the remaining targets. Bandits show red on the radar.'], go: c => { if (c.n0 == null) c.n0 = Math.max(1, objs.filter(o => o.alive).length); return phase === 'extract' ? 1 : clamp(1 - objs.filter(o => o.alive).length / c.n0, 0, .95); } },
     { k: ['Fly to the green marker and press G to lower the wheels.', 'Fly to the green marker and press GEAR to lower the wheels.'], go: () => (P.gear && P.autoUp) || P.gnd ? 1 : 0 },
     { k: ['Keep her steady down the approach and touch down.', 'Keep her steady down the approach and touch down.'], go: () => (P.gnd >= 2 ? 1 : 0) }],
@@ -3446,13 +3472,13 @@ const COACH = {
     { k: ['If she shakes or STALL shows: nose down and add power.', 'If she shakes or STALL shows: nose down and add power.'], go: (c, dt) => { c.t = (c.t || 0) + dt; if (P.stall) c.s = 1; return c.s ? (P.stall ? .5 : 1) : clamp(c.t / 8, 0, 1); } },
     { k: ['Ships need bombs: fly low, put the dashed ring on the hull and press B.', 'Ships need bombs: fly low, put the dashed ring on the hull and press BOMB.'], skip: () => P.bombs <= 0, go: c => { if (c.b0 == null) c.b0 = P.bombs; return P.bombs < c.b0 ? 1 : 0; } }] };
 const coach = { on: false, i: 0, c: {}, okT: 0, key: '' };
-function coachStart() { const L = COACH[mIdx]; coach.on = !!L && !DUEL.on && !done.includes(mIdx); coach.i = 0; coach.c = {}; coach.okT = 0; coach.key = ''; $('coach').hidden = true; }
+function coachStart() { const L = COACH[mIdx]; coach.on = !!L && !DUEL.on && (CAR.coach === 2 || (CAR.coach === 1 && !done.includes(mIdx))); $('coach-q').hidden = true; coach.i = 0; coach.c = {}; coach.okT = 0; coach.key = ''; $('coach').hidden = true; }
 function coachTick(dt) {
   const el = $('coach'); if (!coach.on) { if (!el.hidden) el.hidden = true; return; }
   const L = COACH[mIdx]; if (!P.alive || endT > 0) { el.hidden = true; return; }
   if (coach.okT > 0) { coach.okT -= dt; if (coach.okT <= 0) { coach.i++; coach.c = {}; coach.key = ''; el.classList.remove('ok'); } else return; }
   while (coach.i < L.length && L[coach.i].skip && L[coach.i].skip()) coach.i++;
-  const st = L[coach.i]; if (!st) { coach.on = false; el.hidden = true; return; }
+  const st = L[coach.i]; if (!st) { coach.on = false; el.hidden = true; if (CAR.coach === 2 && mIdx >= 2) { CAR.coach = 1; saveCar(); } return; }
   if (st.wait && !st.wait()) { el.hidden = true; return; }
   const txt = (invertY && st.inv ? st.inv : st.k)[touchMode ? 1 : 0], key = coach.i + txt;
   if (key !== coach.key) { coach.key = key; $('coach-k').textContent = tr('Flying lesson') + ' · ' + (coach.i + 1) + ' / ' + L.length; $('coach-t').textContent = txt; }
@@ -3645,7 +3671,7 @@ function duelSend() { // hits ride along with the position beat
 }
 
 /* ------------------------------------------------------------------ flow */
-function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp', 's-log', 's-fb', 's-pilot']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
+function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp', 's-log', 's-fb', 's-pilot', 's-ctl']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
@@ -3690,6 +3716,7 @@ function fillHangar() {
   seg('o-mus', 'mus', ['Off', 'On'], CAR.mus, v => { CAR.mus = v; });
   seg('o-voice', 'voice', ['Off', 'On'], CAR.voice, v => { CAR.voice = v; if (!v) hush(); else { voxWarm(); setTimeout(() => say('Check your six!'), 900); } });
   seg('o-aid', 'aid', ['Off', 'On'], CAR.aid, v => { CAR.aid = v; });
+  seg('o-coach', 'coach', ['Off', 'On'], CAR.coach ? 1 : 0, v => { CAR.coach = v ? 2 : 0; }); $('o-coach').querySelector('input[value="1"]').onclick = () => { CAR.coach = 2; saveCar(); };
   fillParts(); fillQm();
   seg('o-night', 'night', ['Off', 'On'], CAR.night, v => { CAR.night = v; if (!DUEL.on) { DUEL.wx = null; weatherSet(v ? 'night' : ''); } });
   seg('o-q', 'q', ['Fast', 'Sharp'], CAR.q, v => { CAR.q = v; RS = 1; resCap = 1; applyRes(); planeDirty = true; });
@@ -3730,7 +3757,7 @@ function fillGear() {
     if (!gearOk(i)) { if (CAR.rp < q.rp) return; return pilotCall('buy_gear', { p_i: i }, () => { CAR.rp -= q.rp; CAR.gear.push(i); CAR.wear[sl] = i; }); }
     const w = Object.assign({}, CAR.wear); w[sl] = worn(sl) === i ? 0 : i; pilotCall('set_wear', { p_h: w.h, p_b: w.b, p_k: w.k }, () => { CAR.wear = w; }); }; });
 }
-function pilotOpen(from) { PL.from = from; PL.sel = null; fillPilot(); show('s-pilot'); $('s-pilot').scrollTop = 0; $('b-pback').focus({ preventScroll: true }); }
+function pilotOpen(from) { PL.from = from; PL.sel = null; $('pl-intro').hidden = !!CAR.sp; fillPilot(); show('s-pilot'); $('s-pilot').scrollTop = 0; $('b-pback').focus({ preventScroll: true }); }
 /* the quartermaster's case in the hangar: every portrait, piece of kit and paint in one look, the ones not yet held greyed; nothing is sold here */
 function fillQm() {
   const f = facNow(), st = starsAll(), kit = GEAR.filter((q, i) => q && gearOk(i)).length, pa = PAINTS.filter(p => st >= p.star).length, pl = PLANES.filter((p, i) => planeOk(i)).length, pt = PARTS.filter((q, i) => q && partOk(i)).length;
@@ -3812,7 +3839,19 @@ $('b-pilot').onclick = () => pilotOpen('s-menu'); $('b-pilot2').onclick = () => 
 $('b-preset').onclick = () => { if (!skSpent()) return; pilotCall('skill_reset', {}, () => { for (const k in CAR.sk) CAR.sk[k] = 0; }); };
 function hangarTab(t) { $('s-hangar').querySelectorAll('.h-tab').forEach(d => { d.hidden = +d.dataset.t !== t; }); $('h-tabs').innerHTML = ['Aircraft', 'Equipment', 'Settings'].map((o, i) => '<label><input type="radio" name="htab" value="' + i + '"' + (i === t ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $('h-tabs').querySelectorAll('input').forEach(el => { el.onchange = () => { hangarTab(+el.value); $('s-hangar').scrollTop = 0; }; }); }
 $('b-hback2').onclick = () => $('b-hback').click();
-$('b-hangar').onclick = () => { $('h-msg').hidden = true; hangarTab(0); LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
+/* the controls on one page: before the very first take-off, and from Settings whenever it is wanted */
+function ctlOpen(go) {
+  const up = invertY ? 'down' : 'up';
+  const rows = touchMode ? [['LEFT THUMB', 'Slide anywhere on the left side to steer: ' + up + ' lifts the nose, left and right bank.'], ['FIRE', 'Hold to fire the guns.'], ['WEP', 'Emergency power. It overheats, so use it in bursts.'], ['SLOW', 'Throttle back: tighter turns, and slow enough to land.'], ['GEAR', 'Wheels down before you land.'], ['BOMB · RKT', 'Bombs and rockets, on sorties that carry them.'], ['VIEW', 'Change the view.']]
+    : [[invertY ? 'S / W' : 'W / S', 'Lift and lower the nose.'], ['A / D', 'Bank left and right.'], ['SPACE', 'Hold to fire the guns.'], ['SHIFT', 'Emergency power. It overheats, so use it in bursts.'], ['X', 'Throttle back: tighter turns, and slow enough to land.'], ['G', 'Wheels down before you land.'], ['B / F', 'Bombs and rockets, on sorties that carry them.'], ['C', 'Change the view.'], ['P', 'Pause the sortie.']];
+  $('ctl-list').innerHTML = rows.map(r => '<b>' + r[0] + '</b><span>' + r[1] + '</span>').join('');
+  $('b-ctl').textContent = go ? 'Take off' : 'Back';
+  $('b-ctl').onclick = () => { CAR.ctl = 1; saveCar(); if (go) startGame(); else show('s-hangar'); };
+  show('s-ctl'); $('s-ctl').scrollTop = 0; $('b-ctl').focus({ preventScroll: true });
+}
+$('b-ctl-show').onclick = () => ctlOpen(false);
+$('b-hintro').onclick = () => { CAR.sh = 1; saveCar(); $('h-intro').hidden = true; }; $('b-plintro').onclick = () => { CAR.sp = 1; saveCar(); $('pl-intro').hidden = true; };
+$('b-hangar').onclick = () => { $('h-msg').hidden = true; $('h-intro').hidden = !!CAR.sh; hangarTab(0); LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
   try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = '–'; }
@@ -3830,9 +3869,9 @@ async function roleLoad() { // the experience the match server has written for e
 }
 roleFill();
 $('b-calog').onclick = logOpen; $('b-lgback').onclick = campOpen; $('b-camp').onclick = campOpen; $('b-caback').onclick = onlineOpen; $('b-camp2').onclick = campOpen; $('b-cafly').onclick = () => { if (campOpenF((CAMP.sel - 1) / 5 | 0)) duelStart(CHAPS[CAMP.sel - 1][0], CAMP.sel); };
-$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-isle').onclick = () => duelStart('isle'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-isle').onclick = () => duelStart('isle'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; if (!CAR.ctl && mIdx === 0 && !done.includes(0)) return ctlOpen(true); startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
-$('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam; $('coach-x').onclick = () => { coach.on = false; $('coach').hidden = true; canvas.focus(); }; $('b-map').onclick = () => mapSet(!mapOn); $('tmap').onclick = () => mapSet(false);
+$('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam; $('coach-x').onclick = () => { $('coach-q').hidden = !$('coach-q').hidden; canvas.focus(); }; $('coach-n').onclick = () => { $('coach-q').hidden = true; canvas.focus(); }; $('coach-y').onclick = () => { coach.on = false; $('coach').hidden = true; canvas.focus(); }; $('b-map').onclick = () => mapSet(!mapOn); $('tmap').onclick = () => mapSet(false);
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
 $('o-inv').onchange = e => { invertY = e.target.checked; try { localStorage.setItem('windfall-inv', invertY ? '1' : '0'); } catch (er) {} };
 let startAt = 0;
