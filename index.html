@@ -268,6 +268,10 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .fmark { flex: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font: 700 11px/1 var(--f-hud); font-style: normal; color: #fff; }
 .fmark.us { background: #1f3a63; } .fmark.su { background: #f1ede0; color: #b3261e; box-shadow: inset 0 0 0 1px rgba(41, 40, 31, .35); } .fmark.axis { background: #4b4f52; font-size: 10px; }
 .fmark.raf { background: radial-gradient(circle, #b3261e 0 26%, #f1ede0 27% 54%, #1f3a63 55%); }
+.sheet-top { position: sticky; top: calc(-16px - var(--sat)); z-index: 3; display: flex; gap: 10px; align-items: stretch; margin: -12px -24px 0; padding: calc(24px + var(--sat)) 24px 8px; background: var(--paper); border-bottom: 1.5px solid var(--type); }
+.sheet-top .ghost { flex: none; } .sheet-top .seg { flex: 1 1 auto; min-width: 0; } .sheet-top .seg span { padding-inline: 6px; letter-spacing: .06em; }
+.h-tab { display: contents; }
+@media (max-width: 480px) { .sheet-top { margin-inline: -18px; padding-inline: 18px; } .sheet-top .seg span { font-size: 12px; } }
 .lab2 { font: 700 12px/1 var(--f-hud); letter-spacing: .16em; text-transform: uppercase; color: var(--type-dim); margin-bottom: -6px; }
 .upg { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(41, 40, 31, .3); }
 .upg b { font: 700 16px/1.1 var(--f-hud); letter-spacing: .1em; text-transform: uppercase; } .upg b i { font-style: normal; letter-spacing: .2em; color: var(--stamp); margin-left: 8px; } .upg.pick { cursor: pointer; } .upg.look { box-shadow: inset 4px 0 0 var(--stamp); padding-left: 10px; } .upg.pick:focus-visible { outline: 2px solid var(--stamp); outline-offset: 2px; }
@@ -457,9 +461,11 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div id="h-look" class="wide-only" aria-live="polite"></div>
     <div class="sheet">
       <div class="sheet-head"><span>Hangar and settings</span><span id="h-rp">0 RP</span></div>
+      <div class="sheet-top"><button class="ghost" id="b-hback2" type="button">Back</button><div class="seg" id="h-tabs" role="radiogroup" aria-label="Hangar and settings"></div></div>
+      <p class="note" id="h-msg" hidden></p>
+      <div class="h-tab" data-t="0">
       <h1>Aircraft park</h1>
       <p class="lede">Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.</p>
-      <p class="note" id="h-msg" hidden></p>
       <div class="lab2">Aircraft</div>
       <p class="note wide-only">Tap a line to see that type or paint on the apron before you choose it.</p>
       <div id="h-planes"></div>
@@ -467,6 +473,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <p class="note">Stars from the sorties and the campaign open the last three types and every paint. They are never spent.</p>
       <p class="note" id="h-stars">Stars held: 0</p>
       <div id="h-paints"></div>
+      </div>
+      <div class="h-tab" data-t="1" hidden>
       <div class="lab2">Quartermaster</div>
       <p class="note">What you hold across all four sides. Everything here is earned by flying.</p>
       <div class="qm" id="h-qm"></div>
@@ -475,6 +483,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Equipment</div>
       <p class="note">Bought once, then chosen on the sortie board before each flight.</p>
       <div id="h-parts"></div>
+      </div>
+      <div class="h-tab" data-t="2" hidden>
       <div class="lab2">Stick sensitivity</div><div class="seg" id="o-sens" role="radiogroup" aria-label="Stick sensitivity"></div>
       <div class="lab2">Graphics</div><div class="seg" id="o-q" role="radiogroup" aria-label="Graphics quality"></div>
       <div class="lab2">Frame counter</div><div class="seg" id="o-fps" role="radiogroup" aria-label="Frame counter"></div>
@@ -483,6 +493,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Landing aid</div><div class="seg" id="o-aid" role="radiogroup" aria-label="Landing aid"></div>
       <div class="lab2">Night sortie</div><div class="seg" id="o-night" role="radiogroup" aria-label="Night sortie"></div><p class="note">Fly the sorties after dark: harder to see, and every point is worth a fifth more.</p>
       <p class="lede" style="font-size:13px">A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.</p>
+      </div>
       <div class="row"><button class="go" id="b-hback" type="button">Back</button></div>
     </div>
   </div>
@@ -862,7 +873,7 @@ const DICT = {
   "Every sortie earns requisition points. Spend them on new aircraft and on fittings; both carry over to every sortie. Weapons loads stay as each sortie issues them.": ["Her sorti tahsis puanı kazandırır. Bunları yeni uçaklara ve donanıma harca; ikisi de bütün sortilerde geçerlidir. Silah yükü her sortinin verdiği gibi kalır.", "Jeder Einsatz bringt Zuteilungspunkte. Gib sie für neue Flugzeuge und Ausrüstung aus; beides gilt für alle Einsätze. Die Waffenlast bleibt, wie der Einsatz sie vorgibt."],
   "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Opened": ["Açıldı", "Freigeschaltet"], "Next to open": ["Sıradaki açılış", "Nächste Freischaltung"], "1 star to go": ["1 yıldız kaldı", "noch 1 Stern"], "Every type and paint is open": ["Bütün tipler ve boyalar açık", "Alle Typen und Anstriche sind frei"], "Preview": ["Önizleme", "Vorschau"], "Tap a line to see that type or paint on the apron before you choose it.": ["Seçmeden önce bir tipi ya da boyayı pistte görmek için satırına dokun.", "Tippe auf eine Zeile, um Typ oder Anstrich vor der Wahl auf dem Vorfeld zu sehen."], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
   "A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.": ["Oyun kolu da çalışır: sol çubuk uçurur, A ya da sağ tetik ateş, B roket, X bomba, sağ omuz acil güç, sol tetik hava freni, sol omuz iniş takımı, Y bakış, Start duraklat.", "Ein Gamepad geht auch: linker Stick fliegt, A oder rechter Trigger feuert, B Raketen, X Bomben, rechte Schultertaste Notleistung, linker Trigger Luftbremse, linke Schultertaste Fahrwerk, Y Sicht, Start Pause."],
-  "Back": ["Geri", "Zurück"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
+  "Back": ["Geri", "Zurück"], "Settings": ["Ayarlar", "Einstellungen"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
   "Harder-hitting, cooler-running guns, 12% a step": ["Daha sert vuran, daha serin çalışan toplar, kademe başına %12", "Härter treffende, kühler laufende Waffen, 12 % je Stufe"], "Heavier rocket and bomb warheads, 15% a step": ["Daha ağır roket ve bomba başlıkları, kademe başına %15", "Schwerere Raketen- und Bombenköpfe, 15 % je Stufe"],
   "Fitted": ["Takıldı", "Eingebaut"], "Fit": ["Tak", "Einbauen"], "Buy": ["Satın al", "Kaufen"], "Fly": ["Uç", "Fliegen"], "Flying": ["Uçuyor", "In Benutzung"], "Mission standard": ["Görev standardı", "Einsatzstandard"], "United States": ["Amerika Birleşik Devletleri", "Vereinigte Staaten"], "Soviet Union": ["Sovyetler Birliği", "Sowjetunion"], "Axis": ["Mihver", "Achse"], "Captured types": ["Ele geçirilen tipler", "Erbeutete Typen"], "Quartermaster": ["Levazım", "Zeugmeister"], "What you hold across all four sides. Everything here is earned by flying.": ["Dört tarafta elinde olanlar. Buradaki her şey uçarak kazanılır.", "Was du auf allen vier Seiten besitzt. Alles hier wird im Flug verdient."], "What you hold across all four sides.": ["Dört tarafta elinde olanlar.", "Was du auf allen vier Seiten besitzt."], "Everything here is earned by flying.": ["Buradaki her şey uçarak kazanılır.", "Alles hier wird im Flug verdient."], "Pieces collected": ["Toplanan parça", "Gesammelte Stücke"], "Pilots": ["Pilotlar", "Piloten"], "Open the pilot record": ["Pilot sicilini aç", "Pilotenakte öffnen"],
@@ -3799,7 +3810,9 @@ function debrief() {
 }
 $('b-pilot').onclick = () => pilotOpen('s-menu'); $('b-pilot2').onclick = () => $('b-pilot').click(); $('b-hangar2').onclick = () => $('b-hangar').click(); $('b-pback').onclick = () => { show(PL.from); fillBoard(); if (PL.from === 's-hangar') fillHangar(); };
 $('b-preset').onclick = () => { if (!skSpent()) return; pilotCall('skill_reset', {}, () => { for (const k in CAR.sk) CAR.sk[k] = 0; }); };
-$('b-hangar').onclick = () => { $('h-msg').hidden = true; LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
+function hangarTab(t) { $('s-hangar').querySelectorAll('.h-tab').forEach(d => { d.hidden = +d.dataset.t !== t; }); $('h-tabs').innerHTML = ['Aircraft', 'Equipment', 'Settings'].map((o, i) => '<label><input type="radio" name="htab" value="' + i + '"' + (i === t ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $('h-tabs').querySelectorAll('input').forEach(el => { el.onchange = () => { hangarTab(+el.value); $('s-hangar').scrollTop = 0; }; }); }
+$('b-hback2').onclick = () => $('b-hback').click();
+$('b-hangar').onclick = () => { $('h-msg').hidden = true; hangarTab(0); LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
   try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = '–'; }
