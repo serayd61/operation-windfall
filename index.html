@@ -118,6 +118,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sight); out
 .mk.edge i { left: -6px; top: -6px; width: 12px; height: 12px; }
 .mk.e.edge i { background: var(--threat); } .mk.o.edge i { background: var(--sight); } .mk.h.edge i { background: var(--go); }
 .mk.edge b, .mk.edge span { display: none; }
+.mk.e.near.edge i { left: -9px; top: -9px; width: 18px; height: 18px; transform: rotate(45deg); animation: nearP .5s ease-in-out infinite alternate; } @keyframes nearP { to { box-shadow: 0 0 0 5px rgba(255, 90, 68, .35); } }
+.mk.e.near.edge span { display: block; text-shadow: 0 0 4px #000; } @media (prefers-reduced-motion: reduce) { .mk.e.near.edge i { animation: none; } }
 .mk.home.edge i { left: -9px; top: -9px; width: 18px; height: 18px; animation: homeP .7s ease-in-out infinite alternate; } @keyframes homeP { to { box-shadow: 0 0 0 5px rgba(159, 224, 160, .35); } }
 .mk.home.edge b, .mk.home.edge span { display: block; text-shadow: 0 0 4px #000; } .mk.home.edge.r b, .mk.home.edge.r span { left: auto; right: 20px; }
 @media (prefers-reduced-motion: reduce) { .mk.home.edge i { animation: none; } }
@@ -277,6 +279,12 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .sheet-top { position: sticky; top: calc(-16px - var(--sat)); z-index: 3; display: flex; gap: 10px; align-items: stretch; margin: -12px -24px 0; padding: calc(24px + var(--sat)) 24px 8px; background: var(--paper); border-bottom: 1.5px solid var(--type); }
 .sheet-top .ghost { flex: none; } .sheet-top .seg { flex: 1 1 auto; min-width: 0; } .sheet-top .seg span { padding-inline: 6px; letter-spacing: .06em; }
 .h-tab { display: contents; }
+.row.pin { position: sticky; bottom: calc(-16px - var(--sab)); z-index: 3; margin: 0 -24px; padding: 10px 24px calc(24px + var(--sab)); background: var(--paper); border-top: 1.5px solid var(--type); }
+@media (max-width: 480px) { .row.pin { margin-inline: -18px; padding-inline: 18px; } }
+.endban { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); z-index: 4; min-width: min(360px, 80vw); max-width: 88vw; padding: 14px 22px; text-align: center; background: rgba(14, 20, 18, .88); border: 1.5px solid var(--hud); color: var(--hud); text-shadow: none; }
+.endban b { display: block; font: 700 30px/1.05 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; } .endban span { display: block; margin-top: 7px; font: 600 14px/1.35 var(--f-hud); letter-spacing: .04em; }
+.endban.bad { border-color: var(--threat); } .endban.bad b { color: var(--threat); } .endban.good { border-color: var(--go); } .endban.good b { color: var(--go); }
+@media (max-height: 460px) { .endban b { font-size: 24px; } }
 .tipbox { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border: 1.5px dashed var(--type); } .tipbox p { margin: 0; flex: 1 1 auto; } .tipbox .ghost { flex: none; }
 .ctl { display: grid; grid-template-columns: minmax(92px, auto) 1fr; gap: 8px 12px; align-items: center; } .ctl b { padding: 6px 8px; border: 1.5px solid var(--type); text-align: center; font: 700 13px/1.1 var(--f-hud); letter-spacing: .08em; } .ctl span { font: 400 14px/1.35 var(--f-type); }
 @media (max-width: 480px) { .sheet-top { margin-inline: -18px; padding-inline: 18px; } .sheet-top .seg span { font-size: 12px; } }
@@ -364,6 +372,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="warn" id="warn">Bandits inbound</div>
     <div class="cues"><div class="cue" id="pull">PULL UP</div><div class="cue" id="stall">STALL</div><div class="cue" id="six">CHECK SIX</div></div>
     <div class="coach" id="coach" hidden><div class="k" id="coach-k">Flying lesson</div><p id="coach-t"></p><div class="bar"><i id="coach-b"></i></div><button id="coach-x" type="button" aria-label="Close the lesson">×</button><div class="coach-q" id="coach-q" hidden><span>Skip the flying lesson?</span><button id="coach-y" type="button">Skip</button><button id="coach-n" type="button">Keep</button></div></div>
+    <div class="endban" id="endban" hidden><b id="endban-t"></b><span id="endban-s"></span></div>
     <div class="lso" id="lso" hidden></div>
     <div class="tmap" id="tmap" hidden><canvas id="tmap-c" width="560" height="560"></canvas><div class="tmap-l"><b>Island map</b>
       <div class="key"><span><i style="background:#9fe0a0"></i>Ours</span><span><i style="background:#ff5a44"></i>Theirs</span><span><i style="background:#f3eede"></i>Nobody's</span></div>
@@ -408,6 +417,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
   <div class="screen" id="s-menu">
     <div class="sheet">
       <div class="mast"><img src="img/logo.webp" alt="Operation Windfall" width="770" height="600"></div>
+      <div class="tipbox" id="m-intro" hidden><p class="note">New pilot? Press Take off. Your first sortie teaches you to fly, step by step.</p><button class="go" id="b-start0" type="button">Take off</button></div>
       <div class="sheet-head"><span id="m-no">Mission orders no. 1</span><span id="m-when">South Pacific · 1942</span></div>
       <div class="rec"><b id="r-rank">Pilot Officer</b><div class="bar"><i id="r-bar"></i></div><span id="r-xp">0 XP</span><span id="r-rp">0 RP</span></div>
       <div class="quick"><button class="ghost" id="b-hangar2" type="button">Hangar</button><button class="ghost" id="b-pilot2" type="button">Pilot</button></div>
@@ -445,7 +455,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="lab2">Opposition</div>
       <div class="seg" id="d-pick" role="radiogroup" aria-label="Difficulty"></div>
       <label class="opt" for="o-inv"><input type="checkbox" id="o-inv"> Pilot-style pitch (pull back to climb)</label>
-      <div class="row"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button><button class="ghost" id="b-pilot" type="button">Pilot</button></div>
+      <div class="row pin"><button class="go" id="b-start" type="button">Take off</button><button class="ghost" id="b-hangar" type="button">Hangar</button><button class="ghost" id="b-pilot" type="button">Pilot</button></div>
       <div class="stamp" id="m-stamp">Restricted</div>
       <p class="build">Build 17 · verified scores</p>
       <p class="build"><a href="privacy.html" target="_blank" rel="noopener">Privacy and your data</a> · <a href="#" id="b-fb">Send feedback</a></p>
@@ -495,6 +505,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div id="h-parts"></div>
       </div>
       <div class="h-tab" data-t="2" hidden>
+      <div class="lab2">Pitch control</div><div class="seg" id="o-inv2" role="radiogroup" aria-label="Pitch control"></div><p class="note">Inverted: slide down to climb, like a real control stick.</p>
       <div class="lab2">Stick sensitivity</div><div class="seg" id="o-sens" role="radiogroup" aria-label="Stick sensitivity"></div>
       <div class="lab2">Graphics</div><div class="seg" id="o-q" role="radiogroup" aria-label="Graphics quality"></div>
       <div class="lab2">Frame counter</div><div class="seg" id="o-fps" role="radiogroup" aria-label="Frame counter"></div>
@@ -515,6 +526,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
       <div class="sheet-head"><span>Before you fly</span><span></span></div>
       <h1>Controls</h1>
       <p class="lede">The flying lesson walks you through these in the air, one at a time.</p>
+      <div class="lab2">Pitch control</div><div class="seg" id="c-inv" role="radiogroup" aria-label="Pitch control"></div>
       <div class="ctl" id="ctl-list"></div>
       <p class="note">Amber markers are targets, red are the enemy, green is home.</p>
       <div class="row"><button class="go" id="b-ctl" type="button">Take off</button></div>
@@ -541,6 +553,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     <div class="sheet">
       <div class="sheet-head"><span>Paused</span><span id="p-cs">Kestrel One</span></div>
       <h1>Holding pattern</h1>
+      <div class="lab2">Pitch control</div><div class="seg" id="p-inv" role="radiogroup" aria-label="Pitch control"></div>
       <div class="row"><button class="go" id="b-resume" type="button">Resume</button><button class="ghost" id="b-restart1" type="button">Restart sortie</button><button class="ghost" id="b-board1" type="button">Sortie board</button><button class="ghost" id="b-fb2" type="button">Send feedback</button></div>
     </div>
   </div>
@@ -574,7 +587,8 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
         <div><span class="lab">Touchdown</span><b id="st-land">–</b></div>
         <div><span class="lab">Best time</span><b id="st-best">–</b></div>
       </div>
-      <div class="row"><button class="go" id="b-again" type="button">Fly again</button><button class="ghost" id="b-retry" type="button">Fly it again</button><button class="ghost" id="b-board2" type="button">Sortie board</button></div>
+      <p class="note" id="end-cont" hidden></p>
+      <div class="row"><button class="go" id="b-cont" type="button" hidden>Continue from here</button><button class="go" id="b-again" type="button">Fly again</button><button class="ghost" id="b-retry" type="button">Fly it again</button><button class="ghost" id="b-board2" type="button">Sortie board</button></div>
     </div>
   </div>
   <div class="screen" id="s-online" hidden>
@@ -897,6 +911,7 @@ const DICT = {
   "Fittings": ["Donanım", "Ausrüstung"], "Paint": ["Boya", "Anstrich"], "Opened": ["Açıldı", "Freigeschaltet"], "Next to open": ["Sıradaki açılış", "Nächste Freischaltung"], "1 star to go": ["1 yıldız kaldı", "noch 1 Stern"], "Every type and paint is open": ["Bütün tipler ve boyalar açık", "Alle Typen und Anstriche sind frei"], "Preview": ["Önizleme", "Vorschau"], "Tap a line to see that type or paint on the apron before you choose it.": ["Seçmeden önce bir tipi ya da boyayı pistte görmek için satırına dokun.", "Tippe auf eine Zeile, um Typ oder Anstrich vor der Wahl auf dem Vorfeld zu sehen."], "Stars from the sorties and the campaign open the last three types and every paint. They are never spent.": ["Sortilerden ve seferden gelen yıldızlar son üç tipi ve bütün boyaları açar. Yıldızlar harcanmaz.", "Sterne aus Einsätzen und Feldzug öffnen die letzten drei Typen und jeden Anstrich. Sie werden nie ausgegeben."], "Factory finish": ["Fabrika boyası", "Werkslackierung"], "Desert sand": ["Çöl kumu", "Wüstensand"], "Winter whitewash": ["Kış badanası", "Wintertünche"], "Sea blue": ["Deniz mavisi", "Seeblau"], "Night black": ["Gece siyahı", "Nachtschwarz"], "Bare metal": ["Çıplak metal", "Blankes Metall"], "Red nose": ["Kırmızı burun", "Rote Nase"], "Goes over whatever type you fly": ["Hangi tiple uçarsan onun üstüne gelir", "Kommt über jeden Typ, den du fliegst"], "The colours each type left the works in": ["Her tipin fabrikadan çıktığı renkler", "Die Farben, in denen jeder Typ das Werk verließ"], "Worn": ["Uygulandı", "Aufgetragen"], "Wear": ["Uygula", "Auftragen"], "Not enough stars yet.": ["Henüz yeterli yıldız yok.", "Noch nicht genug Sterne."], "Stick sensitivity": ["Kumanda hassasiyeti", "Knüppelempfindlichkeit"], "Graphics": ["Grafik", "Grafik"], "Frame counter": ["Kare sayacı", "Bildzähler"], "Music": ["Müzik", "Musik"], "Spoken radio": ["Sesli telsiz", "Gesprochener Funk"], "Landing aid": ["İniş yardımı", "Landehilfe"],
   "A gamepad works too: left stick flies, A or right trigger fires, B rockets, X bombs, right bumper emergency power, left trigger air brake, left bumper undercarriage, Y view, Start pause.": ["Oyun kolu da çalışır: sol çubuk uçurur, A ya da sağ tetik ateş, B roket, X bomba, sağ omuz acil güç, sol tetik hava freni, sol omuz iniş takımı, Y bakış, Start duraklat.", "Ein Gamepad geht auch: linker Stick fliegt, A oder rechter Trigger feuert, B Raketen, X Bomben, rechte Schultertaste Notleistung, linker Trigger Luftbremse, linke Schultertaste Fahrwerk, Y Sicht, Start Pause."],
   "Skip the flying lesson?": ["Uçuş dersi atlansın mı?", "Flugstunde überspringen?"], "Skip": ["Atla", "Überspringen"], "Keep": ["Devam", "Weiter"], "Got it": ["Anladım", "Verstanden"], "Switch it on to fly the first lessons again.": ["İlk dersleri yeniden uçmak için aç.", "Einschalten, um die ersten Flugstunden noch einmal zu fliegen."], "Show the controls": ["Kontrolleri göster", "Steuerung zeigen"], "Before you fly": ["Uçmadan önce", "Vor dem Flug"], "Controls": ["Kontroller", "Steuerung"], "The flying lesson walks you through these in the air, one at a time.": ["Uçuş dersi bunları havada tek tek gösterir.", "Die Flugstunde zeigt sie dir in der Luft, eins nach dem anderen."], "LEFT THUMB": ["SOL BAŞPARMAK", "LINKER DAUMEN"], "SPACE": ["BOŞLUK", "LEERTASTE"], "Slide anywhere on the left side to steer: up lifts the nose, left and right bank.": ["Yönlendirmek için sol tarafta parmağını kaydır: yukarı burnu kaldırır, sola ve sağa yatırır.", "Zum Steuern links über den Bildschirm wischen: nach oben hebt die Nase, links und rechts neigt die Maschine."], "Slide anywhere on the left side to steer: down lifts the nose, left and right bank.": ["Yönlendirmek için sol tarafta parmağını kaydır: aşağı burnu kaldırır, sola ve sağa yatırır.", "Zum Steuern links über den Bildschirm wischen: nach unten hebt die Nase, links und rechts neigt die Maschine."], "Hold to fire the guns.": ["Topları ateşlemek için basılı tut.", "Halten, um die Bordwaffen abzufeuern."], "Emergency power. It overheats, so use it in bursts.": ["Acil güç. Aşırı ısınır, kısa kısa kullan.", "Notleistung. Sie überhitzt, also nur stoßweise nutzen."], "Throttle back: tighter turns, and slow enough to land.": ["Gazı kıs: daha dar dönüş ve iniş için yeterince yavaş.", "Gas wegnehmen: engere Kurven und langsam genug zum Landen."], "Wheels down before you land.": ["İnmeden önce tekerlekleri indir.", "Vor der Landung das Fahrwerk ausfahren."], "Bombs and rockets, on sorties that carry them.": ["Bomba ve roketler, taşıyan sortilerde.", "Bomben und Raketen, wenn der Einsatz sie mitführt."], "Lift and lower the nose.": ["Burnu kaldır ve indir.", "Nase heben und senken."], "Bank left and right.": ["Sola ve sağa yat.", "Nach links und rechts neigen."], "Change the view.": ["Bakışı değiştir.", "Sicht wechseln."], "Pause the sortie.": ["Sortiyi duraklat.", "Einsatz pausieren."], "Amber markers are targets, red are the enemy, green is home.": ["Kehribar işaretler hedef, kırmızılar düşman, yeşil üs.", "Gelbe Markierungen sind Ziele, rote der Feind, grün ist die Heimat."], "Amber markers are your targets.": ["Kehribar işaretler hedeflerin.", "Gelbe Markierungen sind deine Ziele."], "Green marker is home. Wheels down before you touch.": ["Yeşil işaret üs. Dokunmadan önce tekerlekleri indir.", "Die grüne Markierung ist die Heimat. Fahrwerk raus vor dem Aufsetzen."], "Red markers are the enemy. Get behind one and fire.": ["Kırmızı işaretler düşman. Birinin arkasına geç ve ateş et.", "Rote Markierungen sind der Feind. Setz dich dahinter und feuere."], "Stop the bombers before they get through.": ["Bombardıman uçaklarını geçmeden durdur.", "Halte die Bomber auf, bevor sie durchkommen."], "Keep the fighters off the green bombers.": ["Avcıları yeşil bombardıman uçaklarından uzak tut.", "Halte die Jäger von den grünen Bombern fern."], "Against aircraft, aim at the red ring ahead of them, not at the aircraft itself.": ["Uçaklara karşı uçağın kendisine değil, önündeki kırmızı halkaya nişan al.", "Bei Flugzeugen auf den roten Ring vor ihnen zielen, nicht auf das Flugzeug selbst."], "New here? Aircraft is what you fly, Equipment is what your points buy, Settings holds the controls and the flying lesson.": ["Yeni misin? Uçak, uçtuğun tiptir; Ekipman, puanlarınla aldıkların; Ayarlar'da kontroller ve uçuş dersi var.", "Neu hier? Flugzeug ist, was du fliegst, Ausstattung ist, was deine Punkte kaufen, und unter Einstellungen findest du Steuerung und Flugstunde."], "Every level gives one skill point. Tap a step to read it and train it; each branch goes in order.": ["Her seviye bir yetenek puanı verir. Okumak ve eğitmek için bir adıma dokun; her dal sırayla ilerler.", "Jede Stufe bringt einen Fähigkeitspunkt. Tippe auf einen Schritt, um ihn zu lesen und zu trainieren; jeder Zweig wird der Reihe nach genommen."],
+  "Pitch control": ["Burun kontrolü", "Höhensteuerung"], "Inverted": ["Ters", "Invertiert"], "Inverted: slide down to climb, like a real control stick.": ["Ters: tırmanmak için aşağı kaydır, gerçek kumanda kolu gibi.", "Invertiert: zum Steigen nach unten wischen, wie am echten Steuerknüppel."], "New pilot? Press Take off. Your first sortie teaches you to fly, step by step.": ["Yeni pilot musun? Kalkış'a bas. İlk sortin sana uçmayı adım adım öğretir.", "Neuer Pilot? Drück auf Starten. Dein erster Einsatz bringt dir das Fliegen Schritt für Schritt bei."], "Continue from here": ["Buradan devam et", "Von hier weiter"], "Continue from here keeps the targets you destroyed. A continued sortie cannot earn the time star.": ["Buradan devam et, yok ettiğin hedefleri korur. Devam edilen sorti süre yıldızını kazanamaz.", "Von hier weiter behält die zerstörten Ziele. Ein fortgesetzter Einsatz kann den Zeitstern nicht verdienen."], "Sortie complete": ["Sorti tamamlandı", "Einsatz abgeschlossen"], "You are down safe.": ["Sağ salim indin.", "Du bist sicher gelandet."], "Welcome back.": ["Tekrar hoş geldin.", "Willkommen zurück."], "Welcome back": ["Tekrar hoş geldin", "Willkommen zurück"],
   "Back": ["Geri", "Zurück"], "Settings": ["Ayarlar", "Einstellungen"], "Engine": ["Motor", "Motor"], "Guns": ["Toplar", "Bordwaffen"], "Ordnance": ["Mühimmat", "Abwurfwaffen"],
   "More speed on emergency power, 4% a step": ["Acil güçte daha çok hız, kademe başına %4", "Mehr Fahrt bei Notleistung, 4 % je Stufe"], "Armour plate and sealed tanks, 12% less damage a step": ["Zırh levha ve sızdırmaz depolar, kademe başına %12 daha az hasar", "Panzerplatten und dichte Tanks, 12 % weniger Schaden je Stufe"],
   "Harder-hitting, cooler-running guns, 12% a step": ["Daha sert vuran, daha serin çalışan toplar, kademe başına %12", "Härter treffende, kühler laufende Waffen, 12 % je Stufe"], "Heavier rocket and bomb warheads, 15% a step": ["Daha ağır roket ve bomba başlıkları, kademe başına %15", "Schwerere Raketen- und Bombenköpfe, 15 % je Stufe"],
@@ -2391,7 +2406,7 @@ function groundRoll(dt) {
       if (DUEL.on && DUEL.mode === 'isle') { // stand on the strip: the match server counts three seconds, then it is ours and she is turned round
         if (!P.ldT) { P.ldT = time + .001; duelTell({ t: 'ld', on: 1 }); warn(DUEL.ap.own === DUEL.team ? 'Rearming' : 'Hold the strip', true); } else if (time - P.ldT > 8) { P.ldT = 0; isleSpot(); }
       }
-      else if (phase === 'extract') { P.gnd = 3; if (!endT) { endT = 1.6; endWon = true; } }
+      else if (phase === 'extract') { P.gnd = 3; if (!endT) { endT = 2; endWon = true; endBan('Sortie complete', 'You are down safe.', 'good'); } }
       else { // turned round on the spot: rearmed and patched up
         P.rkt = loadR(); P.bombs = loadB(); P.hp = 100; P.heat = 0; P.hot = false; P.wep = 0; P.wepHot = false; plane.userData.rkt.forEach(r => r.visible = true); plane.userData.bombs.forEach(r => r.visible = true);
         spotPlane(); feed('Rearmed and repaired'); radio(M.cs + ', you are turned round and rearmed. Off you go again.');
@@ -2454,7 +2469,7 @@ function loadMission(i) {
   reset();
 }
 function reset() {
-  pkSet();
+  pkSet(); contd = false; endBan();
   for (const e of enemies) world.remove(e.mesh); enemies = [];
   for (const b of bullets) { b.on = false; b.m.visible = false; }
   fxT.fill(0); fxD.fill(0); fxGeo.instanceCount = 0;
@@ -2673,7 +2688,9 @@ function toExtract(lead, fighters) {
   if (phase === 'extract') return; phase = 'extract'; beacon.visible = true;
   radio(lead + (PAD.carrier ? ' Recover aboard the carrier. Come round astern through the green beam, wheels down, and take a wire.' : ' Recover at the airstrip. Line up through the green beam, wheels down, and land along the runway.')); warn(PAD.carrier ? 'Land on the carrier' : 'Land at the airstrip', true); if (fighters) spawnFighters(fighters); updateObjective();
 }
-function failMission(why) { if (endT > 0 || !P.alive) return; failed = true; endT = 2.2; endWon = false; endWhy = why; warn('Sortie failed'); }
+function endBan(t, sub, cls) { const el = $('endban'); if (!t) { el.hidden = true; return; } $('endban-t').textContent = t; $('endban-s').textContent = sub || ''; el.className = 'endban ' + (cls || ''); el.hidden = false; }
+let CK = null, contd = false; // a lost strike sortie can be taken up again with the targets already destroyed still down
+function failMission(why) { if (endT > 0 || !P.alive) return; failed = true; endT = 2.8; endWon = false; endWhy = why; warn('Sortie failed'); endBan('Sortie failed', why, 'bad'); }
 function bigPlane(skin, foe) { // a twin-engined bomber from the fighter airframe
   const g = new T.Group(), w = buildWarbird(skin); if (foe) w.rotation.y = Math.PI; g.add(w); g.userData = w.userData; g.scale.setScalar(2.1);
   const dk = std('#2a2c2d', .6, .4); for (const s of [-1, 1]) { const nac = cyl(.42, .34, 2.6, dk, s * 2.6, -.42, foe ? 1.9 : -1.9, 10); nac.rotation.x = Math.PI / 2; g.add(nac); } return g;
@@ -2810,11 +2827,11 @@ function adviceFor(why) { // one thing to do differently, matched to how she was
   return 'Next time: ' + a;
 }
 function crash(why) {
-  if (!P.alive) return; if (DUEL.on) return duelDown(why); P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; endT = 1.8; endWon = false; endWhy = why;
+  if (!P.alive) return; if (DUEL.on) return duelDown(why); P.alive = false; P.hp = 0; plane.visible = false; explode(P.pos, 30); shake = 1; endT = 2.6; endWon = false; endWhy = why; endBan('Aircraft lost', why, 'bad');
   for (const c of ['pull', 'six', 'stall']) $(c).classList.remove('on');
 }
 function pickTarget() {
-  let best = null, bd = M.assist || 2; leadFoe = null; let ld = .9;
+  let best = null, bd = M.assist ? (DUEL.on ? M.assist : 1 - (1 - M.assist) * (CAR.diff === 0 ? 2.2 : 1) * (done.includes(mIdx) ? 1 : 1.6)) : 2; leadFoe = null; let ld = .9;
   const test = (t, foe) => { _a.copy(t.aim || t.pos).sub(P.pos); const d = _a.length(); if (d > 780 || d < 20) return; const dot = _a.multiplyScalar(1 / d).dot(P.fwd); if (dot > bd) { bd = dot; best = t; } if (foe && dot > ld) { ld = dot; leadFoe = t; } };
   for (const e of enemies) if (!e.falling) test(e, e.kind !== 'boat'); for (const o of objs) if (o.alive) test(o);
   if (DUEL.on) for (const q of NET.peers.values()) if (q.alive && q.team !== DUEL.team) test(q, true);
@@ -2904,12 +2921,12 @@ function updatePlayer(dt) {
   // guns
   target = pickTarget(); P.fireCd -= dt; P.ordCd -= dt; const G = M.gun;
   if (input.fire && !P.hot && P.fireCd <= 0) {
-    P.fireCd = G.cd; P.gun = -P.gun; P.heat += G.heat * (1 - .08 * CAR.up.gun) * PK.heat; shots++;
+    P.fireCd = G.cd; P.gun = -P.gun; P.heat += G.heat * (1 - .08 * CAR.up.gun) * PK.heat * (DUEL.on ? 1 : .7); shots++;
     _b.set(Math.cos(P.yaw), 0, -Math.sin(P.yaw)); _c.copy(P.pos).addScaledVector(_b, fl === 4 ? 0 : P.gun * 3.2).addScaledVector(P.fwd, fl === 4 ? 8 : 4);
     if (target) { const tp = target.aim || target.pos, d = tp.distanceTo(_c); _a.copy(tp).addScaledVector(target.vel, d / G.speed).sub(_c).normalize(); } else _a.copy(P.fwd);
     spawnBullet(_c, _a, G.speed, true, G.dmg * (1 + .12 * CAR.up.gun) * PM.gun * PK.gun, 1.7 * PK.rng, false, G.size); spawnFx(_c, 2.4 * G.size, 'flash'); sfxGun(G.size > 1.5, P.heat); shake = Math.max(shake, .05 * G.size);
     if (P.heat >= 1) { P.hot = true; P.heat = 1; warn('Guns overheated'); burst(2200, 'bandpass', .22, .3); burst(5200, 'highpass', .9, .1); }
-  } else if (!input.fire || P.hot) { P.heat = Math.max(0, P.heat - .34 * PK.gcool * dt); if (P.hot && P.heat < .35) P.hot = false; }
+  } else if (!input.fire || P.hot) { P.heat = Math.max(0, P.heat - (DUEL.on ? .34 : .42) * PK.gcool * dt); if (P.hot && P.heat < (DUEL.on ? .35 : .5)) P.hot = false; }
   if (input.rkt && P.rkt > 0 && P.ordCd <= 0) { P.ordCd = .28; launch(false); }
   if (input.bomb && P.bombs > 0 && P.ordCd <= 0) { P.ordCd = .45; launch(true); }
 }
@@ -3042,7 +3059,8 @@ function updateHud(dt) {
   });
   const put = (pos, cls, name, d, frac) => { if (mi >= marks.length) return; const m = marks[mi++], p = project(pos); m.d.hidden = false; m.d.className = 'mk ' + cls + (p.edge ? ' edge' + (p.x > innerWidth / 2 ? ' r' : '') : ''); m.d.style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px)'; m.b.textContent = name; m.s.textContent = range(d); if (frac != null) m.f.style.width = (clamp(frac, 0, 1) * 100).toFixed(0) + '%'; };
   for (const o of list) put(o.aim, o.home ? 'h home' : 'o', o.name, o.aim.distanceTo(P.pos), o.home ? null : o.hp / o.hp0);
-  for (const e of enemies) if (!e.falling) put(e.aim || e.pos, 'e', e.kind === 'fighter' ? 'ENEMY' : e.kind === 'bomber' ? 'BOMBER' : 'GUNBOAT', e.pos.distanceTo(P.pos));
+  let nearE = null, nearD = 1e9; if (!DUEL.on) for (const e of enemies) if (!e.falling && e.kind === 'fighter') { const d = e.pos.distanceTo(P.pos); if (d < nearD) { nearD = d; nearE = e; } }
+  for (const e of enemies) if (!e.falling) put(e.aim || e.pos, e === nearE ? 'e near' : 'e', e.kind === 'fighter' ? 'ENEMY' : e.kind === 'bomber' ? 'BOMBER' : 'GUNBOAT', e.pos.distanceTo(P.pos));
   for (const k of gtanks) if (k.foe && k.alive && k.S.near < 1500) { const d = k.aim.distanceTo(P.pos); if (d < 950) put(k.aim, 'e', k.soft ? 'TRUCK' : 'TANK', d); }
   for (const S of SITES) if (S.camp && S.campLeft > 0 && S.near < 1600) { const d = S.campV.distanceTo(P.pos); if (d < 1300) put(S.campV, 'e', 'TROOPS ' + S.campLeft, d); }
   for (const p of pals) if (p.alive && !p.gone) put(p.pos, 'h', 'BOMBER', p.pos.distanceTo(P.pos));
@@ -3673,6 +3691,7 @@ function duelSend() { // hits ride along with the position beat
 /* ------------------------------------------------------------------ flow */
 function show(id) { for (const s of ['s-menu', 's-pause', 's-end', 's-hangar', 's-rank', 's-duel', 's-online', 's-camp', 's-log', 's-fb', 's-pilot', 's-ctl']) $(s).hidden = s !== id; $('hud').classList.toggle('on', state === 'play'); $('touch').hidden = !(touchMode && state === 'play'); if (state !== 'play') { $('vig').style.opacity = 0; $('gloc').style.opacity = 0; } }
 function fillBoard() {
+  $('m-intro').hidden = done.length > 0;
   $('m-pick').innerHTML = MISSIONS.map((m, i) => '<label><input type="radio" name="sortie" id="s-' + i + '" value="' + i + '"' + (i === mIdx ? ' checked' : '') + '><span>' + (i + 1) + ' · ' + m.tab + '<small>' + (CAR.stars[i] ? '★★★'.slice(0, bits(CAR.stars[i])) + '☆☆☆'.slice(0, 3 - bits(CAR.stars[i])) : m.year) + '</small></span></label>').join('');
   MISSIONS.forEach((m, i) => { $('s-' + i).onchange = () => { DUEL.on = false; loadMission(i); fillBoard(); }; });
   $('m-no').textContent = 'Mission orders no. ' + (mIdx + 1); $('m-when').textContent = M.theatre + ' · ' + M.year; $('m-title').textContent = M.code; $('m-brief').textContent = M.brief; $('m-brf').innerHTML = briefHtml(); briefMap(); fillKit(); $('m-stamp').textContent = done.includes(mIdx) ? 'Flown' : 'Restricted';
@@ -3790,10 +3809,10 @@ function kitNote() {
 }
 function board() { DUEL.on = false; if (isleWorld) { ISLE = false; loadMission(mIdx); } hush(); skyLeave(); state = 'menu'; reset(); fillBoard(); show('s-menu'); dailyLoad(); try { localStorage.setItem('windfall-at', '' + mIdx); } catch (e) {} }
 function startGame() { if (DUEL.on) return duelStart(); initAudio(); reset(); state = 'play'; show(null); canvas.focus(); radio(M.cs + ', cleared for take-off. ' + (PAD.carrier ? 'Deck is yours.' : 'Runway is yours.') + ' Ease the nose up at one hundred.'); skyJoin(); netStart(); }
-function pause() { if (state !== 'play') return; hush(); state = 'pause'; show('s-pause'); $('b-resume').focus(); }
+function pause() { if (state !== 'play') return; invSegs(); hush(); state = 'pause'; show('s-pause'); $('b-resume').focus(); }
 function resume() { if (state !== 'pause') return; state = 'play'; show(null); last = performance.now(); canvas.focus(); }
 function finish() {
-  hush(); state = 'end'; let best = null; const bk = 'windfall-best-m' + mIdx, lastM = mIdx === MISSIONS.length - 1;
+  endBan(); hush(); state = 'end'; let best = null; const bk = 'windfall-best-m' + mIdx, lastM = mIdx === MISSIONS.length - 1;
   try { best = parseFloat(localStorage.getItem(bk)) || null; } catch (e) {}
   if (endWon) {
     if (!done.includes(mIdx)) { done.push(mIdx); try { localStorage.setItem('windfall-done', JSON.stringify(done)); } catch (e) {} }
@@ -3804,9 +3823,11 @@ function finish() {
     $('end-status').textContent = failed ? 'Sortie failed' : 'Aircraft lost'; $('end-title').textContent = failed ? 'Mission failed' : M.cs + ' is down'; $('end-lede').textContent = endWhy + ' ' + cut + ' of ' + goalN() + ' objectives complete.' + (failed ? '' : ' ' + adviceFor(endWhy));
     $('b-again').textContent = 'Fly again'; $('b-retry').hidden = true; $('b-board2').hidden = false;
   }
+  CK = !endWon && !M.mode && !DUEL.on && cut > 0 ? { m: mIdx, dead: objs.map(o => !o.alive) } : null; $('b-cont').hidden = !CK; $('end-cont').hidden = !CK; $('b-again').className = CK ? 'ghost' : 'go';
+  if (CK) $('end-cont').textContent = 'Continue from here keeps the targets you destroyed. A continued sortie cannot earn the time star.';
   let got = 0;
   const st0 = starsAll();
-  if (endWon) { addScore(1000); score += Math.round(Math.max(0, parNow() + 120 - time) * 4 * D.sc); got = 1 | (siteBreaks > 0 ? 2 : 0) | (time <= parNow() ? 4 : 0); CAR.stars[mIdx] |= got; }
+  if (endWon) { addScore(1000); score += Math.round(Math.max(0, parNow() + 120 - time) * 4 * D.sc); got = 1 | (siteBreaks > 0 ? 2 : 0) | (time <= parNow() && !contd ? 4 : 0); CAR.stars[mIdx] |= got; }
   score = Math.max(0, score - fleetHits * 300);
   const rk0 = rankOf(CAR.xp), base = Math.round(score / (endWon ? 10 : 25)), earned = Math.round(base * PK.rp * (endWon ? PK.rpW : PK.rpL)); LOG.bonus = earned - base; CAR.xp += score; CAR.rp += earned; saveCar(); netScore(got);
   $('end-stars').innerHTML = starLines(got); $('end-next').textContent = starLine(st0); $('st-score').textContent = score; $('st-bomb').textContent = bomberKills; $('st-rp').textContent = earned + ' RP';
@@ -3840,18 +3861,21 @@ $('b-preset').onclick = () => { if (!skSpent()) return; pilotCall('skill_reset',
 function hangarTab(t) { $('s-hangar').querySelectorAll('.h-tab').forEach(d => { d.hidden = +d.dataset.t !== t; }); $('h-tabs').innerHTML = ['Aircraft', 'Equipment', 'Settings'].map((o, i) => '<label><input type="radio" name="htab" value="' + i + '"' + (i === t ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $('h-tabs').querySelectorAll('input').forEach(el => { el.onchange = () => { hangarTab(+el.value); $('s-hangar').scrollTop = 0; }; }); }
 $('b-hback2').onclick = () => $('b-hback').click();
 /* the controls on one page: before the very first take-off, and from Settings whenever it is wanted */
-function ctlOpen(go) {
+function ctlRows() {
   const up = invertY ? 'down' : 'up';
   const rows = touchMode ? [['LEFT THUMB', 'Slide anywhere on the left side to steer: ' + up + ' lifts the nose, left and right bank.'], ['FIRE', 'Hold to fire the guns.'], ['WEP', 'Emergency power. It overheats, so use it in bursts.'], ['SLOW', 'Throttle back: tighter turns, and slow enough to land.'], ['GEAR', 'Wheels down before you land.'], ['BOMB · RKT', 'Bombs and rockets, on sorties that carry them.'], ['VIEW', 'Change the view.']]
     : [[invertY ? 'S / W' : 'W / S', 'Lift and lower the nose.'], ['A / D', 'Bank left and right.'], ['SPACE', 'Hold to fire the guns.'], ['SHIFT', 'Emergency power. It overheats, so use it in bursts.'], ['X', 'Throttle back: tighter turns, and slow enough to land.'], ['G', 'Wheels down before you land.'], ['B / F', 'Bombs and rockets, on sorties that carry them.'], ['C', 'Change the view.'], ['P', 'Pause the sortie.']];
   $('ctl-list').innerHTML = rows.map(r => '<b>' + r[0] + '</b><span>' + r[1] + '</span>').join('');
+}
+function ctlOpen(go) {
+  invSegs(); ctlRows();
   $('b-ctl').textContent = go ? 'Take off' : 'Back';
   $('b-ctl').onclick = () => { CAR.ctl = 1; saveCar(); if (go) startGame(); else show('s-hangar'); };
   show('s-ctl'); $('s-ctl').scrollTop = 0; $('b-ctl').focus({ preventScroll: true });
 }
 $('b-ctl-show').onclick = () => ctlOpen(false);
 $('b-hintro').onclick = () => { CAR.sh = 1; saveCar(); $('h-intro').hidden = true; }; $('b-plintro').onclick = () => { CAR.sp = 1; saveCar(); $('pl-intro').hidden = true; };
-$('b-hangar').onclick = () => { $('h-msg').hidden = true; $('h-intro').hidden = !!CAR.sh; hangarTab(0); LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
+$('b-hangar').onclick = () => { $('h-msg').hidden = true; $('h-intro').hidden = !!CAR.sh; invSegs(); hangarTab(0); LOOK.pi = CAR.plane; LOOK.pa = CAR.paint; fillHangar(); campLoad(); show('s-hangar'); $('b-hback').focus({ preventScroll: true }); $('s-hangar').scrollTop = 0; LOOK.sr = $('s-hangar').querySelector('.sheet').getBoundingClientRect().right; LOOK.on = true; $('h-look').style.left = (LOOK.sr + 10) + 'px'; }; $('b-hback').onclick = () => { hush(); lookEnd(); LOOK.on = false; if (planeDirty) { planeDirty = false; loadMission(mIdx); } fillBoard(); show('s-menu'); };
 let onlineT = 0;
 async function onlineFill() { // live head counts from the match server
   try { const r = await fetch(DUEL.url.replace(/^ws/, 'http') + '/stats', { cache: 'no-store' }), d = await r.json(); for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = d[k] | 0; } catch (e) { for (const k of ['df', 'zone', 'ship', 'land', 'isle']) $('on-' + k).textContent = '–'; }
@@ -3869,14 +3893,21 @@ async function roleLoad() { // the experience the match server has written for e
 }
 roleFill();
 $('b-calog').onclick = logOpen; $('b-lgback').onclick = campOpen; $('b-camp').onclick = campOpen; $('b-caback').onclick = onlineOpen; $('b-camp2').onclick = campOpen; $('b-cafly').onclick = () => { if (campOpenF((CAMP.sel - 1) / 5 | 0)) duelStart(CHAPS[CAMP.sel - 1][0], CAMP.sel); };
-$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-isle').onclick = () => duelStart('isle'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start').onclick = () => { DUEL.on = false; if (!CAR.ctl && mIdx === 0 && !done.includes(0)) return ctlOpen(true); startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-duel').onclick = () => duelStart('df'); $('b-zone').onclick = () => duelStart('zone'); $('b-ship').onclick = () => duelStart('ship'); $('b-land').onclick = () => duelStart('land'); $('b-isle').onclick = () => duelStart('isle'); $('b-duel2').onclick = () => duelStart(); $('b-board3').onclick = board; $('b-start0').onclick = () => $('b-start').click();
+$('b-start').onclick = () => { DUEL.on = false; if (!CAR.ctl && mIdx === 0 && !done.includes(0)) return ctlOpen(true); startGame(); }; $('b-retry').onclick = startGame; $('b-restart1').onclick = startGame; $('b-resume').onclick = resume; $('b-pause').onclick = pause; $('b-board1').onclick = board; $('b-board2').onclick = board;
+$('b-cont').onclick = () => { const k = CK; if (!k || k.m !== mIdx) return startGame(); startGame(); contd = true;
+  objs.forEach((o, i) => { if (!k.dead[i]) return; o.alive = false; o.hp = 0; o.boomT = 0; cut++; if (o.kind === 'radar') { o.top.scale.y = .5; o.top.rotation.z = .55; if (o.group.userData.spin) o.group.userData.spin.visible = false; } else if (o.ship) o.group.visible = false; else o.top.visible = false; });
+  if (cut >= objs.length) toExtract('Welcome back.', 0); else radio('Welcome back, ' + M.cs + '. ' + (objs.length - cut === 1 ? 'One more.' : (objs.length - cut) + ' to go.'));
+  updateObjective(); };
 $('b-again').onclick = () => { if (!endWon) return startGame(); if (mIdx === MISSIONS.length - 1) return board(); loadMission(mIdx + 1); fillBoard(); startGame(); };
 $('b-mute').onclick = () => setMuted(!muted); $('b-cam').onclick = nextCam; $('coach-x').onclick = () => { $('coach-q').hidden = !$('coach-q').hidden; canvas.focus(); }; $('coach-n').onclick = () => { $('coach-q').hidden = true; canvas.focus(); }; $('coach-y').onclick = () => { coach.on = false; $('coach').hidden = true; canvas.focus(); }; $('b-map').onclick = () => mapSet(!mapOn); $('tmap').onclick = () => mapSet(false);
 $('o-lang').innerHTML = LANGS.map((l, i) => '<label><input type="radio" name="lang" value="' + i + '"' + (i === LI ? ' checked' : '') + '><span>' + l[1] + '</span></label>').join(''); $('o-lang').querySelectorAll('input').forEach(el => { el.onchange = () => setLang(+el.value); });
-$('o-inv').onchange = e => { invertY = e.target.checked; try { localStorage.setItem('windfall-inv', invertY ? '1' : '0'); } catch (er) {} };
+function setInv(v) { invertY = !!v; $('o-inv').checked = invertY; try { localStorage.setItem('windfall-inv', invertY ? '1' : '0'); } catch (er) {} invSegs(); if (!$('s-ctl').hidden) ctlRows(); }
+function invSegs() { for (const id of ['o-inv2', 'p-inv', 'c-inv']) { $(id).innerHTML = ['Normal', 'Inverted'].map((o, i) => '<label><input type="radio" name="' + id + '" value="' + i + '"' + (i === (invertY ? 1 : 0) ? ' checked' : '') + '><span>' + o + '</span></label>').join(''); $(id).querySelectorAll('input').forEach(el => { el.onchange = () => setInv(+el.value); }); } }
+$('o-inv').onchange = e => setInv(e.target.checked);
 let startAt = 0;
 try {
-  { const v = localStorage.getItem('windfall-inv'); if (v === '1') { invertY = true; $('o-inv').checked = true; } } // up = climb everywhere, touch included, unless the pilot ticked pilot-style pitch
+  { const v = localStorage.getItem('windfall-inv'); if (v === '1') { invertY = true; $('o-inv').checked = true; } invSegs(); } // up = climb everywhere, touch included, unless the pilot ticked pilot-style pitch
   if (localStorage.getItem('windfall-mute') === '1') setMuted(true);
   camMode = clamp(parseInt(localStorage.getItem('windfall-cam')) || 0, 0, 2); startAt = clamp(parseInt(localStorage.getItem('windfall-at')) || 0, 0, MISSIONS.length - 1);
 } catch (e) {}
