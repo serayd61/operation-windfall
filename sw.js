@@ -1,5 +1,5 @@
 // Offline support. Bump VERSION on every release so installed copies pick up the new files.
-const VERSION = 'windfall-74';
+const VERSION = 'windfall-75';
 const SHELL = ['./', 'index.html', 'privacy.html', 'vendor/three.min.js', 'vendor/supabase.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/favicon.svg'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
