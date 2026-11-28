@@ -50,7 +50,7 @@ body { background: var(--ink); color: var(--hud); overflow: hidden; font-family:
 .vig { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(255, 60, 40, .55) 100%); }
 
 /* ---------- HUD ---------- */
-#hud { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s; text-shadow: var(--glow); }
+#hud { --rt: max(calc(100px + var(--sat)), calc(var(--objb, 0px) + 10px)); position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s; text-shadow: var(--glow); }
 #hud.on { opacity: 1; }
 #fps { position: absolute; right: calc(14px + env(safe-area-inset-right, 0px)); top: calc(62px + env(safe-area-inset-top, 0px)); font: 600 12px/1 var(--f-hud); letter-spacing: .12em; color: var(--hud); opacity: .8; }
 .k { font: 600 12px/1 var(--f-hud); letter-spacing: .2em; text-transform: uppercase; color: var(--hud-dim); }
@@ -302,7 +302,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .upg b i.sw { display: inline-block; width: 46px; height: 11px; vertical-align: 1px; border: 1px solid rgba(41, 40, 31, .55); }
 .upg span { grid-column: 1; font: 400 13px/1.3 var(--f-type); color: var(--type-dim); } .upg button { grid-row: 1 / span 2; grid-column: 2; white-space: nowrap; }
 .ghost:disabled { opacity: .45; cursor: default; } .ghost:disabled:hover { background: transparent; color: var(--type); }
-.radar { position: absolute; left: var(--gl); top: calc(100px + var(--sat)); width: 124px; height: 124px; }
+.radar { position: absolute; left: var(--gl); top: var(--rt); width: 124px; height: 124px; }
 .touch .radar { width: 96px; height: 96px; }
 .opt input { width: 16px; height: 16px; accent-color: var(--olive); margin: 0; flex: none; }
 .lab { font: 700 12px/1 var(--f-hud); letter-spacing: .2em; text-transform: uppercase; color: var(--type-dim); }
@@ -320,7 +320,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 .rank li { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: baseline; padding: 7px 4px 6px; border-bottom: 1px solid rgba(41, 40, 31, .3); font: 700 16px/1.1 var(--f-hud); letter-spacing: .06em; }
 .rank li i { font-style: normal; color: var(--type-dim); } .rank li span { font-variant-numeric: tabular-nums; } .rank li.me { background: var(--type); color: var(--paper); } .rank li.me i { color: var(--paper-edge); }
 .rank li.k-wait { display: block; font: 400 14px/1.4 var(--f-type); color: var(--type-dim); }
-.pilots { position: absolute; left: var(--gl); top: calc(234px + var(--sat)); min-width: 132px; padding: 6px 9px 5px; background: var(--ink-plate); border-left: 2px solid var(--go); text-shadow: none; font: 600 12px/1.5 var(--f-hud); letter-spacing: .08em; color: var(--hud); }
+.pilots { position: absolute; left: var(--gl); top: calc(var(--rt) + 134px); min-width: 132px; padding: 6px 9px 5px; background: var(--ink-plate); border-left: 2px solid var(--go); text-shadow: none; font: 600 12px/1.5 var(--f-hud); letter-spacing: .08em; color: var(--hud); }
 .pilots div { display: flex; justify-content: space-between; gap: 12px; } .pilots div.me { color: var(--go); } #obj-t[data-tail]::after { content: attr(data-tail); }
     .daily { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1.5px solid var(--type); } .daily li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 2px; border-bottom: 1px solid rgba(41, 40, 31, .3); font: 700 14px/1.2 var(--f-hud); letter-spacing: .06em; }
     .daily li.wk { display: block; padding: 10px 2px 4px; font: 700 12px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; color: var(--type-dim); } .daily li em { font-style: normal; color: var(--type-dim); font-variant-numeric: tabular-nums; } .daily li button { padding: 7px 10px 5px; min-width: 96px; } .daily li.got { color: var(--type-dim); } .daily li.got span:first-child { text-decoration: line-through; }
@@ -332,7 +332,7 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
     .chap-info h2 { margin: 0; font: 700 20px/1.1 var(--f-hud); letter-spacing: .08em; text-transform: uppercase; }
     .du-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; margin: 10px 0 16px; } .du-cols .rank li.bot b { font-weight: 400; } @media (max-width: 620px) { .du-cols { grid-template-columns: 1fr; } }
     .pilots div.foe { color: #ff8a70; } .pilots span { font-variant-numeric: tabular-nums; }
-.touch .pilots { top: calc(204px + var(--sat)); }
+.touch .pilots { top: calc(var(--rt) + 104px); }
 @media (orientation: landscape) and (max-height: 440px) { .pilots { top: auto; bottom: calc(96px + var(--sab)); } .pilots div:nth-child(n+4) { display: none; } }
 @media (orientation: portrait) and (max-width: 600px) {
   .pilots, .touch .pilots { top: calc(272px + var(--sat)); }
@@ -351,14 +351,18 @@ h1 { margin: 2px 0 0; font: 700 clamp(32px, 8.4vw, 48px)/.94 var(--f-stencil); l
 @media (orientation: landscape) and (max-height: 440px) {
   .obj { max-width: 215px; } .obj-t { font-size: 17px; }
   .compass { width: min(300px, calc(100vw - 150px)); }
-  .touch .radio { left: calc(var(--gl) + 108px); transform: none; width: calc(50vw - var(--gl) - 152px); top: calc(100px + var(--sat)); padding: 8px 10px 6px; }
-  .touch .feed { top: calc(76px + var(--sat)); right: calc(var(--gr) + 162px); }
+  .touch .radio { left: calc(var(--gl) + 108px); transform: none; width: calc(50vw - var(--gl) - 152px); top: var(--rt); padding: 8px 10px 6px; }
+  .touch .feed { top: calc(120px + var(--sat)); right: calc(var(--gr) + 162px); }
+  .touch .coach { left: calc(var(--gl) + 227px); transform: none; width: min(420px, calc(100vw - var(--gl) - var(--gr) - 401px)); }
+  .touch .tgt { top: calc(60px + var(--sat)); }
+  .touch .obj:has(.obj-s:not([hidden])) .obj-h { display: none; }
   .touch .radio p { font-size: 13px; }
   .touch .coaching .obj-h { display: none; }
   .touch .warn { top: calc(46px + var(--sat)); font-size: 19px; letter-spacing: .14em; padding: 7px 0 5px; z-index: 4; text-shadow: 0 0 6px #000, 0 0 2px #000; } .touch .warning .coach { visibility: hidden; }
   #t-gear { right: calc(190px + env(safe-area-inset-right, 0px)); bottom: calc(50px + var(--sab)); }
   #t-slow { right: calc(254px + env(safe-area-inset-right, 0px)); bottom: calc(50px + var(--sab)); }
 }
+@media (orientation: landscape) and (max-height: 440px) and (max-width: 760px) { .touch .arms { left: auto; right: calc(var(--gr) + 6px); transform: none; } .touch .coaching .radio { top: max(var(--rt), calc(120px + var(--sat))); } }
 @media (max-width: 480px) { .stamp { display: none; } .sheet { padding: 18px 18px; } }
 @media (prefers-reduced-motion: reduce) { .warn.on, .cue.on { animation-duration: .01s; animation-iteration-count: 1; opacity: 1; } }
 #boot { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #040d1c; transition: opacity .45s ease; } #boot img { width: min(62vw, 92vh, 520px); height: auto; } #boot.out { opacity: 0; pointer-events: none; }
@@ -2564,6 +2568,12 @@ function updateObjective() {
 }
 
 /* ------------------------------------------------------------------ enemies */
+function steer(dir, want, rate, dt) { // heading and climb turn separately, as an aircraft does: nobody stands on their tail or goes over the top to reverse
+  const y0 = Math.atan2(dir.x, dir.z), p0 = Math.asin(clamp(dir.y, -1, 1)), st = rate * dt;
+  let dy = Math.hypot(want.x, want.z) > 1e-3 ? Math.atan2(want.x, want.z) - y0 : 0; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+  const y1 = y0 + clamp(dy, -st, st), p1 = p0 + clamp(clamp(Math.asin(clamp(want.y, -1, 1)), -.7, .7) - p0, -st * .7, st * .7), c = Math.cos(p1);
+  dir.set(Math.sin(y1) * c, Math.sin(p1), Math.cos(y1) * c);
+}
 function spawnFighters(n, c, prey) {
   const F = M.foe;
   for (let i = 0; i < n; i++) {
@@ -2631,8 +2641,8 @@ function updateEnemies(dt) {
       _b.copy(e.pos).addScaledVector(e.dir, 140);
       const ground = Math.max(0, heightAt(_b.x, _b.z), heightAt(e.pos.x, e.pos.z));
       if (e.pos.y - ground < 60) { _a.y += 1.4; _a.normalize(); } else if (e.pos.y > 620) { _a.y -= .6; _a.normalize(); }
-      const ang = e.dir.angleTo(_a), px = e.dir.x, pz = e.dir.z;
-      if (ang > 1e-4) e.dir.lerp(_a, Math.min(1, F.turn * D.turn * dt / ang)).normalize();
+      const px = e.dir.x, pz = e.dir.z;
+      steer(e.dir, _a, F.turn * D.turn, dt);
       const turn = (pz * e.dir.x - px * e.dir.z) / dt; e.bank += (clamp(-turn * 1.3, -1.2, 1.2) - e.bank) * (1 - Math.exp(-4 * dt));
       e.vel.copy(e.dir).multiplyScalar(e.speed); e.pos.addScaledVector(e.vel, dt);
       e.mesh.position.copy(e.pos); e.mesh.lookAt(_b.copy(e.pos).add(e.dir)); e.mesh.rotateZ(e.bank);
@@ -2781,7 +2791,7 @@ function updateWing(dt) {
   } else { _a.copy(_c).sub(w.pos).normalize(); sp = hold ? 82 : clamp(P.speed + 40, 60, 175); }
   const gy = Math.max(0, heightAt(w.pos.x + w.dir.x * 140, w.pos.z + w.dir.z * 140), heightAt(w.pos.x, w.pos.z));
   if (w.pos.y - gy < 60) { _a.y += 1.4; } _a.normalize();
-  const ang = w.dir.angleTo(_a), px = w.dir.x, pz = w.dir.z; if (ang > 1e-4) w.dir.lerp(_a, Math.min(1, 1.25 * dt / ang)).normalize();
+  const px = w.dir.x, pz = w.dir.z; steer(w.dir, _a, 1.25, dt);
   const turn = (pz * w.dir.x - px * w.dir.z) / dt; w.bank += (clamp(turn * 1.3, -1.2, 1.2) - w.bank) * (1 - Math.exp(-4 * dt));
   w.pos.addScaledVector(w.dir, sp * dt); w.pos.y = Math.max(w.pos.y, gy + 12); w.mesh.position.copy(w.pos); w.mesh.lookAt(_b.copy(w.pos).sub(w.dir)); w.mesh.rotateZ(w.bank);
 }
@@ -3061,6 +3071,7 @@ function updateTarget() {
   $('tg-xv').textContent = air ? Math.round(pos.y * 3.281 / 10) * 10 + ' FT' : String(Math.round(((Math.atan2(pos.x - P.pos.x, -(pos.z - P.pos.z)) * 180 / Math.PI) + 360) % 360)).padStart(3, '0') + '°';
 }
 let lsoWas = null, ordWas = -1, coachWas = null, warnTm = 0; const labs = [];
+if (window.ResizeObserver) { const ob = document.querySelector('.obj'); new ResizeObserver(() => $('hud').style.setProperty('--objb', (ob.offsetTop + ob.offsetHeight) + 'px')).observe(ob); } // the radar and what hangs under it start below the objective block, however tall it gets
 function updateHud(dt) {
   const heading = ((-P.yaw * 180 / Math.PI) % 360 + 360) % 360, cw = $('tape').parentElement.clientWidth;
   $('tape').style.transform = 'translateX(' + (cw / 2 - (heading + 180) * PX) + 'px)';
